@@ -1,0 +1,19 @@
+{
+    "name": "nicat/routetree",
+    "description": "Advanded route management for Laravel 5",
+    "authors": [
+        {
+            "name": "Gerald Buttinger",
+            "email": "gerald.buttinger@nic.at"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Nicat\\RouteTree\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    }
+}
