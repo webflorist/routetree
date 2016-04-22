@@ -82,6 +82,16 @@ class RouteAction
     protected $pathSuffix = null;
 
     /**
+     * RouteAction constructor.
+     * @param string $action
+     */
+    public function __construct($action)
+    {
+        $this->setAction($action);
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getPathSuffix()
@@ -96,19 +106,6 @@ class RouteAction
     public function setPathSuffix($pathSuffix)
     {
         $this->pathSuffix = $pathSuffix;
-        return $this;
-    }
-
-    /**
-     * RouteAction constructor.
-     * @param string $action
-     * @param RouteNode $routeNode
-     */
-    public function __construct($action, RouteNode $routeNode)
-    {
-        $this->setAction($action);
-        $this->setRouteNode($routeNode);
-
         return $this;
     }
 
@@ -228,7 +225,7 @@ class RouteAction
 
         // Add the controller-method or the closure to the action-array.
         if (!is_null($this->uses)) {
-            $action['uses'] = $this->uses;
+            $action['uses'] = $this->routeNode->getNamespace().'\\'.$this->uses;
         }
         else if (is_callable($this->closure)) {
             array_push($action,$this->closure);
@@ -241,8 +238,8 @@ class RouteAction
             $fullRouteName = $language;
 
             // Then we append the full name of the route-node.
-            if (strlen($this->routeNode->getFullName())>0) {
-                $fullRouteName .=  '.' . $this->routeNode->getFullName();
+            if (strlen($this->routeNode->getId())>0) {
+                $fullRouteName .=  '.' . $this->routeNode->getId();
             }
 
             // Append the suffix for this action, if defined.

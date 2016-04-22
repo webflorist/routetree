@@ -71,6 +71,9 @@ class RouteTreeMiddleware
             
         }
 
+        //dd(\Route::getRoutes());
+        //dd($this->routeTree);
+
         return $next($request);
     }
 }

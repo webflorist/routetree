@@ -19,21 +19,21 @@ class RouteNode {
 
     protected $name = '';
 
-    protected $fullName = '';
+    protected $id = '';
 
     protected $paths = [];
 
     protected $middleware = [];
 
     /**
+     * @var string|null
+     */
+    protected $namespace = 'App\Http\Controllers';
+
+    /**
      * @var RouteAction[]
      */
     protected $actions = [];
-
-    /**
-     * @var RouteResource
-     */
-    protected $resource = null;
 
     /**
      * RouteNode constructor.
@@ -50,13 +50,31 @@ class RouteNode {
             $this->setParentNode($parentNode);
         }
 
-        // Append the route-name to the fullName
-        $this->fullName .= $this->name;
+        // Append the route-name to the id.
+        $this->id .= $this->name;
 
         $this->setPaths($path);
 
         return $this;
 
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getNamespace()
+    {
+        return $this->namespace;
+    }
+
+    /**
+     * @param null|string $namespace
+     * @return RouteNode
+     */
+    public function setNamespace($namespace)
+    {
+        $this->namespace .= '\\'.$namespace;
+        return $this;
     }
 
     protected function setParentNode(RouteNode $parentNode) {
@@ -67,9 +85,14 @@ class RouteNode {
         // Set this node as a child node of the parent.
         $this->parentNode->addChildNode($this);
 
-        // Overtake fullName from parentNode into current node.
-        if (strlen($this->parentNode->fullName)>0) {
-            $this->fullName = $this->parentNode->fullName . '.';
+        // Overtake id from parentNode into current node.
+        if (strlen($this->parentNode->id)>0) {
+            $this->id = $this->parentNode->id . '.';
+        }
+
+        // Overtake namespace from parentNode into current node.
+        if (strlen($this->parentNode->namespace)>0) {
+            $this->namespace = $this->parentNode->namespace;
         }
 
         // Overtake middleware from parentNode into current node.
@@ -97,12 +120,30 @@ class RouteNode {
         return $this->childNodes;
     }
 
+    public function getChildNode($nodeName='') {
+        if ($this->hasChildNode($nodeName)) {
+            return $this->childNodes[$nodeName];
+        }
+        else {
+            return false;
+        }
+    }
+
+    public function hasChildNode($nodeName='') {
+        if (isset($this->childNodes[$nodeName])) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     /**
      * @return string
      */
-    public function getFullName()
+    public function getId()
     {
-        return $this->fullName;
+        return $this->id;
     }
 
     /**
@@ -134,19 +175,34 @@ class RouteNode {
         ];
     }
 
-    public function setResource(RouteResource $resource) {
-        $this->resource = $resource;
-    }
-
     public function addAction(RouteAction $routeAction) {
+
+        // Set the RouteNode within the RouteAction.
+        $routeAction->setRouteNode($this);
+
+        // Add the action to $this->actions
         array_push($this->actions, $routeAction);
+
         return $this;
     }
 
     public function setPaths($path=null) {
 
         // Set the translation key to be used for getting localized paths.
-        $pathTranslationKey = 'routes.'.$this->fullName;
+
+        // Translations always reside within the pages-directory.
+        $pathTranslationKey = 'pages/';
+
+        // Every parent node is a subdirectory of the pages-directory.
+        // So we just get the full name of the parent node (if one exists),
+        // and replace the dots with slashes.
+        if ((!is_null($this->parentNode) && strlen($this->parentNode->id)>0)) {
+            $pathTranslationKey .= str_replace('.','/',$this->parentNode->id) . '/';
+        }
+
+        // The translation file-name for paths is 'paths',
+        //  and the key is the name of the current node.
+        $pathTranslationKey .= 'paths.'.$this->name;
 
         // Iterate through configured languages.
         foreach (\Config::get('app.locales') as $language => $fullLanguage) {
@@ -200,13 +256,8 @@ class RouteNode {
     }
 
     public function generateRoutes() {
-        
-        // First we generate the routes for a configured resource.
-        if (is_a($this->resource,RouteResource::class)) {
-            $this->resource->generateRoutes();
-        }
 
-        // Then we generate the routes for this node.
+        // Generate the routes of all actions for this node.
         if (count($this->actions)>0) {
             foreach ($this->actions as $key => $routeAction) {
                 $routeAction->generateRoutes();

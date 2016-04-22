@@ -11,6 +11,9 @@
     "autoload": {
         "psr-4": {
             "Nicat\\RouteTree\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     }
 }

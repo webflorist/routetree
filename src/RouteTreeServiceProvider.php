@@ -20,6 +20,15 @@ class RouteTreeServiceProvider extends ServiceProvider
     {
         // Register the RouteTreeMiddleware.
         $this->app['Illuminate\Contracts\Http\Kernel']->pushMiddleware(RouteTreeMiddleware::class);
+
+        \Blade::directive('menuofsubpages', function($view, $routeId) {
+            $this->app[RouteTree::class]->listGenerator->generateMenuOfSubPages($view, $routeId);
+        });
+
+        \Blade::directive('menuofsubpagesofcurrentpage', function($expression) {
+            $segments = explode(',', preg_replace("/[\(\)\\\"\']/", '', $expression));
+            return "<?php echo $this->app[RouteTree::class]->listGenerator->generateMenuOfSubPagesOfCurrentPage($segments[0]); ?>";
+        });
     }
 
     /**
