@@ -155,6 +155,27 @@ class RouteNode {
     }
 
     /**
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->paths[\App::getLocale()];
+    }
+
+    /**
+     * @return string
+     */
+    public function isActive()
+    {
+        if (app()[RouteTree::class]->getIdOfCurrentNode() === $this->id) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
      * @return array
      */
     public function getMiddleware()
