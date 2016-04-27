@@ -11,7 +11,7 @@ namespace Nicat\RouteTree;
 class RouteNode {
 
     /**
-     * @var RouteNode
+     * @var RouteNode|null
      */
     protected $parentNode = null;
 
@@ -22,6 +22,8 @@ class RouteNode {
     protected $id = '';
 
     protected $paths = [];
+
+    protected $inheritPath = true;
 
     protected $middleware = [];
 
@@ -34,6 +36,8 @@ class RouteNode {
      * @var RouteAction[]
      */
     protected $actions = [];
+
+    protected $langFolder = 'pages/';
 
     /**
      * RouteNode constructor.
@@ -103,6 +107,59 @@ class RouteNode {
                 }
             }
         }
+
+        $this->setLangFolder();
+    }
+
+    /**
+     * @return RouteNode[]
+     */
+    public function hasParentNode() {
+
+        return is_a($this->parentNode,RouteNode::class);
+    }
+
+    /**
+     * @return RouteNode|null
+     */
+    public function getParentNode() {
+
+        return $this->parentNode;
+    }
+
+    /**
+     * @return RouteNode[]
+     */
+    public function getParentNodes() {
+
+        $parentNodes = [];
+
+        $this->accumulateParentNodes($parentNodes);
+
+        $parentNodes = array_reverse($parentNodes);
+
+        return $parentNodes;
+    }
+
+    protected function accumulateParentNodes(&$parentNodes) {
+        if (is_a($this->parentNode,RouteNode::class)) {
+            array_push($parentNodes, $this->parentNode);
+            $this->parentNode->accumulateParentNodes($parentNodes);
+        }
+    }
+
+    protected function setLangFolder() {
+
+        // Translations always reside within the pages-directory.
+        $this->langFolder = 'pages/';
+
+        // Every parent node is a subdirectory of the pages-directory.
+        // So we just get the full name of the parent node (if one exists),
+        // and replace the dots with slashes.
+        if ((!is_null($this->parentNode) && strlen($this->parentNode->id)>0)) {
+            $this->langFolder .= str_replace('.','/',$this->parentNode->id) . '/';
+        }
+
     }
 
     protected function addChildNode(RouteNode $childNode) {
@@ -147,19 +204,17 @@ class RouteNode {
     }
 
     /**
+     * @param null $language
      * @return string
      */
-    public function getPathForLanguage($language='')
+    public function getPath($language = null)
     {
-        return $this->paths[$language];
-    }
+        // If no language is specifically stated, we use the current locale
+        if (is_null($language)) {
+            $language = \App::getLocale();
+        }
 
-    /**
-     * @return string
-     */
-    public function getPath()
-    {
-        return $this->paths[\App::getLocale()];
+        return $this->paths[$language];
     }
 
     /**
@@ -167,12 +222,38 @@ class RouteNode {
      */
     public function isActive()
     {
-        if (app()[RouteTree::class]->getIdOfCurrentNode() === $this->id) {
+        if (app()[RouteTree::class]->getCurrentNode() === $this) {
             return true;
         }
         else {
             return false;
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getPageTitle($language=null)
+    {
+
+        // If no language is specifically stated, we use the current locale
+        if (is_null($language)) {
+            $language = \App::getLocale();
+        }
+
+        // Set the translation key to be used for getting localized page titles.
+
+        // The translation file-name for paths is 'titles',
+        // and the key is the name of the current node.
+        $translationKey = $this->langFolder.'titles.'.$this->name;
+
+        // If a translation for this language exists, we return that as the page title.
+        if (\Lang::hasForLocale($translationKey, $language)) {
+            return trans($translationKey, [], 'messages', $language);
+        }
+
+        // Per default we just return the upper-cased node-name.
+        return ucfirst($this->name);
     }
 
     /**
@@ -207,60 +288,63 @@ class RouteNode {
         return $this;
     }
 
+    protected function getInheritedPaths() {
+
+        if ($this->hasParentNode()) {
+            if ($this->parentNode->inheritPath) {
+                return $this->parentNode->paths;
+            }
+            else {
+                return $this->parentNode->getInheritedPaths();
+            }
+        }
+
+        return false;
+    }
+
     public function setPaths($path=null) {
 
         // Set the translation key to be used for getting localized paths.
 
-        // Translations always reside within the pages-directory.
-        $pathTranslationKey = 'pages/';
-
-        // Every parent node is a subdirectory of the pages-directory.
-        // So we just get the full name of the parent node (if one exists),
-        // and replace the dots with slashes.
-        if ((!is_null($this->parentNode) && strlen($this->parentNode->id)>0)) {
-            $pathTranslationKey .= str_replace('.','/',$this->parentNode->id) . '/';
-        }
-
         // The translation file-name for paths is 'paths',
-        //  and the key is the name of the current node.
-        $pathTranslationKey .= 'paths.'.$this->name;
+        // and the key is the name of the current node.
+        $pathTranslationKey = $this->langFolder.'paths.'.$this->name;
+
+        // Get the inherited paths.
+        $inheritedPaths = $this->getInheritedPaths();
 
         // Iterate through configured languages.
         foreach (\Config::get('app.locales') as $language => $fullLanguage) {
 
-            // The path begins with the path from the parentNode.
-            if (isset($this->parentNode->paths[$language])) {
-                $this->paths[$language] = $this->parentNode->paths[$language];
+            // If an inherited path could be determined, we use that.
+            if ($inheritedPaths !== false) {
+
+                $this->paths[$language] = $inheritedPaths[$language];
             }
-            // If no parent-node-path is set yet, we start the path with the language.
+            // If no inherited path could be determined, we start the path with the language.
             else {
                 $this->paths[$language] = $language;
             }
 
-            // If $path is false, we do not want this node to be visible in the path at all.
-            if ($path !== false) {
+            // Standard path segment is the name of this route node.
+            $pathSegment = $this->name;
 
-                // Standard path segment is the name of this route node.
-                $pathSegment = $this->name;
+            // If $path is an array and contains an entry for this language, we use that.
+            if (is_array($path) && isset($path[$language])) {
+                $pathSegment = $path[$language];
+            }
+            // If $path is a string, we use that.
+            else if (is_string($path)){
+                $pathSegment = $path;
+            }
+            // If a translation for this language exists, we use that as path segment.
+            else if (\Lang::hasForLocale($pathTranslationKey, $language)) {
+                $pathSegment = trans($pathTranslationKey, [], 'messages', $language);
+            }
 
-                // If $path is an array and contains an entry for this language, we use that.
-                if (is_array($path) && isset($path[$language])) {
-                    $pathSegment = $path[$language];
-                }
-                // If $path is a string, we use that.
-                else if (is_string($path)){
-                    $pathSegment = $path;
-                }
-                // If a translation for this language exists, we use that as path segment.
-                else if (\Lang::hasForLocale($pathTranslationKey, $language)) {
-                    $pathSegment = trans($pathTranslationKey, [], 'messages', $language);
-                }
-
-                // Append the path segment for the current node.
-                if (strlen($pathSegment) > 0) {
-                    $this->paths[$language] .= '/' . $pathSegment;
-                }
-
+            // Append the path segment for the current node.
+            if (strlen($pathSegment) > 0) {
+                $this->paths[$language] .= '/' . $pathSegment;
             }
         }
     }
@@ -284,6 +368,16 @@ class RouteNode {
                 $routeAction->generateRoutes();
             }
         }
+    }
+
+    /**
+     * @param boolean $inheritPath
+     * @return RouteNode
+     */
+    public function setInheritPath($inheritPath)
+    {
+        $this->inheritPath = $inheritPath;
+        return $this;
     }
 
 }

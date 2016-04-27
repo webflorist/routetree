@@ -142,7 +142,7 @@ class RouteAction
      */
     public function getMethod()
     {
-        return RouteAction::$possibleActions[$this->action]['method'];
+        return self::$possibleActions[$this->action]['method'];
     }
 
     /**
@@ -151,7 +151,7 @@ class RouteAction
      */
     public function setAction($action)
     {
-        if (!isset($this::$possibleActions[$action])) {
+        if (!isset(self::$possibleActions[$action])) {
             // TODO: throw exception
         }
         $this->action = $action;
@@ -244,14 +244,14 @@ class RouteAction
 
             // Append the suffix for this action, if defined.
             if (isset(RouteAction::$possibleActions[$this->action]['suffix'])) {
-                $fullRouteName .= '.' . RouteAction::$possibleActions[$this->action]['suffix'];
+                $fullRouteName .= '.' . self::$possibleActions[$this->action]['suffix'];
             }
 
             // Set the full route name in the action-array.
             $action['as'] = $fullRouteName;
 
             // Get the path for this route-node and language to register this route with.
-            $path = $this->routeNode->getPathForLanguage($language);
+            $path = $this->routeNode->getPath($language);
 
             // Append any configured suffix.
             if (strlen($this->pathSuffix)>0) {

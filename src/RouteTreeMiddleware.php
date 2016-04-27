@@ -46,7 +46,17 @@ class RouteTreeMiddleware
             // We check, if any route registered with laravel matches the current request,
             // and catch the NotFoundHttpException, if this is not the case.
             try {
-                \Route::getRoutes()->match($request);
+
+                // Try getting the current route.
+                $currentRoute = \Route::getRoutes()->match($request);
+
+                // Find out and set the currently active node.
+                $this->routeTree->setCurrentNode(
+                    $this->routeTree->getNode(
+                        $this->routeTree->getNodeIdByRouteName($currentRoute->getName())
+                    )
+                );
+
             }
             catch(NotFoundHttpException $exception) {
 

@@ -15,11 +15,14 @@ class RouteTree {
      */
     protected $routeTree = null;
 
-    public $listGenerator;
-
     protected $registeredPaths = [];
 
     protected $registeredPathsByMethod = [];
+
+    /**
+     * @var RouteNode|null
+     */
+    protected $currentNode = null;
 
     /**
      * RouteTree constructor.
@@ -27,13 +30,26 @@ class RouteTree {
     public function __construct()
     {
         $this->routeTree = new RouteNode("");
-
-        $this->listGenerator = new ListGenerator($this);
     }
 
 
     public function setRootNode($nodeData=[]) {
         $this->generateNode("",null,$nodeData);
+    }
+
+
+    public function getRootNode() {
+        return $this->routeTree;
+    }
+
+
+    public function getCurrentNode() {
+        return $this->currentNode;
+    }
+
+
+    public function setCurrentNode(RouteNode $routeNode) {
+        $this->currentNode = $routeNode;
     }
 
     public function addNode($nodeName, $nodeData=[], $parentNodeFullName = "") {
@@ -156,6 +172,11 @@ class RouteTree {
         // Set namespace, if configured.
         if (isset($nodeData['namespace'])) {
             $routeNode->setNamespace($nodeData['namespace']);
+        }
+
+        // Set inheritPath, if configured.
+        if (isset($nodeData['inheritPath'])) {
+            $routeNode->setInheritPath($nodeData['inheritPath']);
         }
 
         // Add actions.
@@ -336,11 +357,6 @@ class RouteTree {
         if (preg_match('/(index|create|store|show|edit|update|destroy|get|post)/', $routeSegments[$lengthOfRoute -1])) {
             array_pop( $routeSegments );
             $lengthOfRoute--;
-        }
-
-        //check if we have after strip meta values again a valid route
-        if($lengthOfRoute < 1) {
-            return false;
         }
 
         return implode('.' , $routeSegments);
