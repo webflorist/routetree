@@ -52,9 +52,7 @@ class RouteTreeMiddleware
 
                 // Find out and set the currently active node.
                 $this->routeTree->setCurrentNode(
-                    $this->routeTree->getNode(
-                        $this->routeTree->getNodeIdByRouteName($currentRoute->getName())
-                    )
+                    $this->routeTree->getNodeByRouteName($currentRoute->getName())
                 );
 
             }

@@ -13,7 +13,7 @@ class RouteTree {
     /**
      * @var RouteNode|null
      */
-    protected $routeTree = null;
+    protected $rootNode = null;
 
     protected $registeredPaths = [];
 
@@ -25,21 +25,37 @@ class RouteTree {
     protected $currentNode = null;
 
     /**
+     * @var NodeGenerator|null
+     */
+    protected $nodeGenerator = null;
+
+    /**
      * RouteTree constructor.
      */
     public function __construct()
     {
-        $this->routeTree = new RouteNode("");
+        $this->rootNode = new RouteNode("");
+        
+        $this->nodeGenerator = new NodeGenerator($this);
     }
 
 
+    /**
+     * @param RouteNode|array $nodeData
+     */
     public function setRootNode($nodeData=[]) {
-        $this->generateNode("",null,$nodeData);
+
+        if (is_a($nodeData,RouteNode::class)) {
+            $this->rootNode = $nodeData;
+        }
+        else if (is_array($nodeData)) {
+            $this->rootNode = $this->nodeGenerator->generateNode("",null,$nodeData);
+        }
     }
 
 
     public function getRootNode() {
-        return $this->routeTree;
+        return $this->rootNode;
     }
 
 
@@ -52,21 +68,21 @@ class RouteTree {
         $this->currentNode = $routeNode;
     }
 
-    public function addNode($nodeName, $nodeData=[], $parentNodeFullName = "") {
+    public function addNode($nodeName, $nodeData=[], $parentNodeId = "") {
 
-        $this->generateNode(
+        $this->nodeGenerator->generateNode(
             $nodeName,
-            $this->getOrGenerateNode($parentNodeFullName),
+            $this->getOrGenerateNode($parentNodeId),
             $nodeData
         );
     }
 
-    public function addNodes($nodes=[], $parentNodePath="") {
+    public function addNodes($nodes=[], $parentNodeId="") {
 
-        $parentNode = $this->getOrGenerateNode($parentNodePath);
+        $parentNode = $this->getOrGenerateNode($parentNodeId);
 
         foreach ($nodes as $nodeName => $nodeData) {
-            $this->generateNode(
+            $this->nodeGenerator->generateNode(
                 $nodeName,
                 $parentNode,
                 $nodeData
@@ -90,7 +106,7 @@ class RouteTree {
             // In case, we are already at level 1, the parent node must be the root-node,
             // so we create the node for $path with the root-node as it's parent and return it.
             if ($lastSlashPosition === false) {
-                return new RouteNode($nodeId, $this->routeTree);
+                return new RouteNode($nodeId, $this->rootNode);
             }
             else {
 
@@ -118,14 +134,14 @@ class RouteTree {
 
         // If path is an empty string or null, we return the root-node.
         if ($nodeId === "" || $nodeId === null) {
-            return $this->routeTree;
+            return $this->rootNode;
         }
 
         // Otherwise we explode the path into it's segments.
         $pathSegments = explode('.',$nodeId);
 
         // We start crawling beginning with the root-node.
-        $crawlNode = $this->routeTree;
+        $crawlNode = $this->rootNode;
 
         // Crawl each path-segment...
         foreach ($pathSegments as $segment) {
@@ -148,167 +164,8 @@ class RouteTree {
         return $crawlNode;
     }
 
-    protected function generateNode($nodeName="", $parentNode = null, $nodeData=[]) {
-
-        // Create new RouteNode.
-        $routeNode = new RouteNode($nodeName, $parentNode);
-
-        // If no parent-node is stated and the current routeName is an empty string,
-        // we set this routeNode as the root-node.
-        if (is_null($parentNode) && ($nodeName === '')) {
-            $this->routeTree = $routeNode;
-        }
-
-        // Set specific paths, if configured.
-        if (isset($nodeData['path'])) {
-            $routeNode->setPaths($nodeData['path']);
-        }
-
-        // Add middleware.
-        if (isset($nodeData['middleware'])) {
-            $routeNode->addMiddlewareFromArray($nodeData['middleware']);
-        }
-
-        // Set namespace, if configured.
-        if (isset($nodeData['namespace'])) {
-            $routeNode->setNamespace($nodeData['namespace']);
-        }
-
-        // Set inheritPath, if configured.
-        if (isset($nodeData['inheritPath'])) {
-            $routeNode->setInheritPath($nodeData['inheritPath']);
-        }
-
-        // Add actions.
-        foreach (RouteAction::$possibleActions as $action => $actionInfo) {
-            if (isset($nodeData[$action])) {
-                $this->addActionToNode($routeNode, $action, $nodeData[$action]);
-            }
-        }
-
-        // Process resource.
-        if (isset($nodeData['resource'])) {
-
-            // Normally we assume, all possible actions should be set.
-            $resourceActions = [
-                'index', 'create', 'store', 'show', 'edit', 'update', 'destroy'
-            ];
-
-            // Set only those actions listed in $nodeData['resource']['only'] (if set).
-            if (isset($nodeData['resource']['only'])) {
-                $resourceActions = $nodeData['resource']['only'];
-            }
-
-            // Unset those actions listed in $nodeData['resource']['except'] (if set).
-            if (isset($nodeData['resource']['except'])) {
-                foreach ($nodeData['resource']['except'] as $resource) {
-                    if(($key = array_search($resource, $resourceActions)) !== false) {
-                        unset($resourceActions[$key]);
-                    }
-                }
-            }
-
-            // Set the path-suffix for a single resource (used by actions show|edit|update|destroy.
-            $resourcePathSuffix = '/{'.$nodeData['resource']['name'].'}';
-
-            // Add each requested action to the current resource node.
-            foreach ($resourceActions as $action) {
-                switch($action) {
-                    case 'index':
-                        $routeNode->addAction(
-                            (new RouteAction('index'))
-                                ->setUses($nodeData['resource']['controller'].'@index')
-                        );
-                        break;
-                    case 'create':
-                        $routeNode->addAction(
-                            (new RouteAction('create'))
-                                ->setUses($nodeData['resource']['controller'].'@create')
-                                ->setPathSuffix('/create')
-                        );
-                        break;
-                    case 'store':
-                        $routeNode->addAction(
-                            (new RouteAction('store'))
-                                ->setUses($nodeData['resource']['controller'].'@store')
-                        );
-                        break;
-                    case 'show':
-                        $routeNode->addAction(
-                            (new RouteAction('show'))
-                                ->setUses($nodeData['resource']['controller'].'@show')
-                                ->setPathSuffix($resourcePathSuffix)
-                        );
-                        break;
-                    case 'edit':
-                        $routeNode->addAction(
-                            (new RouteAction('edit'))
-                                ->setUses($nodeData['resource']['controller'].'@edit')
-                                ->setPathSuffix($resourcePathSuffix.'/edit')
-                        );
-                        break;
-                    case 'update':
-                        $routeNode->addAction(
-                            (new RouteAction('update'))
-                                ->setUses($nodeData['resource']['controller'].'@update')
-                                ->setPathSuffix($resourcePathSuffix)
-                        );
-                        break;
-                    case 'destroy':
-                        $routeNode->addAction(
-                            (new RouteAction('destroy'))
-                                ->setUses($nodeData['resource']['controller'].'@destroy')
-                                ->setPathSuffix($resourcePathSuffix)
-                        );
-                        break;
-                }
-            }
-        }
-
-        // Process Children, if present.
-        if (isset($nodeData['children']) && (count($nodeData['children'])>0)) {
-            foreach ($nodeData['children'] as $childName => $childData) {
-                $this->generateNode($childName, $routeNode, $childData);
-            }
-        }
-
-        return $routeNode;
-    }
-
-    /**
-     * @param RouteNode $node
-     * @param string $actionName
-     * @param array $actionData
-     */
-    protected function addActionToNode(RouteNode $node, $actionName, $actionData) {
-
-        // Create RouteAction Object
-        $routeAction = new RouteAction($actionName);
-
-        if (isset($actionData['closure'])) {
-            $routeAction->setClosure($actionData['closure']);
-        }
-        else if (isset($actionData['view'])) {
-            $view = $actionData['view'];
-            $routeAction->setClosure(function () use($view) {
-                return view($view);
-            });
-        }
-        else if (isset($actionData['redirect'])) {
-            $redirectTo = $actionData['redirect'];
-            $routeAction->setClosure(function () use($redirectTo) {
-                return redirect()->route(\App::getLocale().'.'.$redirectTo.'.index');
-            });
-        }
-        else if (isset($actionData['uses'])) {
-            $routeAction->setUses($actionData['uses']);
-        }
-
-        $node->addAction($routeAction);
-    }
-
     public function generateAllRoutes() {
-        $this->routeTree->generateRoutesOfNodeAndChildNodes();
+        $this->rootNode->generateRoutesOfNodeAndChildNodes();
     }
 
     public function registerPath($path='', RouteAction $routeAction) {
@@ -336,30 +193,35 @@ class RouteTree {
     {
         return $this->registeredPathsByMethod[strtolower($method)];
     }
-    
-    public function getIdOfCurrentNode() {
-        return $this->getNodeIdByRouteName(\Request::route()->getName());
-    }
 
-    public function getNodeIdByRouteName($routeName='') {
+    public function getNodeByRouteName($routeName='') {
 
         // Split route name to array.
         $routeSegments = explode('.', $routeName);
         $lengthOfRoute = count($routeSegments);
 
-        // Remove the language prefix from $routeSegments
+        // Remove the language prefix from $routeSegments.
         if (array_key_exists($routeSegments[0], config('app.locales'))) {
             array_shift( $routeSegments  );
             $lengthOfRoute--;
         }
 
-        // Remove the action suffix.
-        if (preg_match('/(index|create|store|show|edit|update|destroy|get|post)/', $routeSegments[$lengthOfRoute -1])) {
-            array_pop( $routeSegments );
-            $lengthOfRoute--;
+        // Let's see, if such a node exists.
+        if ($this->doesNodeExist(implode('.' , $routeSegments))) {
+            return $this->getNode(implode('.' , $routeSegments));
         }
 
-        return implode('.' , $routeSegments);
+        // If not, we try to remove the action suffix, and again try to get the node
+        if (preg_match('/(index|create|store|show|edit|update|destroy|get|post)/', $routeSegments[$lengthOfRoute -1])) {
+            array_pop( $routeSegments );
+
+            if ($this->doesNodeExist(implode('.' , $routeSegments))) {
+                return $this->getNode(implode('.' , $routeSegments));
+            }
+        }
+
+        // If no node was found, we return false.
+        return false;
 
     }
     

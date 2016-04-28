@@ -212,6 +212,22 @@ class RouteAction
         return $this;
     }
     
+    public function getUrl($parameters=null, $language=null) {
+
+        // If no language is specifically stated, we use the current locale
+        if (is_null($language)) {
+            $language = \App::getLocale();
+        }
+
+        // If no parameters are specifically stated, we use the current ones.
+        if (is_null($parameters)) {
+            $parameters = \Route::current()->parameters();
+        }
+
+        return route($this->generateRouteName($language), $parameters);
+
+    }
+    
     public function generateRoutes() {
 
         // Get the method, that will be used for registering the route with laravel.
@@ -234,21 +250,8 @@ class RouteAction
         // Iterate through configured languages.
         foreach (\Config::get('app.locales') as $language => $fullLanguage) {
 
-            // A full route name always starts with the language-key.
-            $fullRouteName = $language;
-
-            // Then we append the full name of the route-node.
-            if (strlen($this->routeNode->getId())>0) {
-                $fullRouteName .=  '.' . $this->routeNode->getId();
-            }
-
-            // Append the suffix for this action, if defined.
-            if (isset(RouteAction::$possibleActions[$this->action]['suffix'])) {
-                $fullRouteName .= '.' . self::$possibleActions[$this->action]['suffix'];
-            }
-
-            // Set the full route name in the action-array.
-            $action['as'] = $fullRouteName;
+            // Generate ans set route name.
+            $action['as'] = $this->generateRouteName($language);
 
             // Get the path for this route-node and language to register this route with.
             $path = $this->routeNode->getPath($language);
@@ -267,6 +270,29 @@ class RouteAction
 
         }
         
+    }
+
+    /**
+     * @param $language
+     * @return string
+     */
+    private function generateRouteName($language)
+    {
+
+        // A full route name always starts with the language-key.
+        $fullRouteName = $language;
+
+        // Then we append the id of the route-node.
+        if (strlen($this->routeNode->getId()) > 0) {
+            $fullRouteName .= '.' . $this->routeNode->getId();
+        }
+
+        // Append the suffix for this action, if defined.
+        if (isset(RouteAction::$possibleActions[$this->action]['suffix'])) {
+            $fullRouteName .= '.' . self::$possibleActions[$this->action]['suffix'];
+        }
+
+        return $fullRouteName;
     }
 
 }
