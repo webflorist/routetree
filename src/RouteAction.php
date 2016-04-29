@@ -12,6 +12,8 @@ class RouteAction
 {
 
     /**
+     * Static list of all possible actions, their method, and route-name-suffix.
+     *
      * @var array
      */
     public static $possibleActions = [
@@ -52,31 +54,36 @@ class RouteAction
     ];
 
     /**
+     * The route-node this action belongs to.
+     *
      * @var RouteNode
      */
     protected $routeNode = null;
 
     /**
+     * Name of the action (e.g. index|create|show|get etc.)
+     *
      * @var string
      */
     protected $action = null;
 
     /**
-     * @var string
-     */
-    protected $name = null;
-
-    /**
+     * The closure to be used for this action.
+     *
      * @var \Closure
      */
     protected $closure = null;
 
     /**
+     * The controller-method to be used for this action.
+     *
      * @var string
      */
     protected $uses = null;
 
     /**
+     * The path-suffix, this action will have on top of it's node's path.
+     *
      * @var string
      */
     protected $pathSuffix = null;
@@ -92,14 +99,8 @@ class RouteAction
     }
 
     /**
-     * @return string
-     */
-    public function getPathSuffix()
-    {
-        return $this->pathSuffix;
-    }
-
-    /**
+     * Set the path-suffix, this action will have on top of it's node's path.
+     *
      * @param string $pathSuffix
      * @return RouteAction
      */
@@ -110,14 +111,8 @@ class RouteAction
     }
 
     /**
-     * @return RouteNode
-     */
-    public function getRouteNode()
-    {
-        return $this->routeNode;
-    }
-
-    /**
+     * Set the route-node this action belongs to.
+     *
      * @param RouteNode $routeNode
      * @return RouteAction
      */
@@ -127,8 +122,9 @@ class RouteAction
         return $this;
     }
 
-
     /**
+     * Get the action-string.
+     *
      * @return string
      */
     public function getAction()
@@ -138,6 +134,8 @@ class RouteAction
 
 
     /**
+     * Get the method to be used with this action.
+     *
      * @return string
      */
     public function getMethod()
@@ -146,6 +144,8 @@ class RouteAction
     }
 
     /**
+     * Set the action-string of this action (e.g. index|update|destroy|get|put etc.).
+     *
      * @param string $action
      * @return RouteAction
      */
@@ -159,32 +159,8 @@ class RouteAction
     }
 
     /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $name
-     * @return RouteAction
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    /**
-     * @return \Closure
-     */
-    public function getClosure()
-    {
-        return $this->closure;
-    }
-
-    /**
+     * Set the closure this action should call.
+     *
      * @param \Closure $closure
      * @return RouteAction
      */
@@ -195,14 +171,8 @@ class RouteAction
     }
 
     /**
-     * @return string
-     */
-    public function getUses()
-    {
-        return $this->uses;
-    }
-
-    /**
+     * Set 'controller@method', this action will use.
+     *
      * @param string $uses
      * @return RouteAction
      */
@@ -211,23 +181,38 @@ class RouteAction
         $this->uses = $uses;
         return $this;
     }
-    
+
+    /**
+     * Get the URL to this action.
+     *
+     * @param array $parameters The values to be used for any route-parameters in the url.
+     * @param string $language The language this url should be generated for (default=current locale).
+     * @return mixed
+     */
     public function getUrl($parameters=null, $language=null) {
 
         // If no language is specifically stated, we use the current locale
         if (is_null($language)) {
-            $language = \App::getLocale();
+            $language = app()->getLocale();
         }
 
-        // If no parameters are specifically stated, we use the current ones.
+        // If no parameters are specifically stated, we overtake the current ones, if they are used anywhere in the rootline.
+        if (is_null($parameters)) {            
+            $parameters = $this->routeNode->getParametersOfNodeAndParents(true, $language);
+        }
+
+        // route() wants empty parameters as an empty array.
         if (is_null($parameters)) {
-            $parameters = \Route::current()->parameters();
+            $parameters = [];
         }
 
         return route($this->generateRouteName($language), $parameters);
 
     }
-    
+
+    /**
+     * Generate routes in each language for this action.
+     */
     public function generateRoutes() {
 
         // Get the method, that will be used for registering the route with laravel.
@@ -250,7 +235,7 @@ class RouteAction
         // Iterate through configured languages.
         foreach (\Config::get('app.locales') as $language => $fullLanguage) {
 
-            // Generate ans set route name.
+            // Generate and set route name.
             $action['as'] = $this->generateRouteName($language);
 
             // Get the path for this route-node and language to register this route with.
@@ -265,14 +250,16 @@ class RouteAction
             \Route::$method($path, $action);
 
             // And tell the RouteTree service about this registered route,
-            // so he can manage a static list.
-            app()[RouteTree::class]->registerPath($path, $this);
+            // so it can manage a static list.
+            route_tree()->registerPath($path, $this);
 
         }
         
     }
 
     /**
+     * Generates a full route-name for this action for a specific language.
+     *
      * @param $language
      * @return string
      */

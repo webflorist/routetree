@@ -11,20 +11,36 @@ namespace Nicat\RouteTree;
 class RouteTree {
 
     /**
+     * Root-node of the route-tree (= the whole route-tree).
+     *
      * @var RouteNode|null
      */
     protected $rootNode = null;
 
+    /**
+     * Static list of paths registered with the route-tree.
+     *
+     * @var array
+     */
     protected $registeredPaths = [];
 
+    /**
+     * Static list of paths registered with the route-tree sorted by method.
+     *
+     * @var array
+     */
     protected $registeredPathsByMethod = [];
 
     /**
+     * Node of the currently active route.
+     *
      * @var RouteNode|null
      */
     protected $currentNode = null;
 
     /**
+     * Instance of the node-generator used to generate nodes out of an array.
+     *
      * @var NodeGenerator|null
      */
     protected $nodeGenerator = null;
@@ -34,16 +50,19 @@ class RouteTree {
      */
     public function __construct()
     {
+        // Create an empty root-node.
         $this->rootNode = new RouteNode("");
-        
+
+        // Create instance of the node-generator.
         $this->nodeGenerator = new NodeGenerator($this);
     }
 
-
     /**
-     * @param RouteNode|array $nodeData
+     * Set the root-node.
+     *
+     * @param RouteNode|array $nodeData Can be either a RouteNode-object or an array of node-data.
      */
-    public function setRootNode($nodeData=[]) {
+    public function setRootNode($nodeData) {
 
         if (is_a($nodeData,RouteNode::class)) {
             $this->rootNode = $nodeData;
@@ -53,21 +72,40 @@ class RouteTree {
         }
     }
 
-
+    /**
+     * Get the root-node (= the whole route-tree).
+     *
+     * @return RouteNode|null
+     */
     public function getRootNode() {
         return $this->rootNode;
     }
 
-
+    /**
+     * Get the currently active node.
+     *
+     * @return RouteNode|null
+     */
     public function getCurrentNode() {
         return $this->currentNode;
     }
 
-
+    /**
+     * Sets the currently active node.
+     *
+     * @param RouteNode $routeNode
+     */
     public function setCurrentNode(RouteNode $routeNode) {
         $this->currentNode = $routeNode;
     }
 
+    /**
+     * Adds a new node to the route-tree.
+     *
+     * @param string $nodeName Name of this node.
+     * @param array $nodeData Node-data structured as array.
+     * @param string $parentNodeId Node-ID of the parent node. If omitted, the root-node is used.
+     */
     public function addNode($nodeName, $nodeData=[], $parentNodeId = "") {
 
         $this->nodeGenerator->generateNode(
@@ -77,6 +115,12 @@ class RouteTree {
         );
     }
 
+    /**
+     * Adds an array of nodes to the route-tree.
+     *
+     * @param array $nodes Multi-dimensional array, whose key is the node-name and whose values are the node-data.
+     * @param string $parentNodeId Node-ID of the parent node. If omitted, the root-node is used.
+     */
     public function addNodes($nodes=[], $parentNodeId="") {
 
         $parentNode = $this->getOrGenerateNode($parentNodeId);
@@ -90,6 +134,13 @@ class RouteTree {
         }
     }
 
+    /**
+     * Gets a node via it's id.
+     * If it does not exist, it creates the node and it's missing parents.
+     *
+     * @param string $nodeId
+     * @return bool|RouteNode|null
+     */
     protected function getOrGenerateNode($nodeId='') {
 
         // Check, if $parentNodePath exists
@@ -110,7 +161,7 @@ class RouteTree {
             }
             else {
 
-                // Otherwise, we
+                // Otherwise, we create the node using getOrGenerateNode() again for it's parent.
                 return new RouteNode(
                     substr($nodeId,$lastSlashPosition+1),
                     $this->getOrGenerateNode(substr($nodeId,0,$lastSlashPosition))
@@ -121,6 +172,12 @@ class RouteTree {
         }
     }
 
+    /**
+     * Checks, if a node exists.
+     *
+     * @param string $nodeId
+     * @return bool
+     */
     public function doesNodeExist($nodeId='') {
         if (is_a($this->getNode($nodeId), RouteNode::class)) {
             return true;
@@ -130,6 +187,12 @@ class RouteTree {
         }
     }
 
+    /**
+     * Get's the node via it's Id.
+     *
+     * @param string $nodeId
+     * @return bool|RouteNode|null
+     */
     public function getNode($nodeId='') {
 
         // If path is an empty string or null, we return the root-node.
@@ -164,10 +227,20 @@ class RouteTree {
         return $crawlNode;
     }
 
+    /**
+     * Generates all routes of the route-tree.
+     */
     public function generateAllRoutes() {
         $this->rootNode->generateRoutesOfNodeAndChildNodes();
     }
 
+    /**
+     * Register a path and it's action with the route-tree.
+     * This is used within the generateRoutes()-method of a RouteAction-object.
+     *
+     * @param string $path
+     * @param RouteAction $routeAction
+     */
     public function registerPath($path='', RouteAction $routeAction) {
 
         // Add path to overall list of registered paths.
@@ -179,6 +252,8 @@ class RouteTree {
     }
 
     /**
+     * Get an array of paths registered with the RouteTree.
+     *
      * @return array
      */
     public function getRegisteredPaths()
@@ -187,6 +262,9 @@ class RouteTree {
     }
 
     /**
+     * Get an array of paths registered with the RouteTree with a specific method.
+     *
+     * @param $method
      * @return array
      */
     public function getRegisteredPathsByMethod($method)
@@ -194,6 +272,12 @@ class RouteTree {
         return $this->registeredPathsByMethod[strtolower($method)];
     }
 
+    /**
+     * Tries to get a node using it's full route-name.
+     *
+     * @param string $routeName
+     * @return bool|RouteNode|null
+     */
     public function getNodeByRouteName($routeName='') {
 
         // Split route name to array.

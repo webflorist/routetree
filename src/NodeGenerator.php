@@ -13,26 +13,36 @@ class NodeGenerator
 {
 
     /**
+     * The route-tree singleton.
+     *
      * @var RouteTree|null
      */
-    protected $nodeTree = null;
+    protected $routeTree = null;
 
     /**
      * NodeGenerator constructor.
-     * @param RouteTree $nodeTree
+     * @param RouteTree $routeTree
      */
-    public function __construct($nodeTree)
+    public function __construct($routeTree)
     {
-        $this->nodeTree = $nodeTree;
+        $this->routeTree = $routeTree;
     }
 
+    /**
+     * Generate a single node using an array including it's desired data.
+     *
+     * @param string $nodeName
+     * @param null $parentNode
+     * @param array $nodeData
+     * @return RouteNode
+     */
     public function generateNode($nodeName="", $parentNode = null, $nodeData=[]) {
 
         // Create new RouteNode.
         $routeNode = new RouteNode($nodeName, $parentNode);
 
+        // We traverse each key set in $nodeData and perform the needed tasks on $routeNode.
         foreach ($nodeData as $key => $value) {
-
             switch($key) {
                 case 'path':
                     $routeNode->setPaths($value);
@@ -42,9 +52,6 @@ class NodeGenerator
                     break;
                 case 'namespace':
                     $routeNode->setNamespace($value);
-                    break;
-                case 'pageTitle':
-                    $routeNode->setPageTitle($value);
                     break;
                 case 'inheritPath':
                     $routeNode->setInheritPath($value);
@@ -80,6 +87,8 @@ class NodeGenerator
     }
 
     /**
+     * Add an action (e.g. index|show|get|post etc.) to a node using an array including it's desired data.
+     *
      * @param RouteNode $node
      * @param string $actionName
      * @param array $actionData
@@ -112,11 +121,13 @@ class NodeGenerator
     }
 
     /**
+     * Add an action for a resource to a node using an array including the resource-data.
+     *
      * @param $resourceData
      * @param RouteNode $routeNode
      * @param $action
      */
-    private function addResourceAction($resourceData, $routeNode, $action)
+    private function addResourceAction($resourceData, RouteNode $routeNode, $action)
     {
         // Create new RouteAction.
         $routeAction = new RouteAction($action);
@@ -150,6 +161,8 @@ class NodeGenerator
     }
 
     /**
+     * Process an array with resource-data and add all required actions to a node.
+     *
      * @param $resourceData
      * @param RouteNode $routeNode
      * @return mixed
@@ -162,6 +175,8 @@ class NodeGenerator
     }
 
     /**
+     * Generate nodes for all children defined in an array.
+     *
      * @param $nodeData
      * @param $routeNode
      */
@@ -175,6 +190,8 @@ class NodeGenerator
     }
 
     /**
+     * Establish a list of needed actions using the array-resource-data.
+     *
      * @param $resourceData
      * @return array
      */

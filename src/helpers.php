@@ -2,13 +2,13 @@
 
 use Nicat\RouteTree\RouteTree;
 
-if (! function_exists('routeTree')) {
+if (! function_exists('route_tree')) {
     /**
      * Get the available auth instance.
      *
      * @return \Nicat\RouteTree\RouteTree
      */
-    function routeTree()
+    function route_tree()
     {
         return app(RouteTree::class);
     }
@@ -17,31 +17,35 @@ if (! function_exists('routeTree')) {
 
 if ( ! function_exists('route_locale()')) {
     /**
-     * Generate a URL to a named route.
+     * Generate an URL to the action of a route-node.
      *
-     * @param  string  $name
-     * @param  array   $parameters
-     * @param  bool    $absolute
-     * @param  \Illuminate\Routing\Route  $route
+     * @param $nodeId The node-id for which this url is generated (default=current node.
+     * @param string $action The node-action for which this url is generated (defaults='index').
+     * @param array $parameters The values to be used for any route-parameters in the url (default=current route-parameters).
+     * @param string $language The language this url should be generated for (default=current locale).
      * @return string
      */
-    function route_locale($name, $parameters = [], $absolute = true, $route = null)
+    function route_node_url($nodeId=null, $action='index', $parameters = null, $language=null)
     {
-        //append a dot(.) before $name and replace double dots(..) with one(.)
-        $name = str_replace('..', '.', (app()->getLocale() . '.' . $name));
-        return route($name, $parameters, $absolute, $route);
+        if (is_null($nodeId)) {
+            $node = route_tree()->getCurrentNode();
+        }
+        else {
+            $node = route_tree()->getNode($nodeId);
+        }
+        return $node->getUrlByAction($action, $parameters, $language);
     }
 }
 
 if ( ! function_exists('route_name()')) {
     /**
-     * Give the current Route name
+     * Get the node-id of the current route.
      *
      * @return string
      */
-    function route_name()
+    function route_node_id()
     {
-        return \Request::route()->getName();
+        return route_tree()->getCurrentNode()->getId();
     }
 }
 
@@ -51,57 +55,29 @@ if (! function_exists('trans_by_route')) {
      * Translate the given message and work with current route.
      *
      * @param  string $id
-     * @param bool $removeSubLevel
-     * @param string $route
+     * @param bool $useParentNode
+     * @param string $nodeId
      * @param array $parameters
      * @param string $domain
      * @param string $locale
-     * @return bool|\Illuminate\Translation\Translator|string|\Symfony\Component\Translation\TranslatorInterface
+     * @return string
      */
-    function trans_by_route($id = null, $removeSubLevel = false, $route = '', $parameters = [], $domain = 'messages', $locale = null)
+    function trans_by_route($id = null, $useParentNode = false, $nodeId = '', $parameters = [], $domain = 'messages', $locale = null)
     {
-        if(empty($route))
-            $route = route_name();
-        //split route name to array
-        $currentRoute = explode('.', $route);
-        $lengthOfRoute = count($currentRoute);
 
-        //check if we have an valid route min 1
-        if($lengthOfRoute < 1) {
-            return false;
+        if(empty($nodeId)) {
+            $routeNode = route_tree()->getCurrentNode();
         }
-        //remove locale prefix from route
-        if (array_key_exists($currentRoute[0], config('app.locales'))) {
-            array_shift( $currentRoute  );
-            $lengthOfRoute--;
-        }
-        //remove index,show,create,edit suffix
-        if (preg_match('/(index|show|create|edit)/', $currentRoute[$lengthOfRoute -1])) {
-            array_pop( $currentRoute );
-            $lengthOfRoute--;
+        else {
+            $routeNode = route_tree()->getNode($nodeId);
         }
 
-        //check if we have after strip meta values again a valid route
-        if($lengthOfRoute < 1) {
-            return false;
+        if ($useParentNode) {
+            $routeNode = $routeNode->getParentNode();
         }
 
-        if ($removeSubLevel) {
-            $currentRoute = array_slice($currentRoute, 0, -1);
-            $lengthOfRoute--;
-        }
+        $id = 'pages/' . str_replace('.', '/', $routeNode->getId()) . '.' . $id;
 
-        //transform currentroute array to strin
-        $currentRoute = 'pages/' . implode('/' , $currentRoute);
-
-        $id = $currentRoute . '.' . $id;
-
-
-        //dd($id);
-        if (is_null($id)) {
-            return app('translator');
-        }
-
-        return app('translator')->trans($id, $parameters, $domain, $locale);
+        return trans($id, $parameters, $domain, $locale);
     }
 }
