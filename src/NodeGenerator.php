@@ -41,6 +41,11 @@ class NodeGenerator
         // Create new RouteNode.
         $routeNode = new RouteNode($nodeName, $parentNode);
 
+        if (isset($nodeData['isResourceChild'])) {
+            $routeNode->isResourceChild = $nodeData['isResourceChild'];
+            unset($nodeData['isResourceChild']);
+        }
+
         // We traverse each key set in $nodeData and perform the needed tasks on $routeNode.
         foreach ($nodeData as $key => $value) {
             switch($key) {
@@ -169,8 +174,27 @@ class NodeGenerator
      */
     private function processResource($resourceData, $routeNode)
     {
+
+        // If no resource-name was set, we use the node-name instead.
+        if (!isset($resourceData['name'])) {
+            $resourceData['name'] = $routeNode->getName();
+        }
+
+        // Set the resource name as the route-node-parameter
+        $routeNode->setParameter($resourceData['name']);
+
         foreach ($this->establishResourceActionList($resourceData) as $action) {
             $this->addResourceAction($resourceData, $routeNode, $action);
+        }
+
+        // If this resource has children, we create them having the "isResourceChild"-flag set.
+        // This way, the generated path is e.g. "/resource/{myResource}/resourceChild"
+        // instead of "/resource/resourceChild"
+        if (isset($resourceData['children']) && (count($resourceData['children']) > 0)) {
+            foreach ($resourceData['children'] as $childName => $childData) {
+                $childData['isResourceChild'] = true;
+                $this->generateNode($childName, $routeNode, $childData);
+            }
         }
     }
 

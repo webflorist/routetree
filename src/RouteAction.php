@@ -239,7 +239,7 @@ class RouteAction
             $action['as'] = $this->generateRouteName($language);
 
             // Get the path for this route-node and language to register this route with.
-            $path = $this->routeNode->getPath($language);
+            $path = $this->routeNode->getFullPath($language);
 
             // Append any configured suffix.
             if (strlen($this->pathSuffix)>0) {
