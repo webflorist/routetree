@@ -51,9 +51,11 @@ class RouteTreeMiddleware
                 $currentRoute = \Route::getRoutes()->match($request);
 
                 // Find out and set the currently active node.
-                $this->routeTree->setCurrentNode(
-                    $this->routeTree->getNodeByRouteName($currentRoute->getName())
-                );
+                $currentNode = $this->routeTree->getNodeByRouteName($currentRoute->getName());
+                if (is_a($currentNode,RouteNode::class)) {
+                    $this->routeTree->setCurrentNode($currentNode);
+                }
+
 
             }
             catch(NotFoundHttpException $exception) {
