@@ -8,6 +8,8 @@
 
 namespace Nicat\RouteTree;
 
+use Nicat\RouteTree\Exceptions\ActionNotFoundException;
+
 class RouteNode {
 
     /**
@@ -464,6 +466,7 @@ class RouteNode {
      * @param array $parameters The values to be used for any route-parameters in the url (default=current route-parameters).
      * @param string $language The language this url should be generated for (default=current locale).
      * @return string
+     * @throws ActionNotFoundException
      */
     public function getUrl($parameters=null, $language = null)
     {
@@ -480,7 +483,7 @@ class RouteNode {
             return $this->getUrlByAction(key($this->actions), $parameters, $language);
         }
 
-        // TODO: throw exception, that no url is set
+        throw new ActionNotFoundException('Node with Id "'.$this->getId().'" does not have any action to generate and URL to.');
     }
 
     /**
@@ -490,6 +493,8 @@ class RouteNode {
      * @param array $parameters The values to be used for any route-parameters in the url (default=current route-parameters).
      * @param string $language The language this url should be generated for (default=current locale).
      * @return string
+     * @throws ActionNotFoundException
+     * @throws Exceptions\UrlParametersMissingException
      */
     public function getUrlByAction($action='index', $parameters=null, $language = null)
     {
@@ -497,7 +502,7 @@ class RouteNode {
             return $this->getAction($action)->getUrl($parameters, $language);
         }
 
-        // TODO: throw exception, that no url is set
+        throw new ActionNotFoundException('Node with Id "'.$this->getId().'" does not have the action "'.$action.'""');
     }
 
     /**

@@ -8,6 +8,8 @@
 
 namespace Nicat\RouteTree;
 
+use Nicat\RouteTree\Exceptions\UrlParametersMissingException;
+
 class RouteAction
 {
 
@@ -195,6 +197,7 @@ class RouteAction
      * @param array $parameters The values to be used for any route-parameters in the url.
      * @param string $language The language this url should be generated for (default=current locale).
      * @return mixed
+     * @throws UrlParametersMissingException
      */
     public function getUrl($parameters=null, $language=null) {
 
@@ -202,21 +205,36 @@ class RouteAction
         if (is_null($language)) {
             $language = app()->getLocale();
         }
+        
+        // Init the parameter-array, that gets handed over to the route() function.
+        $routeParameters = [];
+        
+        // Get all parameters needed for the url to this action.
+        $requiredParameters = $this->getPathParameters($language);
+        
+        if (count($requiredParameters)>0) {
+            
+            // We try filling $routeParameters with the $requiredParameters from $parameters.
+            $this->fillParameterArray($parameters, $requiredParameters, $routeParameters);
 
-        // If no parameters were stated, but the path to the current action has parameters,
-        // we try to set them with currently active values.
-        if (is_null($parameters)) {
-            $parameters = [];
-            $actionPathParameters = $this->getPathParameters($language);
-            if (count($actionPathParameters)>0) {
+            // If not all required parameters were stated in the handed over $parameters-array,
+            // we try to auto-fetch them from the parents of this node, if they are currently active.
+            if (count($requiredParameters)>0) {
+                
+                // Get all current path-parameters for the requested language, but only for active nodes.
                 $currentPathParameters = $this->routeNode->getParametersOfNodeAndParents(true, $language);
-                foreach ($actionPathParameters as $parameter) {
-                    $parameters[$parameter] = $currentPathParameters[$parameter];
+
+                // We try filling $routeParameters with the still $requiredParameters from $currentPathParameters.
+                $this->fillParameterArray($currentPathParameters, $requiredParameters, $routeParameters);
+                
+                // If there are still undetermined parameters missing, we throw an error
+                if (count($requiredParameters)>0) {
+                    throw new UrlParametersMissingException('URL could not be generated due to the following undetermined parameter(s): '.implode(',',$requiredParameters));
                 }
             }
         }
 
-        return route($this->generateRouteName($language), $parameters);
+        return route($this->generateRouteName($language), $routeParameters);
 
     }
 
@@ -306,6 +324,26 @@ class RouteAction
         }
 
         return $fullRouteName;
+    }
+
+    /**
+     * Tries to fill $targetParameters
+     * with the keys stated in $requiredParameters
+     * taken from $sourceParameters.
+     *
+     * @param $sourceParameters
+     * @param $requiredParameters
+     * @param $targetParameters
+     * @return array
+     */
+    protected function fillParameterArray(&$sourceParameters, &$requiredParameters, &$targetParameters)
+    {
+        foreach ($requiredParameters as $key => $parameter) {
+            if (is_array($sourceParameters) && isset($sourceParameters[$parameter])) {
+                $targetParameters[$parameter] = $sourceParameters[$parameter];
+                unset($requiredParameters[$key]);
+            }
+        }
     }
 
 }
