@@ -49,8 +49,8 @@ class NodeGenerator
         // We traverse each key set in $nodeData and perform the needed tasks on $routeNode.
         foreach ($nodeData as $key => $value) {
             switch($key) {
-                case 'path':
-                    $routeNode->setPaths($value);
+                case 'segments':
+                    $routeNode->setSegments($value);
                     break;
                 case 'middleware':
                     $routeNode->addMiddlewareFromArray($value);
@@ -180,7 +180,7 @@ class NodeGenerator
             $resourceData['name'] = $routeNode->getName();
         }
 
-        // Set the resource name as the route-node-parameter
+        // Set the resource name as the route-node-parameter.
         $routeNode->setParameter($resourceData['name']);
 
         foreach ($this->establishResourceActionList($resourceData) as $action) {

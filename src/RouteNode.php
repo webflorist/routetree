@@ -48,14 +48,14 @@ class RouteNode {
      *
      * @var array
      */
-    protected $paths = [];
+    protected $segments = [];
 
     /**
      * An associative array with the languages as keys and the full path to this node as values.
      *
      * @var array
      */
-    protected $fullPaths = [];
+    protected $paths = [];
 
     /**
      * Should the path-segment of this node be inherited to it's children (default=true)?
@@ -130,7 +130,7 @@ class RouteNode {
         $this->id .= $this->name;
 
         // Set the paths.
-        $this->setPaths($path);
+        $this->setSegments($path);
 
         return $this;
 
@@ -312,7 +312,7 @@ class RouteNode {
                 $value = null;
 
                 // If the parameter is currently active, we try getting the value-slug of it.
-                if ($this->hasActiveParameter()) {
+                if ($node->hasActiveParameter()) {
                     $value = $node->getValueSlug(null, $language);
                 }
 
@@ -455,23 +455,6 @@ class RouteNode {
         }
 
         return $this->paths[$language];
-    }
-
-    /**
-     * Get the path for this node (for a specific language).
-     * If no language is stated, the current locale is used.
-     *
-     * @param string $language
-     * @return string
-     */
-    public function getFullPath($language = null)
-    {
-        // If no language is specifically stated, we use the current locale
-        if (is_null($language)) {
-            $language = app()->getLocale();
-        }
-
-        return $this->fullPaths[$language];
     }
 
     /**
@@ -639,12 +622,18 @@ class RouteNode {
             $value = $this->getActiveValue();
         }
 
-        // Fetch the whole list of available values and their translations in the requested language.
-        $values = $this->getValues($language);
+        if (strlen($value)>0) {
 
-        // Return the slug for the requested value, if present
-        if (isset($values[$value])) {
-            return $values[$value];
+            // Fetch the whole list of available values and their translations in the requested language.
+            $values = $this->getValues($language);
+
+            // Return the slug for the requested value, if present
+            if (isset($values[$value])) {
+                return $values[$value];
+            }
+
+            // Otherwise we return the currently active value
+            return $value;
         }
 
         return false;
@@ -815,13 +804,14 @@ class RouteNode {
     /**
      * Retrieves the paths inherited from this node's parents.
      *
+     * @param bool $appendParameter If true, checks, if the parent has a parameter
      * @return array|bool
      */
     protected function getInheritedPaths($appendParameter=false) {
 
         if ($this->hasParentNode()) {
             if ($this->parentNode->inheritPath) {
-                $pathsToInherit = $this->parentNode->fullPaths;
+                $pathsToInherit = $this->parentNode->paths;
                 if ($appendParameter && $this->parentNode->hasParameter()) {
                     foreach ($pathsToInherit as $language => $path) {
 
@@ -839,64 +829,63 @@ class RouteNode {
     }
 
     /**
-     * Sets the full paths to be used for this node in all languages.
+     * Sets the path-segments to be used for this node in all languages.
      *
-     * @param null $path
+     * @param null $segments
      */
-    public function setPaths($path=null) {
+    public function setSegments($segments=null) {
 
         // Iterate through configured languages.
         foreach (\Config::get('app.locales') as $language => $fullLanguage) {
 
-            // If $path is an array and contains an entry for this language, we use that.
-            if (is_array($path) && isset($path[$language])) {
-                $this->paths[$language] = $path[$language];
+            // If $segments is an array and contains an entry for this language, we use that.
+            if (is_array($segments) && isset($segments[$language])) {
+                $this->segments[$language] = $segments[$language];
             }
-            // If $path is a string, we use that.
-            else if (is_string($path)){
-                $this->paths[$language] = $path;
+            // If $segments is a string, we use that.
+            else if (is_string($segments)){
+                $this->segments[$language] = $segments;
             }
 
             // If the path segment is a parameter, we also store it in $this->parameter.
-            if ((substr($path,0,1) === '{') && (substr($path,-1) === '}')) {
-                $this->parameter = str_replace('{','',str_replace('}','',$path));
+            if ((substr($segments,0,1) === '{') && (substr($segments,-1) === '}')) {
+                $this->parameter = str_replace('{','',str_replace('}','',$segments));
             }
         }
     }
 
     /**
-     * Sets the full paths to be used for this node in all languages.
-     *
-     * @param null $path
+     * Automatically sets all path-segments, that have not yet specifically set.
+     * It checks for each-language, if an auto-translation is set,
+     * otherwise it uses the node-name as the path-segment.     *
      */
-    protected function setAutoPaths() {
+    protected function setAutoSegments() {
 
         // Set the translation key to be used for getting localized paths.
-        $pathTranslationKey = $this->langFile.'.path.'.$this->name;
+        $segmentTranslationKey = $this->langFile.'.segment.'.$this->name;
 
         // Iterate through configured languages.
         foreach (\Config::get('app.locales') as $language => $fullLanguage) {
 
-            if (!isset($this->paths[$language])) {
+            if (!isset($this->segments[$language])) {
 
                 // Standard path segment is the name of this route node.
                 $pathSegment = $this->name;
 
                 // If a translation for this language exists, we use that as path segment.
-                if (\Lang::hasForLocale($pathTranslationKey, $language)) {
-                    $pathSegment = trans($pathTranslationKey, [], 'messages', $language);
+                if (\Lang::hasForLocale($segmentTranslationKey, $language)) {
+                    $pathSegment = trans($segmentTranslationKey, [], 'messages', $language);
                 }
 
-                $this->paths[$language] = $pathSegment;
+                $this->segments[$language] = $pathSegment;
             }
         }
     }
 
 
     /**
-     * Sets the full paths to be used for this node in all languages.
+     * Generates the full paths to be used for this node in all languages.
      *
-     * @param null $path
      */
     protected function generateFullPaths() {
 
@@ -908,16 +897,16 @@ class RouteNode {
 
             // If an inherited path could be determined, we overtake that.
             if ($inheritedPaths !== false) {
-                $this->fullPaths[$language] = $inheritedPaths[$language];
+                $this->paths[$language] = $inheritedPaths[$language];
             }
             // If no inherited path could be determined, we start the full-path with the language.
             else {
-                $this->fullPaths[$language] = $language;
+                $this->paths[$language] = $language;
             }
 
             // Append the path segment for the current node.
-            if (strlen($this->paths[$language]) > 0) {
-                $this->fullPaths[$language] .= '/' . $this->paths[$language];
+            if (strlen($this->segments[$language]) > 0) {
+                $this->paths[$language] .= '/' . $this->segments[$language];
             }
         }
     }
@@ -928,7 +917,7 @@ class RouteNode {
     public function generateRoutesOfNodeAndChildNodes() {
 
         // Make sure, paths for all languages are set.
-        $this->setAutoPaths();
+        $this->setAutoSegments();
 
         // Generate the full-paths for this node.
         $this->generateFullPaths();

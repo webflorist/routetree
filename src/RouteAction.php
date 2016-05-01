@@ -89,6 +89,13 @@ class RouteAction
     protected $pathSuffix = null;
 
     /**
+     * The full paths, this action was generated with.
+     *
+     * @var string
+     */
+    protected $paths = null;
+
+    /**
      * RouteAction constructor.
      * @param string $action
      */
@@ -191,22 +198,38 @@ class RouteAction
      */
     public function getUrl($parameters=null, $language=null) {
 
-        // If no language is specifically stated, we use the current locale
+        // If no language is specifically stated, we use the current locale.
         if (is_null($language)) {
             $language = app()->getLocale();
         }
 
-        // If no parameters are specifically stated, we overtake the current ones, if they are used anywhere in the rootline.
-        if (is_null($parameters)) {            
-            $parameters = $this->routeNode->getParametersOfNodeAndParents(true, $language);
-        }
-
-        // route() wants empty parameters as an empty array.
+        // If no parameters were stated, but the path to the current action has parameters,
+        // we try to set them with currently active values.
         if (is_null($parameters)) {
             $parameters = [];
+            $actionPathParameters = $this->getPathParameters($language);
+            if (count($actionPathParameters)>0) {
+                $currentPathParameters = $this->routeNode->getParametersOfNodeAndParents(true, $language);
+                foreach ($actionPathParameters as $parameter) {
+                    $parameters[$parameter] = $currentPathParameters[$parameter];
+                }
+            }
         }
 
         return route($this->generateRouteName($language), $parameters);
+
+    }
+
+    protected function getPathParameters($language) {
+        $parameters = [];
+        $pathSegments = explode('/',$this->paths[$language]);
+        foreach ($pathSegments as $segment) {
+            if ((substr($segment,0,1) === '{') && (substr($segment,-1) === '}')) {
+                array_push($parameters, str_replace('{','',str_replace('}','',$segment)));
+            }
+        }
+
+        return $parameters;
 
     }
 
@@ -239,12 +262,15 @@ class RouteAction
             $action['as'] = $this->generateRouteName($language);
 
             // Get the path for this route-node and language to register this route with.
-            $path = $this->routeNode->getFullPath($language);
+            $path = $this->routeNode->getPath($language);
 
             // Append any configured suffix.
             if (strlen($this->pathSuffix)>0) {
                 $path .= $this->pathSuffix;
             }
+
+            // Save the generated path to $this->paths
+            $this->paths[$language]  = $path;
 
             // Now register the route with laravel.
             \Route::$method($path, $action);
