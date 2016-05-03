@@ -483,7 +483,7 @@ class RouteNode {
             return $this->getUrlByAction(key($this->actions), $parameters, $language);
         }
 
-        throw new ActionNotFoundException('Node with Id "'.$this->getId().'" does not have any action to generate and URL to.');
+        throw new ActionNotFoundException('Node with Id "'.$this->getId().'" does not have any action to generate an URL to.');
     }
 
     /**
