@@ -290,13 +290,14 @@ class RouteNode {
     }
 
     /**
-     * Returns an array of all parameters and their (translated or slugged-)values (if set) used by this node or one of it's parents.
+     * Returns an array of all parameters and their values (if currently active) used by this node or one of it's parents.
      *
      * @param bool $activeOnly Only parameters, that are acutally present in the current route will be returned.
      * @param null $language
+     * @param bool $translateValues Values is are translated into the requested language.
      * @return array
      */
-    public function getParametersOfNodeAndParents($activeOnly=false, $language=null) {
+    public function getParametersOfNodeAndParents($activeOnly=false, $language=null, $translateValues = false) {
 
         // Initialize the return-array.
         $parameters = [];
@@ -313,9 +314,17 @@ class RouteNode {
                 // Per default we set null as the parameter-value
                 $value = null;
 
-                // If the parameter is currently active, we try getting the value-slug of it.
+                // If the parameter is currently active, we try getting the value of it.
                 if ($node->hasActiveParameter()) {
-                    $value = $node->getValueSlug(null, $language);
+
+                    $value = $node->getActiveValue();
+
+                    // If the value should be translated, we try to do that.
+                    if ($translateValues) {
+
+                        $value = $node->getValueSlug($value, $language);
+                    }
+
                 }
 
                 // If $activeOnly is set to true, we only add this parameter to the output-array, if it has a value.
@@ -327,6 +336,21 @@ class RouteNode {
 
         return $parameters;
 
+    }
+
+    /**
+     * Tries to get the currently active action of this node.
+     * Returns false, if no action of the current node is currently active.
+     *
+     * @return RouteAction|bool
+     */
+    public function getActiveAction() {
+
+        if (route_tree()->getCurrentAction()->getRouteNode() === $this) {
+            return route_tree()->getCurrentAction();
+        }
+
+        return false;
     }
 
     /**
@@ -538,6 +562,29 @@ class RouteNode {
     }
 
     /**
+     * Checks, if the current node is active (optionally with the desired parameters).
+     *
+     * @param null $parameters
+     * @return string
+     */
+    public function nodeOrChildIsActive($parameters=null)
+    {
+
+        // Check, if this node is active.
+        if ($this->isActive($parameters)) {
+            return true;
+        }
+
+        if ($this->hasChildNodes()) {
+            foreach ($this->getChildNodes() as $nodeName => $node) {
+                return $node->nodeOrChildIsActive($parameters);
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Get the page title of this node (defaults to the ucfirst-ified node-name).
      * 
      * @param array $parameters The values to be used for any route-parameters in the title-generation (default=current route-parameters).
@@ -549,6 +596,29 @@ class RouteNode {
 
         // Try retrieving title.
         $title = $this->getData('title',$parameters, $language);
+
+        // If $title is an array, and this node has a parameter, and a requested parameter was handed in $parameters,
+        // we return the appropriate value, if the parameter exists as a key within $title,
+        // otherwise we just return the handed-over parameter.
+        if (is_array($title) && $this->hasParameter()) {
+
+            // If this node or a child node is active, we can try to obtain any missing parameters from the current url.
+            if ($this->nodeOrChildIsActive()) {
+                $parameters = route_tree()->getCurrentAction()->autoFillPathParameters($parameters, $language, false);
+            }
+
+            if (isset($title[$parameters[$this->getParameter()]])) {
+                $title = $title[$parameters[$this->getParameter()]];
+            }
+            else {
+                $title = $parameters[$this->getParameter()];
+            }
+
+        }
+
+        if (is_array($title)) {
+            $title = key($title);
+        }
 
         // Per default we just return the upper-cased node-name.
         if ($title === false) {
@@ -638,7 +708,7 @@ class RouteNode {
             }
 
             // Otherwise we return the currently active value
-            return $value;
+            //return $value;
         }
 
         return false;
@@ -713,17 +783,27 @@ class RouteNode {
         }
 
         // Try using auto-translation as next option.
+        $autoTranslatedValue = $this->performAutoTranslation($key.'.'.$this->name, $language);
+        if ($autoTranslatedValue !== false) {
+            return $autoTranslatedValue;
+        }
+
+        // Per default we return false to indicate no data was found.
+        return false;
+    }
+
+    protected function performAutoTranslation($key, $language) {
 
         // Set the translation key to be used for getting the data.
-        $translationKey = $this->langFile.'.'.$key.'.'.$this->name;
+        $translationKey = $this->langFile.'.'.$key;
 
         // If a translation for this language exists, we return that as the data.
         if (\Lang::hasForLocale($translationKey, $language)) {
             return trans($translationKey, [], 'messages', $language);
         }
 
-        // Per default we return false to indicate no data was found.
         return false;
+
     }
 
     /**
@@ -866,8 +946,8 @@ class RouteNode {
      */
     protected function setAutoSegments() {
 
-        // Set the translation key to be used for getting localized paths.
-        $segmentTranslationKey = $this->langFile.'.segment.'.$this->name;
+        // Set the translation key to be used for getting localized path-segments.
+        $segmentTranslationKey = 'segment.'.$this->name;
 
         // Iterate through configured languages.
         foreach (\Config::get('app.locales') as $language => $fullLanguage) {
@@ -877,9 +957,10 @@ class RouteNode {
                 // Standard path segment is the name of this route node.
                 $pathSegment = $this->name;
 
-                // If a translation for this language exists, we use that as path segment.
-                if (\Lang::hasForLocale($segmentTranslationKey, $language)) {
-                    $pathSegment = trans($segmentTranslationKey, [], 'messages', $language);
+                // If a auto-translation segment for this language exists, we use that as path segment.
+                $autoTranslatedSegment = $this->performAutoTranslation($segmentTranslationKey, $language);
+                if ($autoTranslatedSegment !== false) {
+                    $pathSegment = $autoTranslatedSegment;
                 }
 
                 $this->segments[$language] = $pathSegment;

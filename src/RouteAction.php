@@ -132,6 +132,16 @@ class RouteAction
     }
 
     /**
+     * Get the route-node this action belongs to.
+     *
+     * @return RouteAction
+     */
+    public function getRouteNode()
+    {
+        return $this->routeNode;
+    }
+
+    /**
      * Get the action-string.
      *
      * @return string
@@ -205,28 +215,34 @@ class RouteAction
         if (is_null($language)) {
             $language = app()->getLocale();
         }
-        
-        // Init the parameter-array, that gets handed over to the route() function.
-        $routeParameters = [];
-        
-        // Get all parameters needed for the url to this action.
+
+        return route($this->generateRouteName($language), $this->autoFillPathParameters($parameters, $language, true));
+
+    }
+
+    public function autoFillPathParameters($parameters, $language, $translateValues = false) {
+
+        // Init the return-array.
+        $return = [];
+
+        // Get all parameters needed for the path to this action.
         $requiredParameters = $this->getPathParameters($language);
-        
+
         if (count($requiredParameters)>0) {
-            
-            // We try filling $routeParameters with the $requiredParameters from $parameters.
-            $this->fillParameterArray($parameters, $requiredParameters, $routeParameters);
+
+            // We try filling $return with the $requiredParameters from $parameters.
+            $this->fillParameterArray($parameters, $requiredParameters, $return);
 
             // If not all required parameters were stated in the handed over $parameters-array,
             // we try to auto-fetch them from the parents of this node, if they are currently active.
-            if (count($requiredParameters)>0) {
-                
-                // Get all current path-parameters for the requested language, but only for active nodes.
-                $currentPathParameters = $this->routeNode->getParametersOfNodeAndParents(true, $language);
+            if (count($requiredParameters) > 0) {
 
-                // We try filling $routeParameters with the still $requiredParameters from $currentPathParameters.
-                $this->fillParameterArray($currentPathParameters, $requiredParameters, $routeParameters);
-                
+                // Get all current path-parameters for the requested language, but only for active nodes.
+                $currentPathParameters = $this->routeNode->getParametersOfNodeAndParents(true, $language, $translateValues);
+
+                // We try filling $return with the still $requiredParameters from $currentPathParameters.
+                $this->fillParameterArray($currentPathParameters, $requiredParameters, $return);
+
                 // If there are still undetermined parameters missing, we throw an error
                 if (count($requiredParameters)>0) {
                     throw new UrlParametersMissingException('URL could not be generated due to the following undetermined parameter(s): '.implode(',',$requiredParameters));
@@ -234,11 +250,17 @@ class RouteAction
             }
         }
 
-        return route($this->generateRouteName($language), $routeParameters);
+        return $return;
 
     }
 
-    protected function getPathParameters($language) {
+    protected function getPathParameters($language=null) {
+
+        // If no language is specifically stated, we use the current locale.
+        if (is_null($language)) {
+            $language = app()->getLocale();
+        }
+
         $parameters = [];
         $pathSegments = explode('/',$this->paths[$language]);
         foreach ($pathSegments as $segment) {
