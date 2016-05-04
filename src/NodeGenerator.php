@@ -49,7 +49,7 @@ class NodeGenerator
         // We traverse each key set in $nodeData and perform the needed tasks on $routeNode.
         foreach ($nodeData as $key => $value) {
             switch($key) {
-                case 'segments':
+                case 'segment':
                     $routeNode->setSegments($value);
                     break;
                 case 'middleware':
