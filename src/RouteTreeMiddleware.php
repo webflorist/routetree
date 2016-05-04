@@ -50,10 +50,10 @@ class RouteTreeMiddleware
                 // Try getting the current route.
                 $currentRoute = \Route::getRoutes()->match($request);
 
-                // Find out and set the currently active node.
-                $currentNode = $this->routeTree->getNodeByRouteName($currentRoute->getName());
-                if (is_a($currentNode,RouteNode::class)) {
-                    $this->routeTree->setCurrentNode($currentNode);
+                // Find out and set the currently active action.
+                $currentAction = $this->routeTree->getActionByMethodAndRoute('GET', $currentRoute);
+                if (is_a($currentAction,RouteAction::class)) {
+                    $this->routeTree->setCurrentAction($currentAction);
                 }
 
 

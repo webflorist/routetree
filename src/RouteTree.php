@@ -8,6 +8,8 @@
 
 namespace Nicat\RouteTree;
 
+use Illuminate\Routing\Route;
+
 class RouteTree {
 
     /**
@@ -32,11 +34,11 @@ class RouteTree {
     protected $registeredPathsByMethod = [];
 
     /**
-     * Node of the currently active route.
+     * Currently active RouteAction.
      *
-     * @var RouteNode|null
+     * @var RouteAction|null
      */
-    protected $currentNode = null;
+    protected $currentAction = null;
 
     /**
      * Instance of the node-generator used to generate nodes out of an array.
@@ -87,16 +89,25 @@ class RouteTree {
      * @return RouteNode|null
      */
     public function getCurrentNode() {
-        return $this->currentNode;
+        return $this->currentAction->getRouteNode();
+    }
+
+    /**
+     * Get the currently active action.
+     *
+     * @return RouteAction|null
+     */
+    public function getCurrentAction() {
+        return $this->currentAction;
     }
 
     /**
      * Sets the currently active node.
      *
-     * @param RouteNode $routeNode
+     * @param RouteAction $routeAction
      */
-    public function setCurrentNode(RouteNode $routeNode) {
-        $this->currentNode = $routeNode;
+    public function setCurrentAction(RouteAction $routeAction) {
+        $this->currentAction = $routeAction;
     }
 
     /**
@@ -305,6 +316,26 @@ class RouteTree {
         }
 
         // If no node was found, we return false.
+        return false;
+
+    }
+
+    /**
+     * Tries to get a node using it's full route-name.
+     *
+     * @param string $method
+     * @param Route $route
+     * @return bool|RouteNode|null
+     */
+    public function getActionByMethodAndRoute($method='get', Route $route) {
+
+        $method = strtolower($method);
+        
+        if (isset($this->registeredPathsByMethod[$method]) && isset($this->registeredPathsByMethod[$method][$route->getUri()])) {
+            return current($this->registeredPathsByMethod[$method][$route->getUri()]);
+        }
+
+        // If no action was found, we return false.
         return false;
 
     }
