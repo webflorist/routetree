@@ -15,7 +15,7 @@ if (! function_exists('route_tree')) {
 }
 
 
-if ( ! function_exists('route_locale()')) {
+if ( ! function_exists('route_node_url()')) {
     /**
      * Generate an URL to the action of a route-node.
      *
@@ -37,7 +37,7 @@ if ( ! function_exists('route_locale()')) {
     }
 }
 
-if ( ! function_exists('route_name()')) {
+if ( ! function_exists('route_node_id()')) {
     /**
      * Get the node-id of the current route.
      *
