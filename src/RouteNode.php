@@ -172,6 +172,18 @@ class RouteNode {
     }
 
     /**
+     * Appends to the default or inherited namespace to be used for controllers.
+     *
+     * @param null|string $namespace
+     * @return RouteNode
+     */
+    public function appendNamespace($namespace)
+    {
+        $this->namespace .= '\\'.$namespace;
+        return $this;
+    }
+
+    /**
      * Set the namespace to be used for controllers.
      * This is inherited from parents and appended to inherited namespaces.
      *
@@ -180,7 +192,7 @@ class RouteNode {
      */
     public function setNamespace($namespace)
     {
-        $this->namespace .= '\\'.$namespace;
+        $this->namespace = $namespace;
         return $this;
     }
 

@@ -58,6 +58,9 @@ class NodeGenerator
                 case 'namespace':
                     $routeNode->setNamespace($value);
                     break;
+                case 'appendNamespace':
+                    $routeNode->appendNamespace($value);
+                    break;
                 case 'inheritPath':
                     $routeNode->setInheritPath($value);
                     break;
