@@ -2,6 +2,7 @@
 
 namespace RouteTreeTests;
 
+use Illuminate\Foundation\Console\RouteListCommand;
 use Nicat\RouteTree\RouteTreeServiceProvider;
 use Orchestra\Testbench\TestCase;
 
@@ -10,10 +11,10 @@ abstract class RouteTreeTestCase extends TestCase
 
     protected $testRoute = 'test';
 
-    protected $testConfig = [
+    protected $appConfig = [
 
-        // Global Rules
-        'globalRules' => []
+        'locale' => 'de',
+        'locales' => ['de' => 'Deutsch', 'en' => 'English'],
     ];
 
 
@@ -51,8 +52,9 @@ abstract class RouteTreeTestCase extends TestCase
      */
     protected function getEnvironmentSetUp($app)
     {
+
         // Set Config
-        $app['config']->set('extended-validation', $this->testConfig);
+        $app['config']->set('app', $this->appConfig);
 
         // Set Test-Route
         //$app['router']->get($this->testRoute, ['uses' => TestController::class.'@test']);
