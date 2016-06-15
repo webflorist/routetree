@@ -937,18 +937,32 @@ class RouteNode {
 
             // If $segments is an array and contains an entry for this language, we use that.
             if (is_array($segments) && isset($segments[$language])) {
-                $this->segments[$language] = $segments[$language];
+                $this->setSegmentForLanguage($segments[$language], $language);
             }
             // If $segments is a string, we use that.
             else if (is_string($segments)){
-                $this->segments[$language] = $segments;
+                $this->setSegmentForLanguage($segments, $language);
             }
 
-            // If the path segment is a parameter, we also store it in $this->parameter.
-            if ((substr($segments,0,1) === '{') && (substr($segments,-1) === '}')) {
-                $this->parameter = str_replace('{','',str_replace('}','',$segments));
-            }
         }
+
+    }
+
+    /**
+     * Sets the path-segment to be used for this node in the specified languages.
+     *
+     * @param $segment
+     * @param $language
+     */
+    protected function setSegmentForLanguage($segment,$language) {
+
+        $this->segments[$language] = $segment;
+
+        // If the path segment is a parameter, we also store it in $this->parameter.
+        if ((substr($segment,0,1) === '{') && (substr($segment,-1) === '}')) {
+            $this->parameter = str_replace('{','',str_replace('}','',$segment));
+        }
+
     }
 
     /**
@@ -975,7 +989,8 @@ class RouteNode {
                     $pathSegment = $autoTranslatedSegment;
                 }
 
-                $this->segments[$language] = $pathSegment;
+                $this->setSegmentForLanguage($pathSegment, $language);
+
             }
         }
     }
