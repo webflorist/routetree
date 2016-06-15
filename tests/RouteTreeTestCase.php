@@ -2,7 +2,6 @@
 
 namespace RouteTreeTests;
 
-use Illuminate\Foundation\Console\RouteListCommand;
 use Nicat\RouteTree\RouteTreeServiceProvider;
 use Orchestra\Testbench\TestCase;
 
@@ -53,8 +52,13 @@ abstract class RouteTreeTestCase extends TestCase
     protected function getEnvironmentSetUp($app)
     {
 
-        // Set Config
+        // Set app config
         $app['config']->set('app', $this->appConfig);
+
+        // Set view config
+        $app['config']->set('view.paths', [
+            dirname(__FILE__).'/Views'
+        ]);
 
         // Set Test-Route
         //$app['router']->get($this->testRoute, ['uses' => TestController::class.'@test']);

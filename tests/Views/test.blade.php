@@ -1,0 +1,1 @@
+view:test|path:{{\Request::getPathInfo()}}
