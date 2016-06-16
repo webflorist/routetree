@@ -269,6 +269,7 @@ class RouteTree {
      */
     public function getRegisteredPaths()
     {
+        ksort($this->registeredPaths);
         return $this->registeredPaths;
     }
 
@@ -280,6 +281,7 @@ class RouteTree {
      */
     public function getRegisteredPathsByMethod($method)
     {
+        ksort($this->registeredPathsByMethod[strtolower($method)]);
         return $this->registeredPathsByMethod[strtolower($method)];
     }
 
