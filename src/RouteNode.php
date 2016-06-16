@@ -94,7 +94,7 @@ class RouteNode {
      *
      * @var string
      */
-    protected $langFile = 'pages/pages';
+    protected $langFile = null;
 
     /**
      * If this route-node is a route-parameter, it's name is stored here.
@@ -116,9 +116,9 @@ class RouteNode {
      * RouteNode constructor.
      * @param string $name
      * @param RouteNode $parentNode
-     * @param null $path
+     * @param null $segment
      */
-    public function __construct($name='', RouteNode $parentNode = null, $path=null)
+    public function __construct($name='', RouteNode $parentNode = null, $segment=null)
     {
         // Set the name of this node.
         $this->name = $name;
@@ -127,12 +127,17 @@ class RouteNode {
         if (!is_null($parentNode)) {
             $this->setParentNode($parentNode);
         }
+        // If no parent is stated, we set the default langFile.
+        else
+        {
+            $this->setLangFile();
+        }
 
         // Append the route-name to the id.
         $this->id .= $this->name;
 
-        // Set the paths.
-        $this->setSegments($path);
+        // Set the path-segments.
+        $this->setSegments($segment);
 
         return $this;
 
@@ -391,8 +396,8 @@ class RouteNode {
      */
     protected function setLangFile() {
 
-        // Translations always reside within the pages-directory.
-        $this->langFile = 'pages/';
+        // Set the base-folder for localization-files as stated in the config.
+        $this->langFile = config('routetree.localization.baseFolder').'/';
 
         // Every parent node is a subdirectory of the pages-directory.
         // So we just get the full name of the parent node (if one exists),
@@ -401,8 +406,8 @@ class RouteNode {
             $this->langFile .= str_replace('.','/',$this->parentNode->id) . '/';
         }
 
-        // The file-name for route-tree related data is 'pages.php'
-        $this->langFile .= 'pages';
+        // Finally append the file-name for route-tree related translations as set in the config.
+        $this->langFile .= config('routetree.localization.fileName');
 
     }
 
@@ -835,6 +840,12 @@ class RouteNode {
      */
     public function addMiddlewareFromArray($middlewareArray = []) {
         foreach ($middlewareArray as $middlewareKey => $middlewareData) {
+            if (!isset($middlewareData['parameters'])) {
+                $middlewareData['parameters'] = [];
+            }
+            if (!isset($middlewareData['inherit'])) {
+                $middlewareData['inherit'] = true;
+            }
             $this->addMiddleware($middlewareKey, $middlewareData['parameters'], $middlewareData['inherit']);
         }
     }

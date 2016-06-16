@@ -284,8 +284,8 @@ class RouteAction
         // Initialize the action-array, that is used to register the route with laravel.
         $action = [];
 
-        // Add the middleware to the action-array.
-        $action['middleware'] = $this->routeNode->getMiddleware();
+        // Add the compiled middlewares to the action-array.
+        $action['middleware'] = $this->compileMiddleware();
 
         // Add the controller-method or the closure to the action-array.
         if (!is_null($this->uses)) {
@@ -321,6 +321,32 @@ class RouteAction
 
         }
         
+    }
+
+    /**
+     * Generates the compiled middleware-array to be handed over to the laravel-route-generator.
+     *
+     * @return array
+     */
+    private function compileMiddleware()
+    {
+
+        $compiledMiddleware = [];
+
+        // Get the middleware from the node.
+        $nodeMiddleware = $this->routeNode->getMiddleware();
+
+        if (count($nodeMiddleware)>0) {
+
+            foreach ($nodeMiddleware as $middlewareName => $middlewareData) {
+                $compiledMiddleware[$middlewareName] = $middlewareName;
+                if (isset($middlewareData['parameters']) && (count($middlewareData['parameters'])>0)) {
+                    $compiledMiddleware[$middlewareName] .= ':' . implode(',',$middlewareData['parameters']);
+                }
+            }
+        }
+
+        return $compiledMiddleware;
     }
 
     /**

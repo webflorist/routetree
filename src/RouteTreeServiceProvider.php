@@ -18,6 +18,12 @@ class RouteTreeServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
+        // Publish the config.
+        $this->publishes([
+            __DIR__.'/config/routetree.php' => config_path('routetree.php'),
+        ]);
+
         // Register the RouteTreeMiddleware.
         $this->app['Illuminate\Contracts\Http\Kernel']->pushMiddleware(RouteTreeMiddleware::class);
     }
@@ -29,6 +35,9 @@ class RouteTreeServiceProvider extends ServiceProvider
      */
     public function register()
     {
+
+        // Merge the config.
+        $this->mergeConfigFrom(__DIR__.'/config/routetree.php', 'routetree');
 
         // Register the RouteTree singleton.
         $this->app->singleton(RouteTree::class, function()
