@@ -13,7 +13,14 @@ class TestController extends Controller
 
     public function __call($name, $arguments)
     {
-        return 'controller:test|function:'.$name.'|method:'.\Request::getMethod().'|path:'.\Request::getPathInfo();
+        return json_encode([
+            'id' => route_tree()->getCurrentNode()->getId(),
+            'controller' => 'test',
+            'function' => $name,
+            'method' => \Request::getMethod(),
+            'path' => \Request::getPathInfo(),
+            'title' => route_tree()->getCurrentNode()->getTitle()
+        ]);
     }
 
 }

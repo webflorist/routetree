@@ -2,8 +2,6 @@
 
 namespace RouteTreeTests;
 
-use RouteTreeTests\Controllers\TestController;
-
 class RouteGenerationTest extends RouteTreeTestCase
 {
 
@@ -20,22 +18,46 @@ class RouteGenerationTest extends RouteTreeTestCase
             "uri" => "de",
             "action" => 'RouteTreeTests\Controllers\TestController@get',
             "middleware" => [],
-            "content" => "controller:test|function:get|method:GET|path:/de",
+            "content" => [
+                'id' => '',
+                'controller' => 'test',
+                'function' => 'get',
+                'method' => 'GET',
+                'path' => '/de',
+                'title' => 'Startseite'
+            ],
         ],
         "en.index" => [
             "method" => "GET",
             "uri" => "en",
             "action" => 'RouteTreeTests\Controllers\TestController@get',
             "middleware" => [],
-            "content" => "controller:test|function:get|method:GET|path:/en",
+            "content" => [
+                'id' => '',
+                'controller' => 'test',
+                'function' => 'get',
+                'method' => 'GET',
+                'path' => '/en',
+                'title' => 'Startpage'
+            ],
         ]
     ];
+
+    public function testRootNodeController()
+    {
+        $this->performFullRoutesTest();
+    }
 
     public function testRootNodeClosure()
     {
         $this->rootNode = [
             'index' => ['closure' => function () {
-                return 'home';
+                return json_encode([
+                    'id' => route_tree()->getCurrentNode()->getId(),
+                    'method' => \Request::getMethod(),
+                    'path' => \Request::getPathInfo(),
+                    'title' => route_tree()->getCurrentNode()->getTitle()
+                ]);
             }]
         ];
 
@@ -45,19 +67,29 @@ class RouteGenerationTest extends RouteTreeTestCase
                 "uri" => "de",
                 "action" => "Closure",
                 "middleware" => [],
-                "content" => "home",
+                "content" => [
+                    'id' => '',
+                    'method' => 'GET',
+                    'path' => '/de',
+                    'title' => 'Startseite'
+                ],
             ],
             "en.index" => [
                 "method" => "GET",
                 "uri" => "en",
                 "action" => "Closure",
                 "middleware" => [],
-                "content" => "home",
+                "content" => [
+                    'id' => '',
+                    'method' => 'GET',
+                    'path' => '/en',
+                    'title' => 'Startpage'
+                ],
             ]
 
         ];
 
-        $this->performTest();
+        $this->performFullRoutesTest();
     }
 
     public function testRootNodeView()
@@ -72,47 +104,31 @@ class RouteGenerationTest extends RouteTreeTestCase
                 "uri" => "de",
                 "action" => "Closure",
                 "middleware" => [],
-                "content" => 'view:test|path:/de',
+                "content" => [
+                    'id' => '',
+                    'view' => 'test',
+                    'method' => 'GET',
+                    'path' => '/de',
+                    'title' => 'Startseite'
+                ],
             ],
             "en.index" => [
                 "method" => "GET",
                 "uri" => "en",
                 "action" => "Closure",
                 "middleware" => [],
-                "content" => 'view:test|path:/en',
+                "content" => [
+                    'id' => '',
+                    'view' => 'test',
+                    'method' => 'GET',
+                    'path' => '/en',
+                    'title' => 'Startpage'
+                ],
             ]
 
         ];
 
-        $this->performTest();
-    }
-
-    public function testRootNodeController()
-    {
-        $this->rootNode = [
-            'namespace' => 'RouteTreeTests\Controllers',
-            'index' => ['uses' => 'TestController@get']
-        ];
-
-        $this->expectedResult = [
-            "de.index" => [
-                "method" => "GET",
-                "uri" => "de",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
-                "middleware" => [],
-                "content" => "controller:test|function:get|method:GET|path:/de",
-            ],
-            "en.index" => [
-                "method" => "GET",
-                "uri" => "en",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
-                "middleware" => [],
-                "content" => "controller:test|function:get|method:GET|path:/en",
-            ]
-
-        ];
-
-        $this->performTest();
+        $this->performFullRoutesTest();
     }
 
     public function testRootNodeRedirect()
@@ -134,33 +150,61 @@ class RouteGenerationTest extends RouteTreeTestCase
                 "uri" => "de",
                 "action" => 'Closure',
                 "middleware" => [],
-                "content" => "controller:test|function:get|method:GET|path:/de/target",
+                "content" => [
+                    'id' => 'target',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/de/target',
+                    'title' => 'Target'
+                ],
             ],
             "en.index" => [
                 "method" => "GET",
                 "uri" => "en",
                 "action" => 'Closure',
                 "middleware" => [],
-                "content" => "controller:test|function:get|method:GET|path:/en/target",
+                "content" => [
+                    'id' => 'target',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/en/target',
+                    'title' => 'Target'
+                ],
             ],
             "de.target.index" => [
                 "method" => "GET",
                 "uri" => "de/target",
                 "action" => 'RouteTreeTests\Controllers\TestController@get',
                 "middleware" => [],
-                "content" => "controller:test|function:get|method:GET|path:/de/target",
+                "content" => [
+                    'id' => 'target',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/de/target',
+                    'title' => 'Target'
+                ],
             ],
             "en.target.index" => [
                 "method" => "GET",
                 "uri" => "en/target",
                 "action" => 'RouteTreeTests\Controllers\TestController@get',
                 "middleware" => [],
-                "content" => "controller:test|function:get|method:GET|path:/en/target",
+                "content" => [
+                    'id' => 'target',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/en/target',
+                    'title' => 'Target'
+                ],
             ]
 
         ];
 
-        $this->performTest();
+        $this->performFullRoutesTest();
     }
 
     public function testNodeWithChildren()
@@ -180,53 +224,95 @@ class RouteGenerationTest extends RouteTreeTestCase
             ]
         ];
 
-        $this->expectedResult = array_merge($this->expectedResult,[
+        $this->expectedResult = array_merge($this->expectedResult, [
             "de.parent.index" => [
                 "method" => "GET",
                 "uri" => "de/parent",
                 "action" => 'RouteTreeTests\Controllers\TestController@get',
                 "middleware" => [],
-                "content" => "controller:test|function:get|method:GET|path:/de/parent",
+                "content" => [
+                    'id' => 'parent',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/de/parent',
+                    'title' => 'Parent'
+                ],
             ],
             "en.parent.index" => [
                 "method" => "GET",
                 "uri" => "en/parent",
                 "action" => 'RouteTreeTests\Controllers\TestController@get',
                 "middleware" => [],
-                "content" => "controller:test|function:get|method:GET|path:/en/parent",
+                "content" => [
+                    'id' => 'parent',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/en/parent',
+                    'title' => 'Parent'
+                ],
             ],
             "de.parent.child1.index" => [
                 "method" => "GET",
                 "uri" => "de/parent/child1",
                 "action" => 'RouteTreeTests\Controllers\TestController@get',
                 "middleware" => [],
-                "content" => "controller:test|function:get|method:GET|path:/de/parent/child1",
+                "content" => [
+                    'id' => 'parent.child1',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/de/parent/child1',
+                    'title' => 'Child1'
+                ],
             ],
             "en.parent.child1.index" => [
                 "method" => "GET",
                 "uri" => "en/parent/child1",
                 "action" => 'RouteTreeTests\Controllers\TestController@get',
                 "middleware" => [],
-                "content" => "controller:test|function:get|method:GET|path:/en/parent/child1",
+                "content" => [
+                    'id' => 'parent.child1',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/en/parent/child1',
+                    'title' => 'Child1'
+                ],
             ],
             "de.parent.child2.index" => [
                 "method" => "GET",
                 "uri" => "de/parent/child2",
                 "action" => 'RouteTreeTests\Controllers\TestController@get',
                 "middleware" => [],
-                "content" => "controller:test|function:get|method:GET|path:/de/parent/child2",
+                "content" => [
+                    'id' => 'parent.child2',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/de/parent/child2',
+                    'title' => 'Child2'
+                ],
             ],
             "en.parent.child2.index" => [
                 "method" => "GET",
                 "uri" => "en/parent/child2",
                 "action" => 'RouteTreeTests\Controllers\TestController@get',
                 "middleware" => [],
-                "content" => "controller:test|function:get|method:GET|path:/en/parent/child2",
+                "content" => [
+                    'id' => 'parent.child2',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/en/parent/child2',
+                    'title' => 'Child2'
+                ],
             ],
 
         ]);
 
-        $this->performTest();
+        $this->performFullRoutesTest();
     }
 
     public function testCustomSegment()
@@ -239,25 +325,39 @@ class RouteGenerationTest extends RouteTreeTestCase
             ]
         ];
 
-        $this->expectedResult = array_merge($this->expectedResult,[
+        $this->expectedResult = array_merge($this->expectedResult, [
             "de.page.index" => [
                 "method" => "GET",
                 "uri" => "de/custom-segment",
                 "action" => 'RouteTreeTests\Controllers\TestController@get',
                 "middleware" => [],
-                "content" => "controller:test|function:get|method:GET|path:/de/custom-segment",
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/de/custom-segment',
+                    'title' => 'Page'
+                ],
             ],
             "en.page.index" => [
                 "method" => "GET",
                 "uri" => "en/custom-segment",
                 "action" => 'RouteTreeTests\Controllers\TestController@get',
                 "middleware" => [],
-                "content" => "controller:test|function:get|method:GET|path:/en/custom-segment",
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/en/custom-segment',
+                    'title' => 'Page'
+                ],
             ]
 
         ]);
 
-        $this->performTest();
+        $this->performFullRoutesTest();
     }
 
     public function testCustomSegmentPerLanguage()
@@ -273,25 +373,39 @@ class RouteGenerationTest extends RouteTreeTestCase
             ]
         ];
 
-        $this->expectedResult = array_merge($this->expectedResult,[
+        $this->expectedResult = array_merge($this->expectedResult, [
             "de.page.index" => [
                 "method" => "GET",
                 "uri" => "de/custom-segment-de",
                 "action" => 'RouteTreeTests\Controllers\TestController@get',
                 "middleware" => [],
-                "content" => "controller:test|function:get|method:GET|path:/de/custom-segment-de",
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/de/custom-segment-de',
+                    'title' => 'Page'
+                ],
             ],
             "en.page.index" => [
                 "method" => "GET",
                 "uri" => "en/custom-segment-en",
                 "action" => 'RouteTreeTests\Controllers\TestController@get',
                 "middleware" => [],
-                "content" => "controller:test|function:get|method:GET|path:/en/custom-segment-en",
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/en/custom-segment-en',
+                    'title' => 'Page'
+                ],
             ]
 
         ]);
 
-        $this->performTest();
+        $this->performFullRoutesTest();
     }
 
     public function testActionCreate()
@@ -303,25 +417,39 @@ class RouteGenerationTest extends RouteTreeTestCase
             ]
         ];
 
-        $this->expectedResult = array_merge($this->expectedResult,[
+        $this->expectedResult = array_merge($this->expectedResult, [
             "de.page.create" => [
                 "method" => "GET",
                 "uri" => "de/page",
                 "action" => 'RouteTreeTests\Controllers\TestController@create',
                 "middleware" => [],
-                "content" => "controller:test|function:create|method:GET|path:/de/page",
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'create',
+                    'method' => 'GET',
+                    'path' => '/de/page',
+                    'title' => 'Page'
+                ],
             ],
             "en.page.create" => [
                 "method" => "GET",
                 "uri" => "en/page",
                 "action" => 'RouteTreeTests\Controllers\TestController@create',
                 "middleware" => [],
-                "content" => "controller:test|function:create|method:GET|path:/en/page",
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'create',
+                    'method' => 'GET',
+                    'path' => '/en/page',
+                    'title' => 'Page'
+                ],
             ]
 
         ]);
 
-        $this->performTest();
+        $this->performFullRoutesTest();
     }
 
     public function testActionsIndexAndStore()
@@ -334,39 +462,67 @@ class RouteGenerationTest extends RouteTreeTestCase
             ]
         ];
 
-        $this->expectedResult = array_merge($this->expectedResult,[
+        $this->expectedResult = array_merge($this->expectedResult, [
             "de.page.index" => [
                 "method" => "GET",
                 "uri" => "de/page",
                 "action" => 'RouteTreeTests\Controllers\TestController@index',
                 "middleware" => [],
-                "content" => "controller:test|function:index|method:GET|path:/de/page",
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/de/page',
+                    'title' => 'Page'
+                ],
             ],
             "en.page.index" => [
                 "method" => "GET",
                 "uri" => "en/page",
                 "action" => 'RouteTreeTests\Controllers\TestController@index',
                 "middleware" => [],
-                "content" => "controller:test|function:index|method:GET|path:/en/page",
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/en/page',
+                    'title' => 'Page'
+                ],
             ],
             "de.page.store" => [
                 "method" => "POST",
                 "uri" => "de/page",
                 "action" => 'RouteTreeTests\Controllers\TestController@store',
                 "middleware" => [],
-                "content" => "controller:test|function:store|method:POST|path:/de/page",
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'store',
+                    'method' => 'POST',
+                    'path' => '/de/page',
+                    'title' => 'Page'
+                ],
             ],
             "en.page.store" => [
                 "method" => "POST",
                 "uri" => "en/page",
                 "action" => 'RouteTreeTests\Controllers\TestController@store',
                 "middleware" => [],
-                "content" => "controller:test|function:store|method:POST|path:/en/page",
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'store',
+                    'method' => 'POST',
+                    'path' => '/en/page',
+                    'title' => 'Page'
+                ],
             ]
 
         ]);
 
-        $this->performTest();
+        $this->performFullRoutesTest();
     }
 
     public function testActionsShowUpdateDestroy()
@@ -380,53 +536,95 @@ class RouteGenerationTest extends RouteTreeTestCase
             ]
         ];
 
-        $this->expectedResult = array_merge($this->expectedResult,[
+        $this->expectedResult = array_merge($this->expectedResult, [
             "de.page.update" => [
                 "method" => "PUT",
                 "uri" => "de/page",
                 "action" => 'RouteTreeTests\Controllers\TestController@update',
                 "middleware" => [],
-                "content" => "controller:test|function:update|method:PUT|path:/de/page",
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'update',
+                    'method' => 'PUT',
+                    'path' => '/de/page',
+                    'title' => 'Page'
+                ],
             ],
             "en.page.update" => [
                 "method" => "PUT",
                 "uri" => "en/page",
                 "action" => 'RouteTreeTests\Controllers\TestController@update',
                 "middleware" => [],
-                "content" => "controller:test|function:update|method:PUT|path:/en/page",
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'update',
+                    'method' => 'PUT',
+                    'path' => '/en/page',
+                    'title' => 'Page'
+                ],
             ],
             "de.page.destroy" => [
                 "method" => "DELETE",
                 "uri" => "de/page",
                 "action" => 'RouteTreeTests\Controllers\TestController@destroy',
                 "middleware" => [],
-                "content" => "controller:test|function:destroy|method:DELETE|path:/de/page",
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'destroy',
+                    'method' => 'DELETE',
+                    'path' => '/de/page',
+                    'title' => 'Page'
+                ],
             ],
             "en.page.destroy" => [
                 "method" => "DELETE",
                 "uri" => "en/page",
                 "action" => 'RouteTreeTests\Controllers\TestController@destroy',
                 "middleware" => [],
-                "content" => "controller:test|function:destroy|method:DELETE|path:/en/page",
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'destroy',
+                    'method' => 'DELETE',
+                    'path' => '/en/page',
+                    'title' => 'Page'
+                ],
             ],
             "de.page.show" => [
                 "method" => "GET",
                 "uri" => "de/page",
                 "action" => 'RouteTreeTests\Controllers\TestController@show',
                 "middleware" => [],
-                "content" => "controller:test|function:show|method:GET|path:/de/page",
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'show',
+                    'method' => 'GET',
+                    'path' => '/de/page',
+                    'title' => 'Page'
+                ],
             ],
             "en.page.show" => [
                 "method" => "GET",
                 "uri" => "en/page",
                 "action" => 'RouteTreeTests\Controllers\TestController@show',
                 "middleware" => [],
-                "content" => "controller:test|function:show|method:GET|path:/en/page",
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'show',
+                    'method' => 'GET',
+                    'path' => '/en/page',
+                    'title' => 'Page'
+                ],
             ]
 
         ]);
 
-        $this->performTest();
+        $this->performFullRoutesTest();
     }
 
 
@@ -439,25 +637,39 @@ class RouteGenerationTest extends RouteTreeTestCase
             ]
         ];
 
-        $this->expectedResult = array_merge($this->expectedResult,[
+        $this->expectedResult = array_merge($this->expectedResult, [
             "de.page.edit" => [
                 "method" => "GET",
                 "uri" => "de/page",
                 "action" => 'RouteTreeTests\Controllers\TestController@edit',
                 "middleware" => [],
-                "content" => "controller:test|function:edit|method:GET|path:/de/page",
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'edit',
+                    'method' => 'GET',
+                    'path' => '/de/page',
+                    'title' => 'Page'
+                ],
             ],
             "en.page.edit" => [
                 "method" => "GET",
                 "uri" => "en/page",
                 "action" => 'RouteTreeTests\Controllers\TestController@edit',
                 "middleware" => [],
-                "content" => "controller:test|function:edit|method:GET|path:/en/page",
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'edit',
+                    'method' => 'GET',
+                    'path' => '/en/page',
+                    'title' => 'Page'
+                ],
             ]
 
         ]);
 
-        $this->performTest();
+        $this->performFullRoutesTest();
     }
 
     public function testResource()
@@ -472,109 +684,207 @@ class RouteGenerationTest extends RouteTreeTestCase
             ]
         ];
 
-        $this->expectedResult = array_merge($this->expectedResult,[
+        $this->expectedResult = array_merge($this->expectedResult, [
             "de.jobs.index" => [
                 "method" => "GET",
                 "uri" => "de/jobs",
                 "action" => 'RouteTreeTests\Controllers\TestController@index',
                 "middleware" => [],
-                "content" => "controller:test|function:index|method:GET|path:/de/jobs",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/de/jobs',
+                    'title' => 'Jobs'
+                ],
             ],
             "en.jobs.index" => [
                 "method" => "GET",
                 "uri" => "en/jobs",
                 "action" => 'RouteTreeTests\Controllers\TestController@index',
                 "middleware" => [],
-                "content" => "controller:test|function:index|method:GET|path:/en/jobs",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/en/jobs',
+                    'title' => 'Jobs'
+                ],
             ],
             "de.jobs.create" => [
                 "method" => "GET",
                 "uri" => "de/jobs/create",
                 "action" => 'RouteTreeTests\Controllers\TestController@create',
                 "middleware" => [],
-                "content" => "controller:test|function:create|method:GET|path:/de/jobs/create",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'create',
+                    'method' => 'GET',
+                    'path' => '/de/jobs/create',
+                    'title' => 'Jobs'
+                ],
             ],
             "en.jobs.create" => [
                 "method" => "GET",
                 "uri" => "en/jobs/create",
                 "action" => 'RouteTreeTests\Controllers\TestController@create',
                 "middleware" => [],
-                "content" => "controller:test|function:create|method:GET|path:/en/jobs/create",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'create',
+                    'method' => 'GET',
+                    'path' => '/en/jobs/create',
+                    'title' => 'Jobs'
+                ],
             ],
             "de.jobs.store" => [
                 "method" => "POST",
                 "uri" => "de/jobs",
                 "action" => 'RouteTreeTests\Controllers\TestController@store',
                 "middleware" => [],
-                "content" => "controller:test|function:store|method:POST|path:/de/jobs",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'store',
+                    'method' => 'POST',
+                    'path' => '/de/jobs',
+                    'title' => 'Jobs'
+                ],
             ],
             "en.jobs.store" => [
                 "method" => "POST",
                 "uri" => "en/jobs",
                 "action" => 'RouteTreeTests\Controllers\TestController@store',
                 "middleware" => [],
-                "content" => "controller:test|function:store|method:POST|path:/en/jobs",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'store',
+                    'method' => 'POST',
+                    'path' => '/en/jobs',
+                    'title' => 'Jobs'
+                ],
             ],
             "de.jobs.edit" => [
                 "method" => "GET",
                 "uri" => "de/jobs/{job}/edit",
                 "action" => 'RouteTreeTests\Controllers\TestController@edit',
                 "middleware" => [],
-                "content" => "controller:test|function:edit|method:GET|path:/de/jobs/{job}/edit",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'edit',
+                    'method' => 'GET',
+                    'path' => '/de/jobs/{job}/edit',
+                    'title' => 'Jobs'
+                ],
             ],
             "en.jobs.edit" => [
                 "method" => "GET",
                 "uri" => "en/jobs/{job}/edit",
                 "action" => 'RouteTreeTests\Controllers\TestController@edit',
                 "middleware" => [],
-                "content" => "controller:test|function:edit|method:GET|path:/en/jobs/{job}/edit",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'edit',
+                    'method' => 'GET',
+                    'path' => '/en/jobs/{job}/edit',
+                    'title' => 'Jobs'
+                ],
             ],
             "de.jobs.update" => [
                 "method" => "PUT",
                 "uri" => "de/jobs/{job}",
                 "action" => 'RouteTreeTests\Controllers\TestController@update',
                 "middleware" => [],
-                "content" => "controller:test|function:update|method:PUT|path:/de/jobs/{job}",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'update',
+                    'method' => 'PUT',
+                    'path' => '/de/jobs/{job}',
+                    'title' => 'Jobs'
+                ],
             ],
             "en.jobs.update" => [
                 "method" => "PUT",
                 "uri" => "en/jobs/{job}",
                 "action" => 'RouteTreeTests\Controllers\TestController@update',
                 "middleware" => [],
-                "content" => "controller:test|function:update|method:PUT|path:/en/jobs/{job}",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'update',
+                    'method' => 'PUT',
+                    'path' => '/en/jobs/{job}',
+                    'title' => 'Jobs'
+                ],
             ],
             "de.jobs.destroy" => [
                 "method" => "DELETE",
                 "uri" => "de/jobs/{job}",
                 "action" => 'RouteTreeTests\Controllers\TestController@destroy',
                 "middleware" => [],
-                "content" => "controller:test|function:destroy|method:DELETE|path:/de/jobs/{job}",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'destroy',
+                    'method' => 'DELETE',
+                    'path' => '/de/jobs/{job}',
+                    'title' => 'Jobs'
+                ],
             ],
             "en.jobs.destroy" => [
                 "method" => "DELETE",
                 "uri" => "en/jobs/{job}",
                 "action" => 'RouteTreeTests\Controllers\TestController@destroy',
                 "middleware" => [],
-                "content" => "controller:test|function:destroy|method:DELETE|path:/en/jobs/{job}",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'destroy',
+                    'method' => 'DELETE',
+                    'path' => '/en/jobs/{job}',
+                    'title' => 'Jobs'
+                ],
             ],
             "de.jobs.show" => [
                 "method" => "GET",
                 "uri" => "de/jobs/{job}",
                 "action" => 'RouteTreeTests\Controllers\TestController@show',
                 "middleware" => [],
-                "content" => "controller:test|function:show|method:GET|path:/de/jobs/{job}",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'show',
+                    'method' => 'GET',
+                    'path' => '/de/jobs/{job}',
+                    'title' => 'Jobs'
+                ],
             ],
             "en.jobs.show" => [
                 "method" => "GET",
                 "uri" => "en/jobs/{job}",
                 "action" => 'RouteTreeTests\Controllers\TestController@show',
                 "middleware" => [],
-                "content" => "controller:test|function:show|method:GET|path:/en/jobs/{job}",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'show',
+                    'method' => 'GET',
+                    'path' => '/en/jobs/{job}',
+                    'title' => 'Jobs'
+                ],
             ]
 
         ]);
 
-        $this->performTest();
+        $this->performFullRoutesTest();
     }
 
     public function testResourceUsingOnly()
@@ -585,44 +895,72 @@ class RouteGenerationTest extends RouteTreeTestCase
                 'resource' => [
                     'name' => 'job',
                     'controller' => 'TestController',
-                    'only' => ['index','create']
+                    'only' => ['index', 'create']
                 ]
             ]
         ];
 
-        $this->expectedResult = array_merge($this->expectedResult,[
+        $this->expectedResult = array_merge($this->expectedResult, [
             "de.jobs.index" => [
                 "method" => "GET",
                 "uri" => "de/jobs",
                 "action" => 'RouteTreeTests\Controllers\TestController@index',
                 "middleware" => [],
-                "content" => "controller:test|function:index|method:GET|path:/de/jobs",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/de/jobs',
+                    'title' => 'Jobs'
+                ],
             ],
             "en.jobs.index" => [
                 "method" => "GET",
                 "uri" => "en/jobs",
                 "action" => 'RouteTreeTests\Controllers\TestController@index',
                 "middleware" => [],
-                "content" => "controller:test|function:index|method:GET|path:/en/jobs",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/en/jobs',
+                    'title' => 'Jobs'
+                ],
             ],
             "de.jobs.create" => [
                 "method" => "GET",
                 "uri" => "de/jobs/create",
                 "action" => 'RouteTreeTests\Controllers\TestController@create',
                 "middleware" => [],
-                "content" => "controller:test|function:create|method:GET|path:/de/jobs/create",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'create',
+                    'method' => 'GET',
+                    'path' => '/de/jobs/create',
+                    'title' => 'Jobs'
+                ],
             ],
             "en.jobs.create" => [
                 "method" => "GET",
                 "uri" => "en/jobs/create",
                 "action" => 'RouteTreeTests\Controllers\TestController@create',
                 "middleware" => [],
-                "content" => "controller:test|function:create|method:GET|path:/en/jobs/create",
-            ]
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'create',
+                    'method' => 'GET',
+                    'path' => '/en/jobs/create',
+                    'title' => 'Jobs'
+                ],
+            ],
 
         ]);
 
-        $this->performTest();
+        $this->performFullRoutesTest();
     }
 
 
@@ -634,44 +972,72 @@ class RouteGenerationTest extends RouteTreeTestCase
                 'resource' => [
                     'name' => 'job',
                     'controller' => 'TestController',
-                    'except' => ['show','update','destroy','edit','store']
+                    'except' => ['show', 'update', 'destroy', 'edit', 'store']
                 ]
             ]
         ];
 
-        $this->expectedResult = array_merge($this->expectedResult,[
+        $this->expectedResult = array_merge($this->expectedResult, [
             "de.jobs.index" => [
                 "method" => "GET",
                 "uri" => "de/jobs",
                 "action" => 'RouteTreeTests\Controllers\TestController@index',
                 "middleware" => [],
-                "content" => "controller:test|function:index|method:GET|path:/de/jobs",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/de/jobs',
+                    'title' => 'Jobs'
+                ],
             ],
             "en.jobs.index" => [
                 "method" => "GET",
                 "uri" => "en/jobs",
                 "action" => 'RouteTreeTests\Controllers\TestController@index',
                 "middleware" => [],
-                "content" => "controller:test|function:index|method:GET|path:/en/jobs",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/en/jobs',
+                    'title' => 'Jobs'
+                ],
             ],
             "de.jobs.create" => [
                 "method" => "GET",
                 "uri" => "de/jobs/create",
                 "action" => 'RouteTreeTests\Controllers\TestController@create',
                 "middleware" => [],
-                "content" => "controller:test|function:create|method:GET|path:/de/jobs/create",
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'create',
+                    'method' => 'GET',
+                    'path' => '/de/jobs/create',
+                    'title' => 'Jobs'
+                ],
             ],
             "en.jobs.create" => [
                 "method" => "GET",
                 "uri" => "en/jobs/create",
                 "action" => 'RouteTreeTests\Controllers\TestController@create',
                 "middleware" => [],
-                "content" => "controller:test|function:create|method:GET|path:/en/jobs/create",
-            ]
+                "content" => [
+                    'id' => 'jobs',
+                    'controller' => 'test',
+                    'function' => 'create',
+                    'method' => 'GET',
+                    'path' => '/en/jobs/create',
+                    'title' => 'Jobs'
+                ],
+            ],
 
         ]);
 
-        $this->performTest();
+        $this->performFullRoutesTest();
     }
 
     public function testNoInheritPath()
@@ -692,53 +1058,95 @@ class RouteGenerationTest extends RouteTreeTestCase
             ]
         ];
 
-        $this->expectedResult = array_merge($this->expectedResult,[
+        $this->expectedResult = array_merge($this->expectedResult, [
             "de.not_inherited.index" => [
                 "method" => "GET",
                 "uri" => "de/not_inherited",
                 "action" => 'RouteTreeTests\Controllers\TestController@index',
                 "middleware" => [],
-                "content" => "controller:test|function:index|method:GET|path:/de/not_inherited",
+                "content" => [
+                    'id' => 'not_inherited',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/de/not_inherited',
+                    'title' => 'Not_inherited'
+                ],
             ],
             "en.not_inherited.index" => [
                 "method" => "GET",
                 "uri" => "en/not_inherited",
                 "action" => 'RouteTreeTests\Controllers\TestController@index',
                 "middleware" => [],
-                "content" => "controller:test|function:index|method:GET|path:/en/not_inherited",
+                "content" => [
+                    'id' => 'not_inherited',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/en/not_inherited',
+                    'title' => 'Not_inherited'
+                ],
             ],
             "de.not_inherited.child1.index" => [
                 "method" => "GET",
                 "uri" => "de/child1",
                 "action" => 'RouteTreeTests\Controllers\TestController@index',
                 "middleware" => [],
-                "content" => "controller:test|function:index|method:GET|path:/de/child1",
+                "content" => [
+                    'id' => 'not_inherited.child1',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/de/child1',
+                    'title' => 'Child1'
+                ],
             ],
             "en.not_inherited.child1.index" => [
                 "method" => "GET",
                 "uri" => "en/child1",
                 "action" => 'RouteTreeTests\Controllers\TestController@index',
                 "middleware" => [],
-                "content" => "controller:test|function:index|method:GET|path:/en/child1",
+                "content" => [
+                    'id' => 'not_inherited.child1',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/en/child1',
+                    'title' => 'Child1'
+                ],
             ],
             "de.not_inherited.child2.index" => [
                 "method" => "GET",
                 "uri" => "de/child2",
                 "action" => 'RouteTreeTests\Controllers\TestController@index',
                 "middleware" => [],
-                "content" => "controller:test|function:index|method:GET|path:/de/child2",
+                "content" => [
+                    'id' => 'not_inherited.child2',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/de/child2',
+                    'title' => 'Child2'
+                ],
             ],
             "en.not_inherited.child2.index" => [
                 "method" => "GET",
                 "uri" => "en/child2",
                 "action" => 'RouteTreeTests\Controllers\TestController@index',
                 "middleware" => [],
-                "content" => "controller:test|function:index|method:GET|path:/en/child2",
+                "content" => [
+                    'id' => 'not_inherited.child2',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/en/child2',
+                    'title' => 'Child2'
+                ],
             ],
 
         ]);
 
-        $this->performTest();
+        $this->performFullRoutesTest();
     }
 
     public function testAppendNamespace()
@@ -751,62 +1159,429 @@ class RouteGenerationTest extends RouteTreeTestCase
             ]
         ];
 
-        $this->expectedResult = array_merge($this->expectedResult,[
+        $this->expectedResult = array_merge($this->expectedResult, [
             "de.nested.index" => [
                 "method" => "GET",
                 "uri" => "de/nested",
                 "action" => 'RouteTreeTests\Controllers\Nested\NestedController@index',
                 "middleware" => [],
-                "content" => "controller:nested|function:index|method:GET|path:/de/nested",
+                "content" => [
+                    'id' => 'nested',
+                    'controller' => 'nested',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/de/nested',
+                    'title' => 'Nested'
+                ],
             ],
             "en.nested.index" => [
                 "method" => "GET",
                 "uri" => "en/nested",
                 "action" => 'RouteTreeTests\Controllers\Nested\NestedController@index',
                 "middleware" => [],
-                "content" => "controller:nested|function:index|method:GET|path:/en/nested",
+                "content" => [
+                    'id' => 'nested',
+                    'controller' => 'nested',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/en/nested',
+                    'title' => 'Nested'
+                ],
             ]
 
         ]);
 
-        $this->performTest();
+        $this->performFullRoutesTest();
+    }
+
+    public function testAutoTranslatedPathAndTitle()
+    {
+
+        $this->nodeTree = [
+            'products' => [
+                'index' => ['uses' => 'TestController@index'],
+                'children' => [
+                    'product1' => [
+                        'index' => ['uses' => 'TestController@index'],
+                    ],
+                    'product2' => [
+                        'index' => ['uses' => 'TestController@index'],
+                    ]
+                ]
+            ],
+            'contact' => [
+                'index' => ['uses' => 'TestController@index'],
+            ]
+        ];
+
+        $this->expectedResult = array_merge($this->expectedResult, [
+            "de.products.index" => [
+                "method" => "GET",
+                "uri" => "de/produkte",
+                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'products',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/de/produkte',
+                    'title' => 'Unsere Produkte'
+                ],
+            ],
+            "en.products.index" => [
+                "method" => "GET",
+                "uri" => "en/products",
+                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'products',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/en/products',
+                    'title' => 'Our products'
+                ],
+            ],
+            "de.products.product1.index" => [
+                "method" => "GET",
+                "uri" => "de/produkte/produkt_1",
+                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'products.product1',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/de/produkte/produkt_1',
+                    'title' => 'Produkt 1'
+                ],
+            ],
+            "en.products.product1.index" => [
+                "method" => "GET",
+                "uri" => "en/products/product_1",
+                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'products.product1',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/en/products/product_1',
+                    'title' => 'Product 1'
+                ],
+            ],
+            "de.products.product2.index" => [
+                "method" => "GET",
+                "uri" => "de/produkte/produkt_2",
+                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'products.product2',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/de/produkte/produkt_2',
+                    'title' => 'Produkt 2'
+                ],
+            ],
+            "en.products.product2.index" => [
+                "method" => "GET",
+                "uri" => "en/products/product_2",
+                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'products.product2',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/en/products/product_2',
+                    'title' => 'Product 2'
+                ],
+            ],
+            "de.contact.index" => [
+                "method" => "GET",
+                "uri" => "de/kontakt",
+                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'contact',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/de/kontakt',
+                    'title' => 'Kontaktieren Sie uns'
+                ],
+            ],
+            "en.contact.index" => [
+                "method" => "GET",
+                "uri" => "en/contact",
+                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'contact',
+                    'controller' => 'test',
+                    'function' => 'index',
+                    'method' => 'GET',
+                    'path' => '/en/contact',
+                    'title' => 'Contact us'
+                ],
+            ]
+
+        ]);
+
+        $this->performFullRoutesTest();
     }
 
 
-    protected function performTest() {
+    public function testCustomTitle()
+    {
 
-        // Set root-node
-        route_tree()->setRootNode($this->rootNode);
+        $this->nodeTree = [
+            'page' => [
+                'index' => ['uses' => 'TestController@get'],
+                'title' => 'Custom Title'
+            ]
+        ];
 
-        // Set nodes
-        route_tree()->addNodes($this->nodeTree);
+        $this->expectedResult = array_merge($this->expectedResult, [
+            "de.page.index" => [
+                "method" => "GET",
+                "uri" => "de/page",
+                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/de/page',
+                    'title' => 'Custom Title'
+                ],
+            ],
+            "en.page.index" => [
+                "method" => "GET",
+                "uri" => "en/page",
+                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/en/page',
+                    'title' => 'Custom Title'
+                ],
+            ]
+        ]);
 
-        // Visit the root
-        $this->visit('');
+        $this->performFullRoutesTest();
+    }
 
-        // Accumulate all routes
-        $routes = [];
-        foreach (\Route::getRoutes() as $route) {
-            $method = str_replace('|HEAD','',implode('|', $route->methods()));
-            $uri = $route->uri();
-            $routes[$route->getName()] = [
-                'method' => $method,
-                'uri'    => $uri,
-                'action' => $route->getActionName(),
-                'middleware' => $route->middleware(),
-                'content' => $this->makeRequest($method,$uri)->response->getContent()
-            ];
-        }
+    public function testCustomTitlePerLanguage()
+    {
 
-        // Sort expected and actual routes-array by key
-        ksort($routes);
-        ksort($this->expectedResult);
+        $this->nodeTree = [
+            'page' => [
+                'index' => ['uses' => 'TestController@get'],
+                'title' => [
+                    'de' => 'Benutzerdefinierter Titel',
+                    'en' => 'Custom Title'
+                ]
+            ]
+        ];
 
-        // Assert, that expected and actual routes-array are qequal.
-        $this->assertEquals(
-            $routes,
-            $this->expectedResult
-        );
+        $this->expectedResult = array_merge($this->expectedResult, [
+            "de.page.index" => [
+                "method" => "GET",
+                "uri" => "de/page",
+                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/de/page',
+                    'title' => 'Benutzerdefinierter Titel'
+                ],
+            ],
+            "en.page.index" => [
+                "method" => "GET",
+                "uri" => "en/page",
+                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/en/page',
+                    'title' => 'Custom Title'
+                ],
+            ]
+        ]);
+
+        $this->performFullRoutesTest();
+    }
+
+    public function testCustomTitleViaClosure()
+    {
+
+        $this->nodeTree = [
+            'page' => [
+                'index' => ['uses' => 'TestController@get'],
+                'title' => function ($parameters, $language) {
+                    if ($language == 'de') {
+                        return 'Benutzerdefinierter Titel';
+                    } else {
+                        return 'Custom Title';
+                    }
+                }
+            ]
+        ];
+
+        $this->expectedResult = array_merge($this->expectedResult, [
+            "de.page.index" => [
+                "method" => "GET",
+                "uri" => "de/page",
+                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/de/page',
+                    'title' => 'Benutzerdefinierter Titel'
+                ],
+            ],
+            "en.page.index" => [
+                "method" => "GET",
+                "uri" => "en/page",
+                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/en/page',
+                    'title' => 'Custom Title'
+                ],
+            ]
+        ]);
+
+        $this->performFullRoutesTest();
+    }
+
+
+    public function testMiddleware()
+    {
+
+        $this->rootNode = [
+            'namespace' => 'RouteTreeTests\Controllers',
+            'index' => ['uses' => 'TestController@get'],
+            'middleware' => [
+                'test1' => [
+                    'parameters' => [
+                        'parameter1' => 'value1',
+                        'parameter2' => 'value2'
+                    ]
+                ],
+                'test2' => [
+                    'inherit' => false
+                ]
+            ]
+        ];
+
+        $this->nodeTree = [
+            'page' => [
+                'index' => ['uses' => 'TestController@get'],
+                'middleware' => [
+                    'test3' => [
+                        'parameters' => [
+                            'parameter1' => 'value3',
+                            'parameter2' => 'value4'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $this->expectedResult = array_merge($this->expectedResult, [
+            "de.index" => [
+                "method" => "GET",
+                "uri" => "de",
+                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "middleware" => [
+                    'test1' => 'test1:value1,value2',
+                    'test2' => 'test2'
+                ],
+                "content" => [
+                    'id' => '',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/de',
+                    'title' => 'Startseite'
+                ],
+            ],
+            "en.index" => [
+                "method" => "GET",
+                "uri" => "en",
+                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "middleware" => [
+                    'test1' => 'test1:value1,value2',
+                    'test2' => 'test2'
+                ],
+                "content" => [
+                    'id' => '',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/en',
+                    'title' => 'Startpage'
+                ],
+            ],
+            "de.page.index" => [
+                "method" => "GET",
+                "uri" => "de/page",
+                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "middleware" => [
+                    'test1' => 'test1:value1,value2',
+                    'test3' => 'test3:value3,value4'
+                ],
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/de/page',
+                    'title' => 'Page'
+                ],
+            ],
+            "en.page.index" => [
+                "method" => "GET",
+                "uri" => "en/page",
+                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "middleware" => [
+                    'test1' => 'test1:value1,value2',
+                    'test3' => 'test3:value3,value4'
+                ],
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '/en/page',
+                    'title' => 'Page'
+                ],
+            ],
+
+        ]);
+
+        $this->performFullRoutesTest();
     }
 
 }
