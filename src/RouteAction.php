@@ -134,7 +134,7 @@ class RouteAction
     /**
      * Get the route-node this action belongs to.
      *
-     * @return RouteAction
+     * @return RouteNode
      */
     public function getRouteNode()
     {

@@ -327,7 +327,7 @@ class RouteTree {
      *
      * @param string $method
      * @param Route $route
-     * @return bool|RouteNode|null
+     * @return bool|RouteAction|null
      */
     public function getActionByMethodAndRoute($method='get', Route $route) {
 
