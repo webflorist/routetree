@@ -18,6 +18,61 @@ class RouteTreeMethodsTest extends RouteTreeTestCase
 
     }
 
+    public function testGetCurrentAction()
+    {
+        $this->generateRoutes('/de/page1');
+
+        $this->assertEquals(
+            'page1.index',
+            route_tree()->getCurrentAction()->getRouteNode()->getId().'.'.route_tree()->getCurrentAction()->getAction()
+        );
+
+    }
+
+    public function testDoesNodeExist()
+    {
+        $this->generateRoutes('/de/page1');
+
+        $this->assertEquals(
+            true,
+            route_tree()->doesNodeExist('page1.page1-1')
+        );
+
+    }
+
+    public function testDoesNodeNotExist()
+    {
+        $this->generateRoutes('/de/page1');
+
+        $this->assertEquals(
+            false,
+            route_tree()->doesNodeExist('page1.i-do-not-exist')
+        );
+
+    }
+
+    public function testGetNodeByRouteName()
+    {
+        $this->generateRoutes('/de/page1');
+
+        $this->assertEquals(
+            'page1.page1-1',
+            route_tree()->getNodeByRouteName('de.page1.page1-1.index')->getId()
+        );
+
+    }
+
+    public function testGetActionByMethodAndRoute()
+    {
+        $this->generateRoutes('/de/page1');
+
+        $this->assertEquals(
+            'index',
+            route_tree()->getActionByMethodAndRoute('get',\Route::current())->getAction()
+        );
+
+    }
+
     private function generateRoutes($visitUri='') {
 
         route_tree()->setRootNode([
@@ -26,6 +81,11 @@ class RouteTreeMethodsTest extends RouteTreeTestCase
             'children' => [
                 'page1' => [
                     'index' => ['uses' => 'TestController@get'],
+                    'children' => [
+                        'page1-1' => [
+                            'index' => ['uses' => 'TestController@get'],
+                        ]
+                    ]
                 ]
             ]
         ]);
