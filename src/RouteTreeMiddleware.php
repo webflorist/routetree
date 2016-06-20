@@ -43,7 +43,7 @@ class RouteTreeMiddleware
             \App::setLocale($locale);
         } else {
             //set Local from request
-            \App::setLocal($request->getLocale());
+            \App::setLocale($request->getLocale());
         }
 
         // Generate all RouteTree routes.
