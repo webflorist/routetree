@@ -3,9 +3,8 @@
 namespace Nicat\RouteTree;
 
 use Closure;
-use Illuminate\Cache\RateLimiter;
+use Illuminate\Session\SessionManager;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 
 class RouteTreeMiddleware
 {
