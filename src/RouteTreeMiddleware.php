@@ -15,6 +15,11 @@ class RouteTreeMiddleware
      * @var RouteTree
      */
     protected $routeTree;
+    
+    /**
+     * @var SessionManager
+     */
+    private $session;
 
     /**
      * Create a new throttle middleware instance.
@@ -22,9 +27,10 @@ class RouteTreeMiddleware
      * @param RouteTree $routeTree
      *
      */
-    public function __construct(RouteTree $routeTree)
+    public function __construct(RouteTree $routeTree, SessionManager $session)
     {
         $this->routeTree = $routeTree;
+        $this->session = $session;
     }
 
     /**
