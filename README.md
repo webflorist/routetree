@@ -74,8 +74,8 @@ Example:
             'office' => [
                 /*... options of the RouteNode`'office' ...*/   
             ],
-        }
-    }
+        ]
+    ]
 ```
 
 Since the root-line of every RouteNode is reflected in it's ID, this example would create 3 RouteNodes with the following IDs: `contact`, `contact.support`, `contact.office`.
@@ -92,7 +92,7 @@ The values can be either a string, which will be used as a path-segment for all 
 ```php 
     'contact' => [
         'segment' => 'contact_us'
-    }
+    ]
 ```
 The URI to this node will be e.g. `/en/contact_us` for the english version and `/de/contact_us` for the german version.
 
@@ -103,7 +103,7 @@ The URI to this node will be e.g. `/en/contact_us` for the english version and `
             'en' => 'contact',
             'de' => 'kontakt'
         ]
-    }
+    ]
 ```
 The URI to this node would be e.g. `/en/contact` for the english version and `/de/kontakt` for the german version.
 
@@ -135,7 +135,7 @@ The value of an action-definition is always a sub-array, whose structure depends
         'index' => ['closure' => function () {
             return 'welcome';
         }]
-    }
+    ]
 ```
 With this definition, `welcome` would be displayed with a GET-request to `/en/contact` (or any other defined language).
 
@@ -143,7 +143,7 @@ With this definition, `welcome` would be displayed with a GET-request to `/en/co
 ```php 
     'index' => [
         'store' => ['uses' => 'ContactController@index'],
-    }
+    ]
 ```
 With this definition, the `index` method of the `ContactController` would be called on a GET-request to `/en/contact`.
 
@@ -155,8 +155,8 @@ With this definition, the `index` method of the `ContactController` would be cal
             'support' => [
                 'index' => ['uses' => 'SupportController@index'],
             ]
-        }
-    }
+        ]
+    ]
 ```
 With this definition, a GET-request to `/en/contact` would be redirected to `/en/contact/support` with then would call the `index` method of the `SupportController`.
 
@@ -164,7 +164,7 @@ With this definition, a GET-request to `/en/contact` would be redirected to `/en
 ```php 
     'contact' => [
         'index' => ['view' => 'contact'],
-    }
+    ]
 ```
 With this definition, the view `contact` would be rendered on a GET-request to `/en/contact`.
 
@@ -189,8 +189,8 @@ The middlewares that should be attached to all generated routes for this node. T
                     'throttle' => []
                 ]
             ]
-        }
-    }
+        ]
+    ]
 ```
 In this example the `index` action of the `contact`-node will have 2 middlewares attached: `auth` with no parameters and `role` with the parameters `editor,admin`.
 It's child node `support` will inherit the `role` middleware from it's parent, but not the `auth` middleware, because it has `inherit` set to  `false`. Additionally it will have the middleware `throttle` attached to it`s route.
@@ -212,8 +212,8 @@ The namespace, that should be prepended to all controller-definitions of all act
                 'index' => ['uses' => 'OfficeController@index'],
                 'namespace' => `My\Other\Namespace`,
             ]
-        }
-    }
+        ]
+    ]
 ```
 In this example the `index` action of the `contact`-node will call `My\Namespace\ContactController@index`. The  `index` action of the `support`-node will call `My\Namespace\SupportController@index`, because it is inherited from it's parent. The  `index` action of the `office`-node however has it's own namespace defined, and will thus call `My\Other\Namespace\OfficeController@index`.
 It's child node `support` will inherit the `role` middleware from it's parent, but not the `auth` middleware, because it has `inherit` set to  `false`. Additionally it will have the middleware `throttle` attached to it`s route.
@@ -236,8 +236,8 @@ The sub-namespace, that should be appended the inherited namespace.
                 'index' => ['uses' => 'SupportController@index'],
                 'appendNamespace' => `Support`,
             ]
-        }
-    }
+        ]
+    ]
 ```
 In this example the `index` action of the `contact`-node will call `App\Http\Controllers\Contact\ContactController@index`. The  `index` action of the `support`-node will call `App\Http\Controllers\Contact\Support\SupportController@index`.
 
@@ -255,8 +255,8 @@ If you do not want this behaviour, e.g. because you are using the parent node on
             'support' => [
                 'index' => ['uses' => 'SupportController@index'],
             ]
-        }
-    }
+        ]
+    ]
 ```
 In this example the english URI to the `index` action of the `contact`-node will be `/en/contact`. Tthe URI to it's child `support` will be `/en/support` (instead of `/en/contact/support`, when setting `inheritPath` to true or omitting it.
 
@@ -314,7 +314,7 @@ The title can be set in various ways. You can set it as an option in the routes-
 ```php 
     'contact' => [
         'title' => 'Contact us!'
-    }
+    ]
 ```
 You can now call e.g. `route_tree()->getNode('contact')->getTitle()` to retrieve the string `Contact us!` from anywhere in your application.
 
@@ -325,7 +325,7 @@ You can now call e.g. `route_tree()->getNode('contact')->getTitle()` to retrieve
             'en' => 'Contact us!',
             'de' => 'Kontaktieren Sie uns!'
         ]
-    }
+    ]
 ```
 You can now call e.g. `route_tree()->getNode('contact')->getTitle()` to retrieve the title for that page in the current locale.
 You can also retrieve it in a specific language by stating the language as the second parameter of getTitle (e.g. `getAbstract(null, 'en')`) will always return the english title, even if the current locale is 'de'.
@@ -350,8 +350,8 @@ You can also retrieve it in a specific language by stating the language as the s
                      return 'Kontaktieren Sie unser Office-Team!';
                  }
              }
-        }
-    }
+        }]
+    ]
 ```
 
 As you can see, the closure receives 2 parameters. The first one is an array of desired URL-parameters (using any currently active parameters as default), the second one is the desired locale (using the current locale as default).
@@ -432,6 +432,39 @@ You can also add multiple (same-level) nodes at once using the `setNodes()` meth
         'company.team'
     );
 ```
+
+### Auto-translation
+
+Auto-translation is used with several functions of routetree and provides an easy and intuitive way of configuring multi-language variants of the path-segment, page-title, or any other custom information for routes through laravel's localization-files.
+ 
+The basic concept is to map the hierarchy of the route-tree to a folder-structure within the localization-folder. Each route-node is represented as a folder, and within the folder for a node resides a file, that contains all auto-translation-information. 
+
+There are 2 relevant config-items in the `routetree.php`-config-file published by this package:
+* **localization.baseFolder**: This is the base-folder for the localization-files- and folders for route-tree. The default value is `pages`, which translates to the folder `\resources\lang\%locale%\pages`.
+* **localization.fileName**: This is the name of the files, route-tree should use for it's auto-translation functionality. The default value is `pages`, which means information on all 1st-level-pages should be placed in this file: `\resources\lang\%locale%\pages\pages.php`.
+
+**Example:**
+Let's assume, you have defined the following route-tree-array (any actions or other options are missing for simplicity's sake):
+``` 
+    'company' => [
+        'children' => [
+            'history' => [],
+            'teams' => [
+                'children' => [
+                    'office' => [],
+                    'service' => []
+                ]
+            ]
+        ]
+    ],
+    'contact' => []
+```
+
+Please note, that no path-segment, page-titlesor custom information is defined on any node. We will use auto-translation for this.
+
+To use auto-translation, the following file-and folder-structure should be present within the defined base-folder for each locale (per default `\resources\lang\%locale%\pages`):
+
+[TODO]
 
 ### Important RouteNode-methods
 
