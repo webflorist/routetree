@@ -445,11 +445,11 @@ There are 2 relevant config-items in the `routetree.php`-config-file published b
 
 **Example:**
 Let's assume, you have defined the following route-tree-array (any actions or other options are missing for simplicity's sake):
-``` 
+```php
     'company' => [
         'children' => [
             'history' => [],
-            'teams' => [
+            'team' => [
                 'children' => [
                     'office' => [],
                     'service' => []
@@ -460,11 +460,84 @@ Let's assume, you have defined the following route-tree-array (any actions or ot
     'contact' => []
 ```
 
-Please note, that no path-segment, page-titlesor custom information is defined on any node. We will use auto-translation for this.
+Please note, that no path-segment, page-titles or custom information is defined on any node. We will use auto-translation for this.
 
 To use auto-translation, the following file-and folder-structure should be present within the defined base-folder for each locale (per default `\resources\lang\%locale%\pages`):
+``` 
+ .
+ ├── pages.php
+ ├── company
+     ├── pages.php
+     └── team
+         └── pages.php
 
-[TODO]
+```
+
+Each pages.php-file includes auto-translation information for the child-nodes of the node, which corresponds to the folder it resides in. Let's see a german-language example of the contents of these files:
+
+./pages.php:
+```php
+<?php
+return [
+    'segment' => [
+        'company' => 'firma',
+        'contact' => 'kontakt',
+    ],
+    'title' => [
+        'company' => 'Über unsere Firma',
+        'contact' => 'Kontaktieren Sie uns!',
+        '' => 'Startseite',
+    ],
+    'abstract' => [        
+        'company' => 'Hier finden Sie allgemeine Informationen über unsere Firma.',
+        'contact' => 'Hier finden Sie Möglichkeiten, mit uns in Kontakt zu treten.',
+    ]
+];
+```
+
+Note that there is an additional entry in the title-array with an empty string as the key and "Home" as the value. This is title of the root-page.
+
+./company/pages.php:
+```php
+<?php
+return [
+    'segment' => [
+        'history' => 'geschichte',
+        'team' => 'mitarbeiter',
+    ],
+    'title' => [
+        'history' => 'Die Firmengeschichte',
+        'team' => 'Unsere Mitarbeiter',
+    ],
+    'abstract' => [
+        'history' => 'Hier finden Sie die Entstehungsgeschichte unserer Firma.',
+        'team' => 'Hier sind unsere Mitarbeiter zu finden.',
+    ]
+];
+```
+
+./company/team/pages.php:
+```php
+<?php
+return [
+    'segment' => [
+        'office' => 'buero',
+        'service' => 'kundendienst',
+    ],
+    'title' => [
+        'office' => 'Büro',
+        'service' => 'Kundendienst',
+    ],
+    'abstract' => [
+        'office' => 'Hier finden Sie unsere Büro-Mitarbeiter.',
+        'service' => 'Hier finden Sie unsere Service-Mitarbeiter.',
+    ]
+];
+```
+
+With this setup, the segments defined in the language-files will automatically be used for the route-paths of their corresponding nodes.
+Also the title will be fetched with each getTitle-call submitted for a specific node (e.g. `route_tree()->getNode('company/team/service')->getTitle()` would return `Büro`, if the current locale is german. 
+The same thing is possible with the abstract (or any other custom parameter). (e.g. `route_tree()->getNode('company/team/service')->getAbstract()` would return `Hier finden Sie unsere Service-Mitarbeiter.`, if the current locale is german.
 
 ### Important RouteNode-methods
 
