@@ -220,6 +220,18 @@ class RouteAction
 
     }
 
+    /**
+     * Tries to accumulate all path-parameters needed for an URL to this RouteAction.
+     * The parameters can be stated as an associative array with $parameters.
+     * If not all required parameters are stated, the missing ones are tried to be auto-fetched,
+     * which is only possible, if the parent-nodes they belong to are currently active.
+     *
+     * @param array $parameters An associative array of [parameterName => parameterValue] pairs.
+     * @param string $language The language to be used for auto-fetching the parameter-values.
+     * @param bool $translateValues: If true, the auto-fetched parameter-values are tried to be auto-translated.
+     * @return array
+     * @throws UrlParametersMissingException
+     */
     public function autoFillPathParameters($parameters, $language, $translateValues = false) {
 
         // Init the return-array.
@@ -254,6 +266,13 @@ class RouteAction
 
     }
 
+    /**
+     * Returns an array of all path-parameters needed for this RouteAction
+     * These are basically all path-segments enclosed in curly braces.
+     *
+     * @param null $language
+     * @return array
+     */
     protected function getPathParameters($language=null) {
 
         // If no language is specifically stated, we use the current locale.

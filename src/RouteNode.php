@@ -809,6 +809,13 @@ class RouteNode {
         return false;
     }
 
+    /**
+     * Tries to auto-translate a stated key into a stated language.
+     *
+     * @param $key The translation-key to be translated.
+     * @param $language The language to be used for translation.
+     * @return bool|string
+     */
     protected function performAutoTranslation($key, $language) {
 
         // Set the translation key to be used for getting the data.
