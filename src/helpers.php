@@ -4,7 +4,7 @@ use Nicat\RouteTree\RouteTree;
 
 if (! function_exists('route_tree')) {
     /**
-     * Get the available auth instance.
+     * Gets the RouteTree singleton from Laravel's service-container
      *
      * @return \Nicat\RouteTree\RouteTree
      */
@@ -19,9 +19,9 @@ if ( ! function_exists('route_node_url()')) {
     /**
      * Generate an URL to the action of a route-node.
      *
-     * @param $nodeId The node-id for which this url is generated (default=current node.
-     * @param string $action The node-action for which this url is generated (defaults='index').
-     * @param array $parameters The values to be used for any route-parameters in the url (default=current route-parameters).
+     * @param string $nodeId The node-id for which this url is generated (default=current node).
+     * @param string $action The node-action for which this url is generated (default='index').
+     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
      * @param string $language The language this url should be generated for (default=current locale).
      * @return string
      */

@@ -204,7 +204,7 @@ class RouteAction
     /**
      * Get the URL to this action.
      *
-     * @param array $parameters The values to be used for any route-parameters in the url.
+     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
      * @param string $language The language this url should be generated for (default=current locale).
      * @return mixed
      * @throws UrlParametersMissingException
@@ -226,7 +226,7 @@ class RouteAction
      * If not all required parameters are stated, the missing ones are tried to be auto-fetched,
      * which is only possible, if the parent-nodes they belong to are currently active.
      *
-     * @param array $parameters An associative array of [parameterName => parameterValue] pairs.
+     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to use.
      * @param string $language The language to be used for auto-fetching the parameter-values.
      * @param bool $translateValues: If true, the auto-fetched parameter-values are tried to be auto-translated.
      * @return array

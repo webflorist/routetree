@@ -462,7 +462,7 @@ Let's assume, you have defined the following route-tree-array (any actions or ot
 
 Please note, that no path-segment, page-titles or custom information is defined on any node. We will use auto-translation for this.
 
-To use auto-translation, the following file-and folder-structure should be present within the defined base-folder for each locale (per default `\resources\lang\%locale%\pages`):
+To use auto-translation, the following file- and folder-structure should be present within the defined base-folder for each locale (per default `\resources\lang\%locale%\pages`):
 ``` 
  .
  ├── pages.php
@@ -536,17 +536,57 @@ return [
 ```
 
 With this setup, the segments defined in the language-files will automatically be used for the route-paths of their corresponding nodes.
-Also the title will be fetched with each getTitle-call submitted for a specific node (e.g. `route_tree()->getNode('company/team/service')->getTitle()` would return `Büro`, if the current locale is german. 
-The same thing is possible with the abstract (or any other custom parameter). (e.g. `route_tree()->getNode('company/team/service')->getAbstract()` would return `Hier finden Sie unsere Service-Mitarbeiter.`, if the current locale is german.
+Also the title will be fetched with each getTitle-call submitted for a specific node (e.g. `route_tree()->getNode('company.team.service')->getTitle()` would return `Büro`, if the current locale is german. 
+The same thing is possible with the abstract (or any other custom parameter). (e.g. `route_tree()->getNode('company.team.service')->getAbstract()` would return `Hier finden Sie unsere Service-Mitarbeiter.`, if the current locale is german.
+
+### Important RouteTree-methods
+
+For the already mentioned and explained methods `setRootNode`, `addNode` and `addNodes` please see the corresponding sections above.
+
+Here are some other useful methods of the RouteTree-class:
+
+* **route_tree**: Get the root-node which is also the whole route-tree.
+* **getCurrentNode**: Get the currently active node.
+* **getCurrentAction**: Get the currently active action.
+* **doesNodeExist**: Checks, if a node within the route-tree. It takes one parameter, which is the node-id to be checked. (e.g.: `route_tree()->doesNodeExist('company.team.office')`)
+* **getNode**: Get's and returns the RouteNode via it's Id. (e.g.: `route_tree()->getNode('company.team.office')`)
 
 ### Important RouteNode-methods
 
-[TODO]
+For the already mentioned and explained methods `getTitle`, `getValues` and `getData` please see the corresponding sections above.
+
+Here are some other useful methods of the RouteNode-class:
+
+* **getParentNode**: Gets the parent node of this node. (e.g.: `route_tree()->getNode('company.team.office')->getParentNode()` would retrieve the node with the ID `company.team`.)
+* **getParentNodes**: Gets an array of all hierarchical parent-nodes of this node (with the root-node as the first element). (e.g.: `route_tree()->getCurrentNode()->getParentNodes()` would retrieve an array of all ancestral-nodes of the currently active node up to to the root-node. This is very useful for site-maps or breadcrumbs.)
+* **hasChildNodes**: Checks, if this node has any child-nodes.
+* **getChildNodes**: Get an array of all child-nodes (e.g. useful for sub-menus).
+* **hasChildNodes**: Checks, if this node has any child-nodes.
+* **getChildNode**: Checks, if this node has a child-node with the stated name.
+* **getId**: Get the full Id of this node.
+* **getUrlByAction**: Gets the url of a certain action of this node. It takes the following parameters:
+     * string $action: The action name (e.g. index|show|get|post|update,etc.) (defaults='index').
+     * array $parameters: An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
+     * string $language: The language this url should be generated for (default=current locale).
+* **isActive**: Checks, if the current node is currently active (optionally with the desired parameters) (e.g. useful to apply a CSS-class to an active link).
+* **nodeOrChildIsActive**: Checks, if the current node or one of it's children is currently active (optionally with the desired parameters) (e.g. useful to apply a CSS-class to an active link).
 
 ### Important RouteAction-methods
 
-[TODO]
+* **getUrl**: Get the URL to this action. It takes the following parameters:
+     * array $parameters: An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
+     * string $language: The language this url should be generated for (default=current locale).
 
 ### Helper functions
 
-[TODO]
+Several helper-functions are included with this package:
+
+* **route_tree**: Gets the RouteTree singleton from Laravel's service-container. It can be used anywhere in your application (controllers, views, etc.) to access the RouteTree service.
+
+* **route_node_id**: Gets the node-id of the currently active RouteNode.
+
+* **route_node_url**: Generate an URL to the action of a route-node. It takes the following parameters:
+      * string $nodeId: The node-id for which this url is generated (default=current node.
+      * string $action: The node-action for which this url is generated (defaults='index').
+      * array $parameters: An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
+      * string $language: The language this url should be generated for (default=current locale).

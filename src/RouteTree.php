@@ -102,7 +102,7 @@ class RouteTree {
     }
 
     /**
-     * Sets the currently active node.
+     * Sets the currently active RouteAction.
      *
      * @param RouteAction $routeAction
      */
@@ -189,7 +189,7 @@ class RouteTree {
      * @param string $nodeId
      * @return bool
      */
-    public function doesNodeExist($nodeId='') {
+    public function doesNodeExist($nodeId) {
         if (is_a($this->getNode($nodeId), RouteNode::class)) {
             return true;
         }
@@ -199,12 +199,12 @@ class RouteTree {
     }
 
     /**
-     * Get's the node via it's Id.
+     * Get's the RouteNode via it's ID.
      *
      * @param string $nodeId
      * @return bool|RouteNode|null
      */
-    public function getNode($nodeId='') {
+    public function getNode($nodeId) {
 
         // If path is an empty string or null, we return the root-node.
         if ($nodeId === "" || $nodeId === null) {
@@ -323,7 +323,7 @@ class RouteTree {
     }
 
     /**
-     * Tries to get a node using it's full route-name.
+     * Tries to retrieve the correct RouteAction corresponding to a certain HTTP-method from a stated Laravel-route.
      *
      * @param string $method
      * @param Route $route

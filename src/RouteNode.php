@@ -504,7 +504,7 @@ class RouteNode {
      * Get url to the most suitable action of this node,
      * using the following order: 'index' -> 'get' -> the first element of the action-array.
      *
-     * @param array $parameters The values to be used for any route-parameters in the url (default=current route-parameters).
+     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
      * @param string $language The language this url should be generated for (default=current locale).
      * @return string
      * @throws ActionNotFoundException
@@ -531,7 +531,7 @@ class RouteNode {
      * Gets the url of a certain action of this node.
      *
      * @param string $action The action name (e.g. index|show|get|post|update,etc.)
-     * @param array $parameters The values to be used for any route-parameters in the url (default=current route-parameters).
+     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
      * @param string $language The language this url should be generated for (default=current locale).
      * @return string
      * @throws ActionNotFoundException
@@ -604,7 +604,7 @@ class RouteNode {
     /**
      * Get the page title of this node (defaults to the ucfirst-ified node-name).
      * 
-     * @param array $parameters The values to be used for any route-parameters in the title-generation (default=current route-parameters).
+     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
      * @param string $language The language the title should be fetched for (default=current locale).
      * @return string
      */
@@ -767,7 +767,7 @@ class RouteNode {
      *
      *
      * @param $key
-     * @param array $parameters The values to be used for any route-parameters the data should be fetched for (default=current route-parameters).
+     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters the data should be fetched for (default=current route-parameters).
      * @param string $language The language the data should be fetched for (default=current locale).
      * @return mixed
      */
