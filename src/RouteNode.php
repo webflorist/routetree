@@ -165,6 +165,30 @@ class RouteNode {
         // TODO: return unknown method error.
     }
 
+    /**
+     * Overloading function to catch class variable get calls
+     * like $node->title
+     *
+     * @param $name
+     * @return mixed
+     */
+    public function __get($name)
+    {
+            return $this->getData($name);
+    }
+
+    /**
+     * Overloading function to catch class variable setting
+     * like $node->title =  ' foo'
+     *
+     * @param $name
+     * @param $argument
+     * @return RouteNode
+     */
+    public function __set($name, $argument)
+    {
+        return $this->setData($name, $argument);
+    }
 
     /**
      * Get the namespace to be used for controllers.
