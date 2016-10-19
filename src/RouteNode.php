@@ -749,7 +749,7 @@ class RouteNode {
             }
 
             // Otherwise we return the currently active value
-            //return $value;
+            return $value;
         }
 
         return false;
