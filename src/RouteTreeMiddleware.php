@@ -60,27 +60,28 @@ class RouteTreeMiddleware
         // Generate all RouteTree routes.
         $this->routeTree->generateAllRoutes();
 
-        // Handle auto-redirects for GET-requests.
-        if ($request->method() === 'GET') {
+        // Try finding out current RouteAction
 
-            // We check, if any route registered with laravel matches the current request,
-            // and catch the NotFoundHttpException, if this is not the case.
-            try {
+        // We check, if any route registered with laravel matches the current request,
+        // and catch the NotFoundHttpException, if this is not the case.
+        try {
 
-                // Try getting the current route.
-                $currentRoute = \Route::getRoutes()->match($request);
+            // Try getting the current route.
+            $currentRoute = \Route::getRoutes()->match($request);
 
-                // Find out and set the currently active action.
-                $currentAction = $this->routeTree->getActionByMethodAndRoute('GET', $currentRoute);
-                if (is_a($currentAction,RouteAction::class)) {
-                    $this->routeTree->setCurrentAction($currentAction);
-                }
-
-
+            // Find out and set the currently active action.
+            $currentAction = $this->routeTree->getActionByMethodAndRoute($request->method(), $currentRoute);
+            if (is_a($currentAction,RouteAction::class)) {
+                $this->routeTree->setCurrentAction($currentAction);
             }
-            catch(NotFoundHttpException $exception) {
 
-                // If no route was found, we try to perform an auto-redirect:
+
+        }
+        catch(NotFoundHttpException $exception) {
+
+            // If no route was found, we try to perform an auto-redirect, if current method is 'GET':
+
+            if ($request->method() === 'GET') {
 
                 // If the root of the website was called, we redirect to the language root of the current locale.
                 if ($request->path() === '/') {
@@ -90,15 +91,15 @@ class RouteTreeMiddleware
                 // Otherwise, we try finding an appropriate path
                 // using the paths registered with the RouteTree service.
                 foreach ($this->routeTree->getRegisteredPathsByMethod('get') as $path => $actions) {
-                    if (strpos($path,'/'.$request->path()) !== false) {
+                    if (strpos($path, '/' . $request->path()) !== false) {
                         return redirect()->to($path);
                     }
                 }
 
-                // If no auto-redirect occurred, we throw the original exception.
-                throw $exception;
             }
-            
+
+            // If no auto-redirect occurred, we throw the original exception.
+            throw $exception;
         }
 
         return $next($request);
