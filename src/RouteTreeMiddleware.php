@@ -5,6 +5,7 @@ namespace Nicat\RouteTree;
 use Closure;
 use Illuminate\Session\SessionManager;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 
 class RouteTreeMiddleware
 {
@@ -51,7 +52,7 @@ class RouteTreeMiddleware
 
         // Set current and session locale depending on first path-segment.
         $locale = $request->segment(1);
-        
+
         if ( array_key_exists($locale, \Config::get('app.locales'))) {
             $this->session->set('locale', $locale);
             \App::setLocale($locale);
@@ -77,11 +78,10 @@ class RouteTreeMiddleware
 
 
         }
-        catch(NotFoundHttpException $exception) {
+        catch(\Exception $exception) {
 
-            // If no route was found, we try to perform an auto-redirect, if current method is 'GET':
-
-            if ($request->method() === 'GET') {
+            // If no route was found, we try to perform an auto-redirect, if current method is 'GET'.
+            if (($exception instanceof NotFoundHttpException) && ($request->method() === 'GET')) {
 
                 // If the root of the website was called, we redirect to the language root of the current locale.
                 if ($request->path() === '/') {
@@ -98,8 +98,6 @@ class RouteTreeMiddleware
 
             }
 
-            // If no auto-redirect occurred, we throw the original exception.
-            throw $exception;
         }
 
         return $next($request);
