@@ -24,6 +24,9 @@ class RouteTreeServiceProvider extends ServiceProvider
             __DIR__.'/config/routetree.php' => config_path('routetree.php'),
         ]);
 
+        // Load default translations.
+        $this->loadTranslationsFrom(__DIR__ . "/resources/lang","Nicat-RouteTree");
+
         // Register the RouteTreeMiddleware.
         $this->app['Illuminate\Contracts\Http\Kernel']->pushMiddleware(RouteTreeMiddleware::class);
     }

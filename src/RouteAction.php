@@ -14,48 +14,6 @@ class RouteAction
 {
 
     /**
-     * Static list of all possible actions, their method, and route-name-suffix.
-     *
-     * @var array
-     */
-    public static $possibleActions = [
-        'index' => [
-            'method' => 'get',
-            'suffix' => 'index'
-        ],
-        'create' => [
-            'method' => 'get',
-            'suffix' => 'create'
-        ],
-        'store' => [
-            'method' => 'post',
-            'suffix' => 'store'
-        ],
-        'show' => [
-            'method' => 'get',
-            'suffix' => 'show'
-        ],
-        'edit' => [
-            'method' => 'get',
-            'suffix' => 'edit'
-        ],
-        'update' => [
-            'method' => 'put',
-            'suffix' => 'update'
-        ],
-        'destroy' => [
-            'method' => 'delete',
-            'suffix' => 'destroy'
-        ],
-        'get' => [
-            'method' => 'get'
-        ],
-        'post' => [
-            'method' => 'post'
-        ],
-    ];
-
-    /**
      * The route-node this action belongs to.
      *
      * @var RouteNode
@@ -107,6 +65,80 @@ class RouteAction
         return $this;
     }
 
+
+    /**
+     * Returns list of all possible actions, their method, route-name-suffix, parent-action and title-closure.
+     *
+     * @return array
+     */
+    public function getActionConfigs() {
+        return [
+            'index' => [
+                'method' => 'get',
+                'suffix' => 'index',
+                'title' => function() {
+                    return $this->routeNode->getTitle();
+                },
+                'navTitle' => function() {
+                    return $this->routeNode->getNavTitle();
+                }
+            ],
+            'create' => [
+                'method' => 'get',
+                'suffix' => 'create',
+                'parentAction' => 'index',
+                'title' => function() {
+                    return trans('Nicat-RouteTree::routetree.createTitle', ['resource' => $this->routeNode->getTitle()]);
+                },
+                'navTitle' => function() {
+                    return trans('Nicat-RouteTree::routetree.createNavTitle');
+                }
+            ],
+            'store' => [
+                'method' => 'post',
+                'suffix' => 'store'
+            ],
+            'show' => [
+                'method' => 'get',
+                'suffix' => 'show',
+                'parentAction' => 'index',
+                'title' => function() {
+                    return $this->routeNode->getTitle() . ': ' . $this->routeNode->getActiveValue();
+                },
+                'navTitle' => function() {
+                    return $this->routeNode->getActiveValue();
+                }
+            ],
+            'edit' => [
+                'method' => 'get',
+                'suffix' => 'edit',
+                'parentAction' => 'show',
+                'title' => function() {
+                    return trans('Nicat-RouteTree::routetree.editTitle', ['item' => $this->routeNode->getActiveValue()]);
+                },
+                'navTitle' => function() {
+                    return trans('Nicat-RouteTree::routetree.editNavTitle');
+                }
+            ],
+            'update' => [
+                'method' => 'put',
+                'suffix' => 'update',
+                'parentAction' => 'index'
+            ],
+            'destroy' => [
+                'method' => 'delete',
+                'suffix' => 'destroy',
+                'parentAction' => 'index'
+            ],
+            'get' => [
+                'method' => 'get'
+            ],
+            'post' => [
+                'method' => 'post'
+            ],
+        ];
+    }
+
     /**
      * Set the path-suffix, this action will have on top of it's node's path.
      *
@@ -151,6 +183,37 @@ class RouteAction
         return $this->action;
     }
 
+    /**
+     * Get the action-title.
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        $actionConfigs = $this->getActionConfigs();
+        if (isset($actionConfigs[$this->action]['title'])) {
+            return call_user_func_array($actionConfigs[$this->action]['title'],[]);
+        }
+        return $this->routeNode->getTitle();
+    }
+
+    /**
+     * Get the action-navigation-title.
+     *
+     * @return string
+     */
+    public function getNavTitle()
+    {
+        $actionConfigs = $this->getActionConfigs();
+        if (isset($actionConfigs[$this->action]['navTitle'])) {
+            return call_user_func_array($actionConfigs[$this->action]['navTitle'],[]);
+        }
+        if (isset($actionConfigs[$this->action]['title'])) {
+            return call_user_func_array($actionConfigs[$this->action]['title'],[]);
+        }
+        return $this->routeNode->getNavTitle();
+    }
+
 
     /**
      * Get the method to be used with this action.
@@ -159,7 +222,8 @@ class RouteAction
      */
     public function getMethod()
     {
-        return self::$possibleActions[$this->action]['method'];
+        $actionConfigs = $this->getActionConfigs();
+        return $actionConfigs[$this->action]['method'];
     }
 
     /**
@@ -170,11 +234,81 @@ class RouteAction
      */
     public function setAction($action)
     {
-        if (!isset(self::$possibleActions[$action])) {
+        $actionConfigs = $this->getActionConfigs();
+        if (!isset($actionConfigs[$action])) {
             // TODO: throw exception
         }
         $this->action = $action;
         return $this;
+    }
+
+    /**
+     * Gets an array of all hierarchical actions of this node and all parent nodes
+     * (with the root-node-action as the first element).
+     *
+     * @return RouteAction[]
+     */
+    public function getRootLineActions() {
+
+        $rootLineActions = [];
+
+        $this->accumulateRootLineActions($rootLineActions);
+
+        $rootLineActions = array_reverse($rootLineActions);
+
+        return $rootLineActions;
+    }
+
+    /**
+     * Gets an array of all hierarchical parent-nodes of this node
+     * (with the root-node as the first element).
+     *
+     * @return RouteNode[]
+     */
+    public function getParentActions() {
+
+        $parentActions = [];
+
+        $this->accumulateParentActions($parentActions);
+
+        $parentActions = array_reverse($parentActions);
+
+        return $parentActions;
+    }
+
+    /**
+     * Accumulate all parent-actions for this action.
+     *
+     * @param $rootLineActions
+     */
+    protected function accumulateRootLineActions(&$rootLineActions) {
+
+        $this->accumulateParentActions($rootLineActions);
+        if ($this->routeNode->hasParentNode()) {
+            $mostActiveRootLineAction = $this->routeNode->getParentNode()->getLowestRootLineAction();
+            if ($mostActiveRootLineAction !== false) {
+                array_push($rootLineActions, $mostActiveRootLineAction);
+                $mostActiveRootLineAction->accumulateRootLineActions($rootLineActions);
+            }
+        }
+
+    }
+
+    /**
+     * Accumulate all parent-actions for this action.
+     *
+     * @param $parentActions
+     */
+    public function accumulateParentActions(&$parentActions) {
+
+        $actionConfigs = $this->getActionConfigs();
+        if (isset($actionConfigs[$this->action]['parentAction'])) {
+            $parentActionName = $actionConfigs[$this->action]['parentAction'];
+            $parentAction = $this->routeNode->getAction($parentActionName);
+            array_push($parentActions, $parentAction);
+            $parentAction->accumulateParentActions($parentActions);
+        }
+
     }
 
     /**
@@ -386,8 +520,9 @@ class RouteAction
         }
 
         // Append the suffix for this action, if defined.
-        if (isset(RouteAction::$possibleActions[$this->action]['suffix'])) {
-            $fullRouteName .= '.' . self::$possibleActions[$this->action]['suffix'];
+        $actionConfigs = $this->getActionConfigs();
+        if (isset($actionConfigs[$this->action]['suffix'])) {
+            $fullRouteName .= '.' . $actionConfigs[$this->action]['suffix'];
         }
 
         return $fullRouteName;
