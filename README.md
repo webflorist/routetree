@@ -328,7 +328,7 @@ You can now call e.g. `route_tree()->getNode('contact')->getTitle()` to retrieve
     ]
 ```
 You can now call e.g. `route_tree()->getNode('contact')->getTitle()` to retrieve the title for that page in the current locale.
-You can also retrieve it in a specific language by stating the language as the second parameter of getTitle (e.g. `getAbstract(null, 'en')`) will always return the english title, even if the current locale is 'de'.
+You can also retrieve it in a specific language by stating the language as the second parameter of getTitle (e.g. `getTitle(null, 'en')`) will always return the english title, even if the current locale is 'de'.
 
 **Example 3: Setting a title for a RouteNode using a closure.**
 ```php 

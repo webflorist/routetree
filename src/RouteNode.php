@@ -395,6 +395,38 @@ class RouteNode {
     }
 
     /**
+     * Tries to get the action of this node, that is currently lowest
+     * in the hierarchy of root-line-actions (mostly relevant for resource actions).
+     *
+     * e.g. the edit action with path "/user/{user}/edit" is lower in the root-line
+     * as the show action with "/user/{user}", which is again lower
+     * as the index action with "/user".
+     *
+     * Returns false, if no action of the current node is currently in the rootline.
+     *
+     * @return RouteAction|bool
+     */
+    public function getLowestRootLineAction() {
+
+        $currentActionUrl = route_tree()->getCurrentAction()->getUrl();
+
+        $mostActiveRootLineAction = false;
+        $mostActiveRootLineActionUrlLength = 0;
+        foreach ($this->actions as $action) {
+            $actionUrl = $action->getUrl();
+            $actionUrlLength = strlen($actionUrl);
+
+            if ((strpos($currentActionUrl, $actionUrl) === 0) && (strlen($actionUrl) > $mostActiveRootLineActionUrlLength)) {
+                $mostActiveRootLineAction = $action;
+                $mostActiveRootLineActionUrlLength = $actionUrlLength;
+            }
+        }
+
+        return $mostActiveRootLineAction;
+
+    }
+
+    /**
      * Get the name of this node.
      *
      * @return string
@@ -618,7 +650,9 @@ class RouteNode {
 
         if ($this->hasChildNodes()) {
             foreach ($this->getChildNodes() as $nodeName => $node) {
-                return $node->nodeOrChildIsActive($parameters);
+                if ($node->nodeOrChildIsActive($parameters)) {
+                    return true;
+                }
             }
         }
 
@@ -627,17 +661,75 @@ class RouteNode {
 
     /**
      * Get the page title of this node (defaults to the ucfirst-ified node-name).
-     * 
+     *
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
      * @param string $language The language the title should be fetched for (default=current locale).
+     * @param null $action The action, whose action-specific-title should be fetched.
      * @return string
      */
-    public function getTitle($parameters=null, $language=null)
+    public function getTitle($parameters=null, $language=null, $action=null)
     {
 
-        // Try retrieving title.
-        $title = $this->getData('title',$parameters, $language);
+        $dataKey = 'title';
 
+        if (!is_null($action)) {
+            $dataKey = $action.'Title';
+        }
+
+        // Try retrieving title.
+        $title = $this->getData($dataKey,$parameters, $language);
+
+        // If no title was returned, and a $action was stated, we try to fall back to the normal 'title'.
+        if (($title === false) && !is_null($action)) {
+            $title = $this->getData('title',$parameters, $language);
+        }
+
+        return $this->processTitle($parameters, $language, $title);
+    }
+
+    /**
+     * Get the page title to be used in navigations (e.g. breadcrumbs or menus) of this node (defaults to the result of $this->getTitle()).
+     *
+     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
+     * @param string $language The language the title should be fetched for (default=current locale).
+     * @param null $action The action, whose title should be fetched.
+     * @return string
+     */
+    public function getNavTitle($parameters=null, $language=null, $action=null)
+    {
+
+        $dataKey = 'navTitle';
+
+        if (!is_null($action)) {
+            $dataKey = $action.'NavTitle';
+        }
+
+        // Try retrieving title.
+        $title = $this->getData($dataKey,$parameters, $language);
+
+        // If no title was returned, and a $action was stated, we try to fall back to the normal 'navTitle'.
+        if (($title === false) && !is_null($action)) {
+            $title = $this->getData('navTitle',$parameters, $language);
+        }
+
+        // If still not title could be determined, we fall back to the result of the $this->getTitle() call.
+        if ($title === false) {
+            return $this->getTitle($parameters, $language, $action);
+        }
+
+        return $this->processTitle($parameters, $language, $title);
+    }
+
+    /**
+     *
+     *
+     * @param $parameters
+     * @param $language
+     * @param $title
+     * @return array|mixed|string
+     */
+    protected function processTitle($parameters, $language, $title)
+    {
         // If $title is an array, and this node has a parameter, and a requested parameter was handed in $parameters,
         // we return the appropriate value, if the parameter exists as a key within $title,
         // otherwise we just return the handed-over parameter.
@@ -650,8 +742,7 @@ class RouteNode {
 
             if (isset($title[$parameters[$this->getParameter()]])) {
                 $title = $title[$parameters[$this->getParameter()]];
-            }
-            else {
+            } else {
                 $title = $parameters[$this->getParameter()];
             }
 
@@ -663,9 +754,9 @@ class RouteNode {
 
         // Per default we just return the upper-cased node-name.
         if ($title === false) {
-            $title =  ucfirst($this->name);
+            $title = ucfirst($this->name);
+            return $title;
         }
-
         return $title;
     }
 
@@ -802,17 +893,16 @@ class RouteNode {
             $language = app()->getLocale();
         }
 
+        // If no parameters were handed over, we use current route-parameters as default.
+        if (is_null($parameters)) {
+            $parameters = \Route::current()->parameters();
+        }
+
         // If this data was specifically set...
         if (isset($this->data[$key])) {
 
             // If data is a callable, we retrieve the data for this language by calling it.
             if (is_callable($this->data[$key])) {
-
-                // If no parameters were handed over, we use current route-parameters as default.
-                if (is_null($parameters)) {
-                    $parameters = \Route::current()->parameters();
-                }
-
                 return call_user_func($this->data[$key], $parameters, $language);
             }
 
@@ -824,7 +914,7 @@ class RouteNode {
         }
 
         // Try using auto-translation as next option.
-        $autoTranslatedValue = $this->performAutoTranslation($key.'.'.$this->name, $language);
+        $autoTranslatedValue = $this->performAutoTranslation($key.'.'.$this->name, $parameters, $language);
         if ($autoTranslatedValue !== false) {
             return $autoTranslatedValue;
         }
@@ -840,14 +930,14 @@ class RouteNode {
      * @param $language The language to be used for translation.
      * @return bool|string
      */
-    protected function performAutoTranslation($key, $language) {
+    protected function performAutoTranslation($key, $parameters, $language) {
 
         // Set the translation key to be used for getting the data.
         $translationKey = $this->langFile.'.'.$key;
 
         // If a translation for this language exists, we return that as the data.
         if (\Lang::hasForLocale($translationKey, $language)) {
-            return trans($translationKey, [], 'messages', $language);
+            return trans($translationKey, $parameters, 'messages', $language);
         }
 
         return false;
@@ -1026,7 +1116,7 @@ class RouteNode {
                 $pathSegment = $this->name;
 
                 // If a auto-translation segment for this language exists, we use that as path segment.
-                $autoTranslatedSegment = $this->performAutoTranslation($segmentTranslationKey, $language);
+                $autoTranslatedSegment = $this->performAutoTranslation($segmentTranslationKey, [], $language);
                 if ($autoTranslatedSegment !== false) {
                     $pathSegment = $autoTranslatedSegment;
                 }
@@ -1109,6 +1199,8 @@ class RouteNode {
         $this->inheritPath = $inheritPath;
         return $this;
     }
+
+
 
 
 }
