@@ -246,6 +246,17 @@ class RouteAction
      * Gets an array of all hierarchical actions of this node and all parent nodes
      * (with the root-node-action as the first element).
      *
+     * This is very useful for breadcrumbs.
+     *
+     * E.g. The edit action of the node 'user.comment'
+     * with path '/user/{user}/comments/{comment}/edit' consists of the following parent actions:
+     *
+     * - the default-action of the root-node with path '/'
+     * - the index-action of the node 'user' with path '/user'
+     * - the show-action of the node 'user' with path '/user/{user}'
+     * - the index action of the node 'user.comment' with path '/user/{user}/comments'
+     * - the show action of the node 'user.comment' with path '/user/{user}/comments/{comment}'
+     *
      * @return RouteAction[]
      */
     public function getRootLineActions() {
@@ -260,24 +271,7 @@ class RouteAction
     }
 
     /**
-     * Gets an array of all hierarchical parent-nodes of this node
-     * (with the root-node as the first element).
-     *
-     * @return RouteNode[]
-     */
-    public function getParentActions() {
-
-        $parentActions = [];
-
-        $this->accumulateParentActions($parentActions);
-
-        $parentActions = array_reverse($parentActions);
-
-        return $parentActions;
-    }
-
-    /**
-     * Accumulate all parent-actions for this action.
+     * Accumulate all parent actions of this and any parent nodes represented in the path for this action.
      *
      * @param $rootLineActions
      */
@@ -295,11 +289,15 @@ class RouteAction
     }
 
     /**
-     * Accumulate all parent-actions for this action.
+     * Accumulate all parent-actions within the same routeNode for this action.
+     * E.g.
+     * The action 'edit' with it's path 'user/{user}/edit' is a child of
+     * the action 'show' with it's path 'user/{user]', which is itself a child of
+     * the action 'index' with it's path 'user'.
      *
      * @param $parentActions
      */
-    public function accumulateParentActions(&$parentActions) {
+    protected function accumulateParentActions(&$parentActions) {
 
         $actionConfigs = $this->getActionConfigs();
         if (isset($actionConfigs[$this->action]['parentAction'])) {
