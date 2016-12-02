@@ -664,26 +664,11 @@ class RouteNode {
      *
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
      * @param string $language The language the title should be fetched for (default=current locale).
-     * @param null $action The action, whose action-specific-title should be fetched.
      * @return string
      */
-    public function getTitle($parameters=null, $language=null, $action=null)
+    public function getTitle($parameters=null, $language=null)
     {
-
-        $dataKey = 'title';
-
-        if (!is_null($action)) {
-            $dataKey = $action.'Title';
-        }
-
-        // Try retrieving title.
-        $title = $this->getData($dataKey,$parameters, $language);
-
-        // If no title was returned, and a $action was stated, we try to fall back to the normal 'title'.
-        if (($title === false) && !is_null($action)) {
-            $title = $this->getData('title',$parameters, $language);
-        }
-
+        $title = $this->getData('title',$parameters, $language);
         return $this->processTitle($parameters, $language, $title);
     }
 
@@ -692,29 +677,17 @@ class RouteNode {
      *
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
      * @param string $language The language the title should be fetched for (default=current locale).
-     * @param null $action The action, whose title should be fetched.
      * @return string
      */
-    public function getNavTitle($parameters=null, $language=null, $action=null)
+    public function getNavTitle($parameters=null, $language=null)
     {
 
-        $dataKey = 'navTitle';
-
-        if (!is_null($action)) {
-            $dataKey = $action.'NavTitle';
-        }
-
         // Try retrieving title.
-        $title = $this->getData($dataKey,$parameters, $language);
+        $title = $this->getData('navTitle',$parameters, $language);
 
-        // If no title was returned, and a $action was stated, we try to fall back to the normal 'navTitle'.
-        if (($title === false) && !is_null($action)) {
-            $title = $this->getData('navTitle',$parameters, $language);
-        }
-
-        // If still not title could be determined, we fall back to the result of the $this->getTitle() call.
+        // If no title could be determined, we fall back to the result of the $this->getTitle() call.
         if ($title === false) {
-            return $this->getTitle($parameters, $language, $action);
+            return $this->getTitle($parameters, $language);
         }
 
         return $this->processTitle($parameters, $language, $title);

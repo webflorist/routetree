@@ -76,11 +76,23 @@ class RouteAction
             'index' => [
                 'method' => 'get',
                 'suffix' => 'index',
+                'title' => function() {
+                    return $this->routeNode->getTitle();
+                },
+                'navTitle' => function() {
+                    return $this->routeNode->getNavTitle();
+                }
             ],
             'create' => [
                 'method' => 'get',
                 'suffix' => 'create',
                 'parentAction' => 'index',
+                'title' => function() {
+                    return trans('Nicat-RouteTree::routetree.createTitle', ['resource' => $this->routeNode->getTitle()]);
+                },
+                'navTitle' => function() {
+                    return trans('Nicat-RouteTree::routetree.createNavTitle');
+                }
             ],
             'store' => [
                 'method' => 'post',
@@ -90,11 +102,23 @@ class RouteAction
                 'method' => 'get',
                 'suffix' => 'show',
                 'parentAction' => 'index',
+                'title' => function() {
+                    return $this->routeNode->getTitle() . ': ' . $this->routeNode->getActiveValue();
+                },
+                'navTitle' => function() {
+                    return $this->routeNode->getActiveValue();
+                }
             ],
             'edit' => [
                 'method' => 'get',
                 'suffix' => 'edit',
                 'parentAction' => 'show',
+                'title' => function() {
+                    return trans('Nicat-RouteTree::routetree.editTitle', ['item' => $this->routeNode->getActiveValue()]);
+                },
+                'navTitle' => function() {
+                    return trans('Nicat-RouteTree::routetree.editNavTitle');
+                }
             ],
             'update' => [
                 'method' => 'put',
@@ -166,7 +190,11 @@ class RouteAction
      */
     public function getTitle()
     {
-        return $this->routeNode->getTitle(null, null, $this->action);
+        $actionConfigs = $this->getActionConfigs();
+        if (isset($actionConfigs[$this->action]['title'])) {
+            return call_user_func_array($actionConfigs[$this->action]['title'],[]);
+        }
+        return $this->routeNode->getTitle();
     }
 
     /**
@@ -176,8 +204,16 @@ class RouteAction
      */
     public function getNavTitle()
     {
-        return $this->routeNode->getNavTitle(null, null, $this->action);
+        $actionConfigs = $this->getActionConfigs();
+        if (isset($actionConfigs[$this->action]['navTitle'])) {
+            return call_user_func_array($actionConfigs[$this->action]['navTitle'],[]);
+        }
+        if (isset($actionConfigs[$this->action]['title'])) {
+            return call_user_func_array($actionConfigs[$this->action]['title'],[]);
+        }
+        return $this->routeNode->getNavTitle();
     }
+
 
     /**
      * Get the method to be used with this action.
