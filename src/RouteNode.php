@@ -543,17 +543,15 @@ class RouteNode {
      * Get the path for this node (for a specific language).
      * If no language is stated, the current locale is used.
      *
-     * @param string $language
+     * @param string $locale
      * @return string
      */
-    public function getPath($language = null)
+    public function getPath($locale = null)
     {
         // If no language is specifically stated, we use the current locale
-        if (is_null($language)) {
-            $language = app()->getLocale();
-        }
+        RouteTree::establishLocale($locale);
 
-        return $this->paths[$language];
+        return $this->paths[$locale];
     }
 
     /**
@@ -663,45 +661,45 @@ class RouteNode {
      * Get the page title of this node (defaults to the ucfirst-ified node-name).
      *
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
-     * @param string $language The language the title should be fetched for (default=current locale).
+     * @param string $locale The language the title should be fetched for (default=current locale).
      * @return string
      */
-    public function getTitle($parameters=null, $language=null)
+    public function getTitle($parameters=null, $locale=null)
     {
-        $title = $this->getData('title',$parameters, $language);
-        return $this->processTitle($parameters, $language, $title);
+        $title = $this->getData('title',$parameters, $locale);
+        return $this->processTitle($parameters, $locale, $title);
     }
 
     /**
      * Get the page title to be used in navigations (e.g. breadcrumbs or menus) of this node (defaults to the result of $this->getTitle()).
      *
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
-     * @param string $language The language the title should be fetched for (default=current locale).
+     * @param string $locale The language the title should be fetched for (default=current locale).
      * @return string
      */
-    public function getNavTitle($parameters=null, $language=null)
+    public function getNavTitle($parameters=null, $locale=null)
     {
 
         // Try retrieving title.
-        $title = $this->getData('navTitle',$parameters, $language);
+        $title = $this->getData('navTitle',$parameters, $locale);
 
         // If no title could be determined, we fall back to the result of the $this->getTitle() call.
         if ($title === false) {
-            return $this->getTitle($parameters, $language);
+            return $this->getTitle($parameters, $locale);
         }
 
-        return $this->processTitle($parameters, $language, $title);
+        return $this->processTitle($parameters, $locale, $title);
     }
 
     /**
-     *
+     * Processes the value, that was returned as the title.
      *
      * @param $parameters
-     * @param $language
+     * @param $locale
      * @param $title
      * @return array|mixed|string
      */
-    protected function processTitle($parameters, $language, $title)
+    public function processTitle($parameters, $locale, $title)
     {
         // If $title is an array, and this node has a parameter, and a requested parameter was handed in $parameters,
         // we return the appropriate value, if the parameter exists as a key within $title,
@@ -710,7 +708,7 @@ class RouteNode {
 
             // If this node or a child node is active, we can try to obtain any missing parameters from the current url.
             if ($this->nodeOrChildIsActive()) {
-                $parameters = route_tree()->getCurrentAction()->autoFillPathParameters($parameters, $language, false);
+                $parameters = route_tree()->getCurrentAction()->autoFillPathParameters($parameters, $locale, false);
             }
 
             if (isset($title[$parameters[$this->getParameter()]])) {
@@ -856,38 +854,45 @@ class RouteNode {
      *
      * @param $key
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters the data should be fetched for (default=current route-parameters).
-     * @param string $language The language the data should be fetched for (default=current locale).
+     * @param string $locale The language the data should be fetched for (default=current locale).
      * @return mixed
      */
-    public function getData($key, $parameters=null, $language=null)
+    public function getData($key, $parameters=null, $locale=null, $action=null)
     {
         // If no language is specifically stated, we use the current locale
-        if (is_null($language)) {
-            $language = app()->getLocale();
-        }
+        RouteTree::establishLocale($locale);
 
         // If no parameters were handed over, we use current route-parameters as default.
-        if (is_null($parameters)) {
-            $parameters = \Route::current()->parameters();
+        RouteTree::establishRouteParameters($parameters);
+
+        $array_key = $key;
+        // If an action was explicitly stated, we use "$key_$action" as the array-key we are looking for.
+        if ($action !== null) {
+            $array_key = $key.'_'.$action;
         }
 
         // If this data was specifically set...
-        if (isset($this->data[$key])) {
+        if (isset($this->data[$array_key])) {
 
             // If data is a callable, we retrieve the data for this language by calling it.
-            if (is_callable($this->data[$key])) {
-                return call_user_func($this->data[$key], $parameters, $language);
+            if (is_callable($this->data[$array_key])) {
+                return call_user_func($this->data[$array_key], $parameters, $locale);
             }
 
             // If data is an array and contains an element for this language, we return that.
-            if (is_array($this->data[$key]) && isset($this->data[$key][$language])) {
-                return $this->data[$key][$language];
+            if (is_array($this->data[$array_key]) && isset($this->data[$array_key][$locale])) {
+                return $this->data[$array_key][$locale];
             }
 
         }
 
         // Try using auto-translation as next option.
-        $autoTranslatedValue = $this->performAutoTranslation($key.'.'.$this->name, $parameters, $language);
+        $translationKey = $key.'.'.$this->name;
+        // If an action was explicitly stated, we append "_$action" to the translation-key.
+        if ($action !== null) {
+            $translationKey .= '_'.$action;
+        }
+        $autoTranslatedValue = $this->performAutoTranslation($translationKey, $parameters, $locale);
         if ($autoTranslatedValue !== false) {
             return $autoTranslatedValue;
         }
@@ -899,8 +904,9 @@ class RouteNode {
     /**
      * Tries to auto-translate a stated key into a stated language.
      *
-     * @param $key The translation-key to be translated.
-     * @param $language The language to be used for translation.
+     * @param string $key The translation-key to be translated.
+     * @param array $parameters An associative array of [parameterName => parameterValue] that should be passed to the translation (default=current route-parameters).
+     * @param string $language The language to be used for translation.
      * @return bool|string
      */
     protected function performAutoTranslation($key, $parameters, $language) {

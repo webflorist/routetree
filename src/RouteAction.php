@@ -76,10 +76,10 @@ class RouteAction
             'index' => [
                 'method' => 'get',
                 'suffix' => 'index',
-                'title' => function() {
+                'defaultTitle' => function() {
                     return $this->routeNode->getTitle();
                 },
-                'navTitle' => function() {
+                'defaultNavTitle' => function() {
                     return $this->routeNode->getNavTitle();
                 }
             ],
@@ -87,10 +87,10 @@ class RouteAction
                 'method' => 'get',
                 'suffix' => 'create',
                 'parentAction' => 'index',
-                'title' => function() {
+                'defaultTitle' => function() {
                     return trans('Nicat-RouteTree::routetree.createTitle', ['resource' => $this->routeNode->getTitle()]);
                 },
-                'navTitle' => function() {
+                'defaultNavTitle' => function() {
                     return trans('Nicat-RouteTree::routetree.createNavTitle');
                 }
             ],
@@ -102,10 +102,10 @@ class RouteAction
                 'method' => 'get',
                 'suffix' => 'show',
                 'parentAction' => 'index',
-                'title' => function() {
+                'defaultTitle' => function() {
                     return $this->routeNode->getTitle() . ': ' . $this->routeNode->getActiveValue();
                 },
-                'navTitle' => function() {
+                'defaultNavTitle' => function() {
                     return $this->routeNode->getActiveValue();
                 }
             ],
@@ -113,10 +113,10 @@ class RouteAction
                 'method' => 'get',
                 'suffix' => 'edit',
                 'parentAction' => 'show',
-                'title' => function() {
+                'defaultTitle' => function() {
                     return trans('Nicat-RouteTree::routetree.editTitle', ['item' => $this->routeNode->getActiveValue()]);
                 },
-                'navTitle' => function() {
+                'defaultNavTitle' => function() {
                     return trans('Nicat-RouteTree::routetree.editNavTitle');
                 }
             ],
@@ -184,33 +184,66 @@ class RouteAction
     }
 
     /**
-     * Get the action-title.
+     * Get the title of this action.
      *
+     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
+     * @param string $locale The language the title should be fetched for (default=current locale).
      * @return string
      */
-    public function getTitle()
+    public function getTitle($parameters=null, $locale=null)
     {
-        $actionConfigs = $this->getActionConfigs();
-        if (isset($actionConfigs[$this->action]['title'])) {
-            return call_user_func_array($actionConfigs[$this->action]['title'],[]);
+
+        // Try to get a title specifically set for this action.
+        $title = $this->routeNode->getData('title',$parameters, $locale, $this->action);
+        if ($title !== false) {
+            return $this->routeNode->processTitle($parameters, $locale, $title);
         }
+
+        // Next try calling the closure for a default-title configured within $this->getActionConfigs().
+        $actionConfigs = $this->getActionConfigs();
+        if (isset($actionConfigs[$this->action]['defaultTitle'])) {
+            return call_user_func_array($actionConfigs[$this->action]['defaultTitle'],[]);
+        }
+
+        // The default-fallback is the RouteNode's title.
         return $this->routeNode->getTitle();
     }
 
     /**
      * Get the action-navigation-title.
      *
+     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
+     * @param string $locale The language the title should be fetched for (default=current locale).
      * @return string
      */
-    public function getNavTitle()
+    public function getNavTitle($parameters=null, $locale=null)
     {
+
+        // Try to get a navTitle specifically set for this action.
+        $title = $this->routeNode->getData('navTitle',$parameters, $locale, $this->action);
+        if ($title !== false) {
+            return $this->routeNode->processTitle($parameters, $locale, $title);
+        }
+
+        // Next try calling the closure for a default-navTitle configured within $this->getActionConfigs().
         $actionConfigs = $this->getActionConfigs();
-        if (isset($actionConfigs[$this->action]['navTitle'])) {
-            return call_user_func_array($actionConfigs[$this->action]['navTitle'],[]);
+        if (isset($actionConfigs[$this->action]['defaultNavTitle'])) {
+            return call_user_func_array($actionConfigs[$this->action]['defaultNavTitle'],[]);
         }
-        if (isset($actionConfigs[$this->action]['title'])) {
-            return call_user_func_array($actionConfigs[$this->action]['title'],[]);
+
+        // Try to get a title specifically set for this action.
+        $title = $this->routeNode->getData('title',$parameters, $locale, $this->action);
+        if ($title !== false) {
+            return $this->routeNode->processTitle($parameters, $locale, $title);
         }
+
+        // Next try calling the closure for a default-title configured within $this->getActionConfigs().
+        $actionConfigs = $this->getActionConfigs();
+        if (isset($actionConfigs[$this->action]['defaultTitle'])) {
+            return call_user_func_array($actionConfigs[$this->action]['defaultTitle'],[]);
+        }
+
+        // The default-fallback is the RouteNode's navTitle.
         return $this->routeNode->getNavTitle();
     }
 
@@ -337,18 +370,16 @@ class RouteAction
      * Get the URL to this action.
      *
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
-     * @param string $language The language this url should be generated for (default=current locale).
+     * @param string $locale The language this url should be generated for (default=current locale).
      * @return mixed
      * @throws UrlParametersMissingException
      */
-    public function getUrl($parameters=null, $language=null) {
+    public function getUrl($parameters=null, $locale=null) {
 
         // If no language is specifically stated, we use the current locale.
-        if (is_null($language)) {
-            $language = app()->getLocale();
-        }
+        RouteTree::establishLocale($locale);
 
-        return route($this->generateRouteName($language), $this->autoFillPathParameters($parameters, $language, true));
+        return route($this->generateRouteName($locale), $this->autoFillPathParameters($parameters, $locale, true));
 
     }
 
@@ -402,18 +433,16 @@ class RouteAction
      * Returns an array of all path-parameters needed for this RouteAction
      * These are basically all path-segments enclosed in curly braces.
      *
-     * @param null $language
+     * @param null $locale
      * @return array
      */
-    protected function getPathParameters($language=null) {
+    protected function getPathParameters($locale=null) {
 
         // If no language is specifically stated, we use the current locale.
-        if (is_null($language)) {
-            $language = app()->getLocale();
-        }
+        RouteTree::establishLocale($locale);
 
         $parameters = [];
-        $pathSegments = explode('/',$this->paths[$language]);
+        $pathSegments = explode('/',$this->paths[$locale]);
         foreach ($pathSegments as $segment) {
             if ((substr($segment,0,1) === '{') && (substr($segment,-1) === '}')) {
                 array_push($parameters, str_replace('{','',str_replace('}','',$segment)));
@@ -544,6 +573,38 @@ class RouteAction
                 unset($requiredParameters[$key]);
             }
         }
+    }
+
+    /**
+     * Checks, if the current action is active (optionally with the desired parameters).
+     *
+     * @param null $parameters
+     * @return string
+     */
+    public function isActive($parameters=null)
+    {
+
+        // Check, if the current action is identical to this node.
+        if (route_tree()->getCurrentAction() === $this) {
+
+            // If no parameters are specifically requested, we immediately return true.
+            if (is_null($parameters)) {
+                return true;
+            }
+
+            // If a set of parameters should also be checked, we get the current route-parameters,
+            // check if each one is indeed set, and return the boolean result.
+            $currentParameters = \Route::current()->parameters();
+            $allParametersSet = true;
+            foreach ($parameters as $desiredParameterName => $desiredParameterValue) {
+                if (!isset($currentParameters[$desiredParameterName]) || ($currentParameters[$desiredParameterName] !== $desiredParameterValue)) {
+                    $allParametersSet = false;
+                }
+            }
+            return $allParametersSet;
+        }
+
+        return false;
     }
 
 }

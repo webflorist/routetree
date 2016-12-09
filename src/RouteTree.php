@@ -341,6 +341,28 @@ class RouteTree {
         return false;
 
     }
+
+    /**
+     * Fills $locale with the current locale, if it is null.
+     *
+     * @param $locale
+     */
+    public static function establishLocale(&$locale) {
+        if (is_null($locale)) {
+            $locale = app()->getLocale();
+        }
+    }
+
+    /**
+     * Fills $parameters with the current route-parameters, if it is null.
+     *
+     * @param $parameters
+     */
+    public static function establishRouteParameters(&$parameters) {
+        if (is_null($parameters)) {
+            $parameters = \Route::current()->parameters();
+        }
+    }
     
 
 }

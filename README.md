@@ -359,6 +359,18 @@ You could now call e.g. `route_tree()->getNode('contact')->getTitle(['team' => '
 
 If `getTitle()` is called on a RouteNode, which does not have a title set, an auto-translation is tried (see below for how that works). If the title could not be auto-translated, the upper-cased node-name itself will be used (e.g. The title would then automatically be `Contact`).
 
+###### **'navTitle'**:
+
+In many applications you may want to use a different/shorter title in menus or breadcrumbs.
+
+RouteTree provides the this functionality out of the box. Just see the description of the 'title' functionality above and change all references of `title` into `navTitle`.
+
+###### ** Action specific (nav-)titles (e.g. 'title_show', 'title_edit', 'navTitle_show', 'navTitle_edit') **:
+
+You can also define action-specific titles or navTitles by appending an underscore and the action name to 'title' or 'navTitle'.
+
+The could now call e.g. `route_tree()->getNode('contact')->getAction('show'))` to retrieve the title for the `show`-action of the `contact`-node.
+
 ###### **'values'**:
 
 [TODO]
@@ -538,6 +550,20 @@ return [
 With this setup, the segments defined in the language-files will automatically be used for the route-paths of their corresponding nodes.
 Also the title will be fetched with each getTitle-call submitted for a specific node (e.g. `route_tree()->getNode('company.team.service')->getTitle()` would return `Büro`, if the current locale is german. 
 The same thing is possible with the abstract (or any other custom parameter). (e.g. `route_tree()->getNode('company.team.service')->getAbstract()` would return `Hier finden Sie unsere Service-Mitarbeiter.`, if the current locale is german.
+
+You can also set action-specific titles or navTitles via auto-translation by appending an underscore and the action to the node-name. This is very useful for resource nodes. Here is an example:
+
+```php
+<?php
+return [
+    'title' => [
+        'users' => 'Users',
+        'users_create' => 'Create news user',
+        'users_show' => 'User :userName',
+        'users_edit' => 'Edit user :userName',
+    ],
+];
+```
 
 ### Important RouteTree-methods
 
