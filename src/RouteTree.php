@@ -9,6 +9,7 @@
 namespace Nicat\RouteTree;
 
 use Illuminate\Routing\Route;
+use Nicat\RouteTree\Exceptions\NodeNotFoundException;
 
 class RouteTree {
 
@@ -202,7 +203,8 @@ class RouteTree {
      * Get's the RouteNode via it's ID.
      *
      * @param string $nodeId
-     * @return bool|RouteNode|null
+     * @return RouteNode
+     * @throws NodeNotFoundException
      */
     public function getNode($nodeId) {
 
@@ -230,7 +232,7 @@ class RouteTree {
 
                 // If it was not found, it is clear, that no node exists for $path.
                 // So we return false.
-                return false;
+                throw new NodeNotFoundException("Node with ID '".$nodeId."' could not be found.");
             }
         }
 
