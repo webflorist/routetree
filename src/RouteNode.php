@@ -896,6 +896,11 @@ class RouteNode {
         if ($autoTranslatedValue !== false) {
             return $autoTranslatedValue;
         }
+        
+        //If we have no translation but data are exists return plain data
+        if (isset($this->data[$key])) {
+            return $this->data[$key];
+        }
 
         // Per default we return false to indicate no data was found.
         return false;
