@@ -821,20 +821,21 @@ class RouteNode {
      * Set custom data.
      * 
      * @param $key
-     * @param \Callable|array[]|mixed $data Can be either a callable, a string (that is set for every language) or an associative array (language => value).
+     * @param \Callable|array[]|mixed $data Can be either a callable, an associative array (language => value), or a string/bool (that is should be used for every language).
      * @return RouteNode
      */
     public function setData($key,$data)
     {
-        // If $data is a string, we set it's value for each language.
-        if (is_string($data)) {
+
+        // If $data is callable or already a (language-)array, we set it directly.
+        if (is_callable($data) || is_array($data)) {
+            $this->data[$key] = $data;
+        }
+        // In all other cases ($data is a string or bool), we set it's value for each language.
+        else {
             foreach (\Config::get('app.locales') as $language => $fullLanguage) {
                 $this->data[$key][$language] = $data;
             }
-        }
-        // In all other cases ($data is callable or array), we overtake $data as is.
-        else {
-            $this->data[$key] = $data;
         }
 
         return $this;
@@ -855,6 +856,7 @@ class RouteNode {
      * @param $key
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters the data should be fetched for (default=current route-parameters).
      * @param string $locale The language the data should be fetched for (default=current locale).
+     * @param null $action If an action is stated, you can set data action specific (e.g. "title_show" in node-generation or "mynode_show" with auto-translation).
      * @return mixed
      */
     public function getData($key, $parameters=null, $locale=null, $action=null)
@@ -895,11 +897,6 @@ class RouteNode {
         $autoTranslatedValue = $this->performAutoTranslation($translationKey, $parameters, $locale);
         if ($autoTranslatedValue !== false) {
             return $autoTranslatedValue;
-        }
-        
-        //If we have no translation but data are exists return plain data
-        if (isset($this->data[$key])) {
-            return $this->data[$key];
         }
 
         // Per default we return false to indicate no data was found.
