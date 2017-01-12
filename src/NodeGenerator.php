@@ -81,15 +81,13 @@ class NodeGenerator
                 case 'resource':
                     $this->processResource($value, $routeNode);
                     break;
+                case 'children':
+                    $this->processChildren($value, $routeNode);
+                    break;
                 default:
                     $routeNode->setData($key, $value);
-
             }
-
         }
-
-        // Process Children, if present.
-        $this->processChildren($nodeData, $routeNode);
 
         return $routeNode;
     }
@@ -204,15 +202,13 @@ class NodeGenerator
     /**
      * Generate nodes for all children defined in an array.
      *
-     * @param $nodeData
+     * @param $children
      * @param $routeNode
      */
-    private function processChildren($nodeData, $routeNode)
+    private function processChildren($children, $routeNode)
     {
-        if (isset($nodeData['children']) && (count($nodeData['children']) > 0)) {
-            foreach ($nodeData['children'] as $childName => $childData) {
-                $this->generateNode($childName, $routeNode, $childData);
-            }
+        foreach ($children as $childName => $childData) {
+            $this->generateNode($childName, $routeNode, $childData);
         }
     }
 
