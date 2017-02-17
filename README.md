@@ -452,8 +452,8 @@ Auto-translation is used with several functions of routetree and provides an eas
 The basic concept is to map the hierarchy of the route-tree to a folder-structure within the localization-folder. Each route-node is represented as a folder, and within the folder for a node resides a file, that contains all auto-translation-information. 
 
 There are 2 relevant config-items in the `routetree.php`-config-file published by this package:
-* **localization.baseFolder**: This is the base-folder for the localization-files- and folders for route-tree. The default value is `pages`, which translates to the folder `\resources\lang\%locale%\pages`.
-* **localization.fileName**: This is the name of the files, route-tree should use for it's auto-translation functionality. The default value is `pages`, which means information on all 1st-level-pages should be placed in this file: `\resources\lang\%locale%\pages\pages.php`.
+* **localization.base_folder**: This is the base-folder for the localization-files- and folders for route-tree. The default value is `pages`, which translates to the folder `\resources\lang\%locale%\pages`.
+* **localization.file_name**: This is the name of the files, route-tree should use for it's auto-translation functionality. The default value is `pages`, which means information on all 1st-level-pages should be placed in this file: `\resources\lang\%locale%\pages\pages.php`.
 
 **Example:**
 Let's assume, you have defined the following route-tree-array (any actions or other options are missing for simplicity's sake):

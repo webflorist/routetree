@@ -453,7 +453,7 @@ class RouteNode {
     protected function setLangFile() {
 
         // Set the base-folder for localization-files as stated in the config.
-        $this->langFile = config('routetree.localization.baseFolder').'/';
+        $this->langFile = config('routetree.localization.base_folder').'/';
 
         // Every parent node is a subdirectory of the pages-directory.
         // So we just get the full name of the parent node (if one exists),
@@ -463,7 +463,7 @@ class RouteNode {
         }
 
         // Finally append the file-name for route-tree related translations as set in the config.
-        $this->langFile .= config('routetree.localization.fileName');
+        $this->langFile .= config('routetree.localization.file_name');
 
     }
 

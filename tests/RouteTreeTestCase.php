@@ -40,12 +40,12 @@ abstract class RouteTreeTestCase extends TestCase
             /*
              * The base-folder for translations (optionally including any namespace)
              */
-            'baseFolder'  => 'RouteTreeTests::pages',
+            'base_folder'  => 'RouteTreeTests::pages',
 
             /*
              * The name of the file, in which auto-translations reside.
              */
-            'fileName' => 'pages',
+            'file_name' => 'pages',
 
         ],
 
