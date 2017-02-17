@@ -191,12 +191,13 @@ class RouteTree {
      * @return bool
      */
     public function doesNodeExist($nodeId) {
-        if (is_a($this->getNode($nodeId), RouteNode::class)) {
-            return true;
+        try {
+            $this->getNode($nodeId);
         }
-        else {
+        catch (NodeNotFoundException $exception) {
             return false;
         }
+        return true;
     }
 
     /**
