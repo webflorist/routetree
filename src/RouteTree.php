@@ -360,11 +360,14 @@ class RouteTree {
      * Fills $parameters with the current route-parameters, if it is null.
      *
      * @param $parameters
+     * @return array
      */
     public static function establishRouteParameters(&$parameters) {
-        if (is_null($parameters)) {
-            $parameters = \Route::current()->parameters();
+        if (is_null($parameters) and  !is_null(\Route::current())) {
+            return $parameters = \Route::current()->parameters();
         }
+
+        return $parameters = [];
     }
     
 
