@@ -123,6 +123,10 @@ class NodeGenerator
             $routeAction->setUses($actionData['uses']);
         }
 
+        if (isset($actionData['middleware'])) {
+            $routeAction->addMiddlewareFromArray($actionData['middleware']);
+        }
+
         $node->addAction($routeAction);
     }
 

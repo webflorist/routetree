@@ -9,9 +9,12 @@
 namespace Nicat\RouteTree;
 
 use Nicat\RouteTree\Exceptions\UrlParametersMissingException;
+use Nicat\RouteTree\Traits\CanHaveMiddleware;
 
 class RouteAction
 {
+
+    use CanHaveMiddleware;
 
     /**
      * The route-node this action belongs to.
@@ -511,14 +514,16 @@ class RouteAction
     private function compileMiddleware()
     {
 
-        $compiledMiddleware = [];
-
         // Get the middleware from the node.
-        $nodeMiddleware = $this->routeNode->getMiddleware();
+        $middleware = $this->routeNode->getMiddleware();
 
-        if (count($nodeMiddleware)>0) {
+        // Merge it with middleware set within this action.
+        $middleware = array_merge($middleware, $this->getMiddleware());
 
-            foreach ($nodeMiddleware as $middlewareName => $middlewareData) {
+        // Compile it into laravel-syntax.
+        $compiledMiddleware = [];
+        if (count($middleware)>0) {
+            foreach ($middleware as $middlewareName => $middlewareData) {
                 $compiledMiddleware[$middlewareName] = $middlewareName;
                 if (isset($middlewareData['parameters']) && (count($middlewareData['parameters'])>0)) {
                     $compiledMiddleware[$middlewareName] .= ':' . implode(',',$middlewareData['parameters']);

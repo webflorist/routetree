@@ -1498,6 +1498,17 @@ class RouteGenerationTest extends RouteTreeTestCase
         $this->nodeTree = [
             'page' => [
                 'index' => ['uses' => 'TestController@get'],
+                'store' => [
+                    'uses' => 'TestController@store',
+                    'middleware' => [
+                        'test4' => [
+                            'parameters' => [
+                                'parameter1' => 'value5',
+                                'parameter2' => 'value6'
+                            ]
+                        ]
+                    ]
+                ],
                 'middleware' => [
                     'test3' => [
                         'parameters' => [
@@ -1574,6 +1585,42 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'path' => '/en/page',
+                    'title' => 'Page'
+                ],
+            ],
+            "de.page.store" => [
+                "method" => "POST",
+                "uri" => "de/page",
+                "action" => 'RouteTreeTests\Controllers\TestController@store',
+                "middleware" => [
+                    'test1' => 'test1:value1,value2',
+                    'test3' => 'test3:value3,value4',
+                    'test4' => 'test4:value5,value6'
+                ],
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'store',
+                    'method' => 'POST',
+                    'path' => '/de/page',
+                    'title' => 'Page'
+                ],
+            ],
+            "en.page.store" => [
+                "method" => "POST",
+                "uri" => "en/page",
+                "action" => 'RouteTreeTests\Controllers\TestController@store',
+                "middleware" => [
+                    'test1' => 'test1:value1,value2',
+                    'test3' => 'test3:value3,value4',
+                    'test4' => 'test4:value5,value6'
+                ],
+                "content" => [
+                    'id' => 'page',
+                    'controller' => 'test',
+                    'function' => 'store',
+                    'method' => 'POST',
                     'path' => '/en/page',
                     'title' => 'Page'
                 ],

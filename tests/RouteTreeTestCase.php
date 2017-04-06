@@ -7,6 +7,7 @@ use Orchestra\Testbench\TestCase;
 use RouteTreeTests\Middleware\Test1Middleware;
 use RouteTreeTests\Middleware\Test2Middleware;
 use RouteTreeTests\Middleware\Test3Middleware;
+use RouteTreeTests\Middleware\Test4Middleware;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class RouteTreeTestCase extends TestCase
@@ -80,6 +81,7 @@ abstract class RouteTreeTestCase extends TestCase
         $this->app['router']->middleware('test1', Test1Middleware::class);
         $this->app['router']->middleware('test2', Test2Middleware::class);
         $this->app['router']->middleware('test3', Test3Middleware::class);
+        $this->app['router']->middleware('test4', Test4Middleware::class);
 
     }
 

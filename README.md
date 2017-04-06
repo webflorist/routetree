@@ -179,7 +179,7 @@ The middlewares that should be attached to all generated routes for this node. T
     'contact' => [
         'index' => ['uses' => 'ContactController@index'],
         'middleware' => [
-            'auth' => ['inherit' => false,
+            'auth' => ['inherit' => false],
             'role' => ['parameters' => ['editor','admin']]
         ],
         'children' => [
@@ -194,6 +194,27 @@ The middlewares that should be attached to all generated routes for this node. T
 ```
 In this example the `index` action of the `contact`-node will have 2 middlewares attached: `auth` with no parameters and `role` with the parameters `editor,admin`.
 It's child node `support` will inherit the `role` middleware from it's parent, but not the `auth` middleware, because it has `inherit` set to  `false`. Additionally it will have the middleware `throttle` attached to it`s route.
+
+If you do not want to apply a middleware to all actions of a RouteNode, you can also set it within the specific action-array. Here is an example:
+
+```php 
+    'contact' => [
+        'index' => [
+            'uses' => 'ContactController@index'
+         ],
+        'show' => [
+            'uses' => 'ContactController@show',
+            'middleware' => [
+                'throttle' => []
+            ]
+         ],
+        'middleware' => [
+            'auth' => []
+        ]
+    ]
+```
+
+In this example, the `auth` middleware will be attached to both the `show`- and `index`-actions, while the middleware `throttle` will only be attached to the `show` action.
 
 ###### **'namespace'**:
 
