@@ -20,12 +20,12 @@ if ( ! function_exists('route_node_url()')) {
      * Generate an URL to the action of a route-node.
      *
      * @param string $nodeId The node-id for which this url is generated (default=current node).
-     * @param string $action The node-action for which this url is generated (default='index').
+     * @param string $action The node-action for which this url is generated (default='index|get').
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
      * @param string $language The language this url should be generated for (default=current locale).
      * @return string
      */
-    function route_node_url($nodeId=null, $action='index', $parameters = null, $language=null)
+    function route_node_url($nodeId=null, $action=null, $parameters = null, $language=null)
     {
         if (is_null($nodeId)) {
             $node = route_tree()->getCurrentNode();
@@ -33,6 +33,16 @@ if ( ! function_exists('route_node_url()')) {
         else {
             $node = route_tree()->getNode($nodeId);
         }
+
+        if (is_null($action)) {
+            if ($node->hasAction('index')) {
+                $action = 'index';
+            }
+            else if ($node->hasAction('get')) {
+                $action = 'get';
+            }
+        }
+
         return $node->getUrlByAction($action, $parameters, $language);
     }
 }
