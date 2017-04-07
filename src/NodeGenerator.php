@@ -116,7 +116,7 @@ class NodeGenerator
         else if (isset($actionData['redirect'])) {
             $redirectTo = $actionData['redirect'];
             $routeAction->setClosure(function () use($redirectTo) {
-                return redirect()->route(\App::getLocale().'.'.$redirectTo.'.index');
+                return redirect()->to(route_node_url($redirectTo));
             });
         }
         else if (isset($actionData['uses'])) {
