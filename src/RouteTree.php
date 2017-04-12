@@ -87,18 +87,27 @@ class RouteTree {
     /**
      * Get the currently active node.
      *
+     * @param string $default
      * @return RouteNode|null
      */
-    public function getCurrentNode() {
+    public function getCurrentNode($default='') {
+        if ($this->pageNotFound()) {
+            return  $this->getNodeByRouteName($default);
+        }
         return $this->currentAction->getRouteNode();
     }
 
     /**
      * Get the currently active action.
      *
+     * @param string $default
+     * @param string $defaultAction
      * @return RouteAction|null
      */
-    public function getCurrentAction() {
+    public function getCurrentAction($default = '', $defaultAction = 'index') {
+        if ($this->pageNotFound()) {
+            return  $this->getNodeByRouteName($default)->getAction($defaultAction);
+        }
         return $this->currentAction;
     }
 
@@ -368,6 +377,16 @@ class RouteTree {
         }
 
         return $parameters = [];
+    }
+
+    /**
+     * Check if we have a currentAction else we have possible a 404
+     *
+     * @return bool
+     */
+    public function pageNotFound()
+    {
+        return $this->currentAction ? false : true;
     }
     
 
