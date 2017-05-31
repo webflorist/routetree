@@ -88,11 +88,13 @@ class RouteTreeMiddleware
                     return redirect()->to(\App::getLocale());
                 }
 
-                // Otherwise, we try finding an appropriate path
+                // Otherwise, we try finding an appropriate path of any language
                 // using the paths registered with the RouteTree service.
                 foreach ($this->routeTree->getRegisteredPathsByMethod('get') as $path => $actions) {
-                    if (strpos($path, '/' . $request->path()) !== false) {
-                        return redirect()->to($path);
+                    foreach (config('app.locales') as $locale => $language) {
+                        if (strpos($path, $locale . '/' . $request->path()) !== false) {
+                            return redirect()->to($path);
+                        }
                     }
                 }
 
