@@ -92,7 +92,7 @@ class RouteTreeMiddleware
                 // using the paths registered with the RouteTree service.
                 foreach ($this->routeTree->getRegisteredPathsByMethod('get') as $path => $actions) {
                     foreach (config('app.locales') as $locale => $language) {
-                        if (strpos($path, $locale . '/' . $request->path()) !== false) {
+                        if (strpos($path, $locale . '/' . $request->path()) === 0) {
                             return redirect()->to($path);
                         }
                     }
