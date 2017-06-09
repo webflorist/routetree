@@ -71,7 +71,8 @@ class RouteTreeMiddleware
             $currentRoute = \Route::getRoutes()->match($request);
 
             // Find out and set the currently active action.
-            $currentAction = $this->routeTree->getActionByMethodAndRoute($request->method(), $currentRoute);
+            $currentAction = $this->routeTree->getActionByRoute($currentRoute);
+
             if (is_a($currentAction,RouteAction::class)) {
                 $this->routeTree->setCurrentAction($currentAction);
             }
@@ -90,13 +91,17 @@ class RouteTreeMiddleware
 
                 // Otherwise, we try finding an appropriate path of any language
                 // using the paths registered with the RouteTree service.
-                foreach ($this->routeTree->getRegisteredPathsByMethod('get') as $path => $actions) {
-                    foreach (config('app.locales') as $locale => $language) {
-                        if (strpos($path, $locale . '/' . $request->path()) === 0) {
-                            return redirect()->to($path);
-                        }
+                $foundPath = null;
+                $this->routeTree->getRegisteredRoutesByMethod('get')->each(function ($routeData) use (&$foundPath, $request) {
+                    if (strpos($routeData['path'], $routeData['language'] . '/' . $request->path()) === 0) {
+                        $foundPath = $routeData['path'];
+                        return false;
                     }
+                });
+                if (!is_null($foundPath)) {
+                    return redirect()->to($foundPath);
                 }
+
 
             }
 

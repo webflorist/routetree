@@ -8,6 +8,7 @@
 
 namespace Nicat\RouteTree;
 
+use Illuminate\Routing\Route;
 use Nicat\RouteTree\Exceptions\UrlParametersMissingException;
 use Nicat\RouteTree\Traits\CanHaveMiddleware;
 
@@ -439,7 +440,7 @@ class RouteAction
      * @param null $locale
      * @return array
      */
-    protected function getPathParameters($locale=null) {
+    public function getPathParameters($locale=null) {
 
         // If no language is specifically stated, we use the current locale.
         RouteTree::establishLocale($locale);
@@ -496,11 +497,12 @@ class RouteAction
             $this->paths[$language]  = $path;
 
             // Now register the route with laravel.
-            \Route::$method($path, $action);
+            /** @var Route $route */
+            $route = \Route::$method($path, $action);
 
-            // And tell the RouteTree service about this registered route,
+            // And register the generated route with the RouteTree service about this registered route,
             // so it can manage a static list.
-            route_tree()->registerPath($path, $this);
+            route_tree()->registerRoute($route, $this, $language);
 
         }
         
@@ -543,21 +545,21 @@ class RouteAction
     private function generateRouteName($language)
     {
 
-        // A full route name always starts with the language-key.
-        $fullRouteName = $language;
+        // A route name always starts with the language-key.
+        $routeName = $language;
 
         // Then we append the id of the route-node.
         if (strlen($this->routeNode->getId()) > 0) {
-            $fullRouteName .= '.' . $this->routeNode->getId();
+            $routeName .= '.' . $this->routeNode->getId();
         }
 
         // Append the suffix for this action, if defined.
         $actionConfigs = $this->getActionConfigs();
         if (isset($actionConfigs[$this->action]['suffix'])) {
-            $fullRouteName .= '.' . $actionConfigs[$this->action]['suffix'];
+            $routeName .= '.' . $actionConfigs[$this->action]['suffix'];
         }
 
-        return $fullRouteName;
+        return $routeName;
     }
 
     /**

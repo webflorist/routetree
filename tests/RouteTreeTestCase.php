@@ -136,7 +136,7 @@ abstract class RouteTreeTestCase extends TestCase
         ksort($result);
         ksort($this->expectedResult);
 
-        // Assert, that expected and actual routes-array are qequal.
+        // Assert, that expected and actual routes-array are equal.
         $this->assertEquals(
             $result,
             $this->expectedResult

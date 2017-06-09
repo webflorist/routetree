@@ -9,7 +9,9 @@
 namespace Nicat\RouteTree;
 
 use Illuminate\Routing\Route;
+use Illuminate\Support\Collection;
 use Nicat\RouteTree\Exceptions\NodeNotFoundException;
+use Nicat\RouteTree\Exceptions\RouteNameAlreadyRegisteredException;
 
 class RouteTree {
 
@@ -21,18 +23,11 @@ class RouteTree {
     protected $rootNode = null;
 
     /**
-     * Static list of paths registered with the route-tree.
+     * Laravel-Collection of all Routes registered with the route-tree.
      *
-     * @var array
+     * @var Collection
      */
-    protected $registeredPaths = [];
-
-    /**
-     * Static list of paths registered with the route-tree sorted by method.
-     *
-     * @var array
-     */
-    protected $registeredPathsByMethod = [];
+    protected $registeredRoutes;
 
     /**
      * Currently active RouteAction.
@@ -49,6 +44,13 @@ class RouteTree {
     protected $nodeGenerator = null;
 
     /**
+     * Gets set to true, if all routes have been successfully generated.
+     *
+     * @var bool
+     */
+    protected $routesGenerated = false;
+
+    /**
      * RouteTree constructor.
      */
     public function __construct()
@@ -58,6 +60,9 @@ class RouteTree {
 
         // Create instance of the node-generator.
         $this->nodeGenerator = new NodeGenerator($this);
+
+        // Create instance of the registeredRoutes-collection.
+        $this->registeredRoutes = new Collection();
     }
 
     /**
@@ -87,12 +92,11 @@ class RouteTree {
     /**
      * Get the currently active node.
      *
-     * @param string $default
      * @return RouteNode|null
      */
-    public function getCurrentNode($default='') {
+    public function getCurrentNode() {
         if ($this->pageNotFound()) {
-            return  $this->getNodeByRouteName($default);
+            return  $this->getRootNode();
         }
         return $this->currentAction->getRouteNode();
     }
@@ -100,13 +104,11 @@ class RouteTree {
     /**
      * Get the currently active action.
      *
-     * @param string $default
-     * @param string $defaultAction
      * @return RouteAction|null
      */
-    public function getCurrentAction($default = '', $defaultAction = 'index') {
+    public function getCurrentAction() {
         if ($this->pageNotFound()) {
-            return  $this->getNodeByRouteName($default)->getAction($defaultAction);
+            return  $this->getRootNode()->getAction('index');
         }
         return $this->currentAction;
     }
@@ -254,79 +256,85 @@ class RouteTree {
      * Generates all routes of the route-tree.
      */
     public function generateAllRoutes() {
-        $this->rootNode->generateRoutesOfNodeAndChildNodes();
+        if (!$this->routesGenerated) {
+            $this->rootNode->generateRoutesOfNodeAndChildNodes();
+        }
+        $this->routesGenerated = true;
     }
 
     /**
-     * Register a path and it's action with the route-tree.
+     * Register a Laravel-route and it's action with the route-tree.
      * This is used within the generateRoutes()-method of a RouteAction-object.
      *
-     * @param string $path
+     * @param Route $route
      * @param RouteAction $routeAction
+     * @param $language
+     * @throws RouteNameAlreadyRegisteredException
      */
-    public function registerPath($path='', RouteAction $routeAction) {
+    public function registerRoute(Route $route, RouteAction $routeAction, $language) {
 
-        // Add path to overall list of registered paths.
-        $this->registeredPaths[$path][$routeAction->getAction()] = $routeAction;
+        $key = strtoupper($routeAction->getMethod()) . $route->getName();
 
-        // Add path to registered paths sorted by method.
-        $this->registeredPathsByMethod[$routeAction->getMethod()][$path][$routeAction->getAction()] = $routeAction;
+        if ($this->registeredRoutes->has($key)) {
+            throw new RouteNameAlreadyRegisteredException('Route with key "'.$key.'" already registered.');
+        }
+
+        $this->registeredRoutes->put(
+            $key,
+            [
+                'route' => $route,
+                'route_action' => $routeAction,
+                'language' => $language,
+                'method' => $routeAction->getMethod(),
+                'path' => $route->getPath(),
+                'route_name' => $route->getName()
+            ]
+        );
 
     }
 
     /**
-     * Get an array of paths registered with the RouteTree.
+     * Get collection of Routes registered with the RouteTree.
      *
-     * @return array
+     * @return Collection
      */
-    public function getRegisteredPaths()
+    public function getRegisteredRoutes()
     {
-        ksort($this->registeredPaths);
-        return $this->registeredPaths;
+        return $this->registeredRoutes;
     }
 
     /**
-     * Get an array of paths registered with the RouteTree with a specific method.
+     * Get a Collection of Routes registered with the RouteTree with a specific method
+     * (and optionally limited to a certain language).
      *
-     * @param $method
-     * @return array
+     * @param string $method
+     * @param null|string $language
+     * @return Collection
      */
-    public function getRegisteredPathsByMethod($method)
+    public function getRegisteredRoutesByMethod($method, $language=null)
     {
-        ksort($this->registeredPathsByMethod[strtolower($method)]);
-        return $this->registeredPathsByMethod[strtolower($method)];
+        $filteredRoutes = $this->registeredRoutes->where('method', strtolower($method));
+
+        if (!is_null($language)) {
+            $filteredRoutes = $filteredRoutes->where('language', $language);
+        }
+
+        return $filteredRoutes->sortBy('path');
     }
 
     /**
      * Tries to get a node using it's full route-name.
      *
      * @param string $routeName
+     * @param null $method
      * @return bool|RouteNode|null
      */
-    public function getNodeByRouteName($routeName='') {
+    public function getNodeByRouteName($routeName, $method=null) {
 
-        // Split route name to array.
-        $routeSegments = explode('.', $routeName);
-        $lengthOfRoute = count($routeSegments);
+        $routeAction = $this->getActionByRouteName($routeName, $method);
 
-        // Remove the language prefix from $routeSegments.
-        if (array_key_exists($routeSegments[0], config('app.locales'))) {
-            array_shift( $routeSegments  );
-            $lengthOfRoute--;
-        }
-
-        // Let's see, if such a node exists.
-        if ($this->doesNodeExist(implode('.' , $routeSegments))) {
-            return $this->getNode(implode('.' , $routeSegments));
-        }
-
-        // If not, we try to remove the action suffix, and again try to get the node
-        if (preg_match('/(index|create|store|show|edit|update|destroy|get|post)/', $routeSegments[$lengthOfRoute -1])) {
-            array_pop( $routeSegments );
-
-            if ($this->doesNodeExist(implode('.' , $routeSegments))) {
-                return $this->getNode(implode('.' , $routeSegments));
-            }
+        if ($routeAction !== false) {
+            return $routeAction->getRouteNode();
         }
 
         // If no node was found, we return false.
@@ -335,18 +343,53 @@ class RouteTree {
     }
 
     /**
-     * Tries to retrieve the correct RouteAction corresponding to a certain HTTP-method from a stated Laravel-route.
+     * Tries to retrieve the correct RouteAction corresponding to a certain Laravel-Route-Name.
      *
-     * @param string $method
+     * @param string $routeName
+     * @param null $method
+     * @return bool|RouteAction|null
+     */
+    public function getActionByRouteName($routeName, $method=null) {
+
+        // Since $routeName may be used for multiple methods,
+        // we search for a matching registeredRoute in the following order.
+        $matchMethods = [
+            'GET',
+            'POST',
+            'PUT',
+            'PATCH',
+            'DELETE'
+        ];
+
+        // If a method was specifically stated, we just search for that one.
+        if (is_null($matchMethods)) {
+            $matchMethods = [strtoupper($method)];
+        }
+
+        foreach ($matchMethods as $matchMethod) {
+            $matchKey = $matchMethod.$routeName;
+            if ($this->registeredRoutes->has($matchKey)) {
+                return $this->registeredRoutes->get($matchKey)['route_action'];
+            }
+        }
+
+        // If no action was found, we return false.
+        return false;
+
+    }
+
+    /**
+     * Tries to retrieve the correct RouteAction corresponding to a certain Laravel-Route.
+     *
      * @param Route $route
      * @return bool|RouteAction|null
      */
-    public function getActionByMethodAndRoute($method='get', Route $route) {
+    public function getActionByRoute(Route $route) {
 
-        $method = strtolower($method);
-        
-        if (isset($this->registeredPathsByMethod[$method]) && isset($this->registeredPathsByMethod[$method][$route->getUri()])) {
-            return current($this->registeredPathsByMethod[$method][$route->getUri()]);
+        $filteredRoutes = $this->registeredRoutes->where('route', $route);
+
+        if ($filteredRoutes->count() > 0) {
+            return $filteredRoutes->first()['route_action'];
         }
 
         // If no action was found, we return false.

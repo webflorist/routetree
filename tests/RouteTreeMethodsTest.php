@@ -62,13 +62,13 @@ class RouteTreeMethodsTest extends RouteTreeTestCase
 
     }
 
-    public function testGetActionByMethodAndRoute()
+    public function testGetActionByRoute()
     {
         $this->generateRoutes('/de/page1');
 
         $this->assertEquals(
             'index',
-            route_tree()->getActionByMethodAndRoute('get',\Route::current())->getAction()
+            route_tree()->getActionByRoute(\Route::current())->getAction()
         );
 
     }
