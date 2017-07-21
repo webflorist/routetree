@@ -362,7 +362,7 @@ class RouteTree {
         ];
 
         // If a method was specifically stated, we just search for that one.
-        if (is_null($matchMethods)) {
+        if (!is_null($method)) {
             $matchMethods = [strtoupper($method)];
         }
 
