@@ -7,7 +7,9 @@
             "email": "gerald.buttinger@nic.at"
         }
     ],
-    "require": {},
+    "require": {
+      "laravel/framework": "5.1.*"
+    },
     "require-dev": {
         "phpunit/phpunit": "~4.0",
         "orchestra/testbench": "~3.0"
