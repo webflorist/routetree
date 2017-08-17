@@ -18,7 +18,7 @@ class TestController extends Controller
             'controller' => 'test',
             'function' => $name,
             'method' => \Request::getMethod(),
-            'path' => \Request::getPathInfo(),
+            'path' => trim(\Request::getPathInfo(),'/'),
             'title' => route_tree()->getCurrentNode()->getTitle()
         ]);
     }

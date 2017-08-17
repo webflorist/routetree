@@ -286,7 +286,7 @@ class RouteTree {
                 'route_action' => $routeAction,
                 'language' => $language,
                 'method' => $routeAction->getMethod(),
-                'path' => $route->getPath(),
+                'path' => $route->uri(),
                 'route_name' => $route->getName()
             ]
         );

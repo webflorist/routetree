@@ -28,7 +28,7 @@ class ParameterNodesTest extends RouteTreeTestCase
             $translationLocale = ((\App::getLocale() === 'de') ? 'en':'de');
             return json_encode([
                 'id' => route_tree()->getCurrentNode()->getId(),
-                'path' => \Request::getPathInfo(),
+                'path' => trim(\Request::getPathInfo(),'/'),
                 'language' => \App::getLocale(),
                 'activeValue' => route_tree()->getCurrentNode()->getActiveValue(),
                 'translationUri' => route_tree()->getCurrentAction()->getUrl(null,$translationLocale),
@@ -65,7 +65,7 @@ class ParameterNodesTest extends RouteTreeTestCase
 
         $this->expectedResult = [
             "id" => "page",
-            "path" => "/de/uebersetzt1",
+            "path" => "de/uebersetzt1",
             "language" => "de",
             "activeValue" => 'value1',
             "translationUri" => 'http://localhost/en/translate1',
@@ -88,7 +88,7 @@ class ParameterNodesTest extends RouteTreeTestCase
 
         $this->expectedResult = [
             "id" => "parameter",
-            "path" => "/de/wert_1",
+            "path" => "de/wert_1",
             "language" => "de",
             "activeValue" => 'value1',
             "translationUri" => 'http://localhost/en/value_1',

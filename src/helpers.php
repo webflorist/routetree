@@ -68,11 +68,10 @@ if (! function_exists('trans_by_route')) {
      * @param bool $useParentNode
      * @param string $nodeId
      * @param array $parameters
-     * @param string $domain
      * @param string $locale
      * @return string
      */
-    function trans_by_route($id = null, $useParentNode = false, $nodeId = '', $parameters = [], $domain = 'messages', $locale = null)
+    function trans_by_route($id = null, $useParentNode = false, $nodeId = '', $parameters = [], $locale = null)
     {
 
         if(empty($nodeId)) {
@@ -88,6 +87,6 @@ if (! function_exists('trans_by_route')) {
 
         $id = 'pages/' . str_replace('.', '/', $routeNode->getId()) . '.' . $id;
 
-        return trans($id, $parameters, $domain, $locale);
+        return trans($id, $parameters, $locale);
     }
 }

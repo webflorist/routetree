@@ -21,7 +21,7 @@ class RouteTreeMiddlewareTest extends RouteTreeTestCase
         $this->standardClosure = function () {
             return json_encode([
                 'id' => route_tree()->getCurrentNode()->getId(),
-                'path' => \Request::getPathInfo(),
+                'path' => trim(\Request::getPathInfo(),'/'),
                 'language' => \App::getLocale(),
             ]);
         };
@@ -34,7 +34,7 @@ class RouteTreeMiddlewareTest extends RouteTreeTestCase
         // Set expected default result.
         $this->expectedResult = [
             "id" => "",
-            "path" => "/de",
+            "path" => "de",
             "language" => "de",
         ];
 
@@ -58,7 +58,7 @@ class RouteTreeMiddlewareTest extends RouteTreeTestCase
     {
 
         $this->expectedResult["language"] = 'en';
-        $this->expectedResult["path"] = '/en';
+        $this->expectedResult["path"] = 'en';
 
         $this->performSingleUriTest('/en');
     }
@@ -93,7 +93,7 @@ class RouteTreeMiddlewareTest extends RouteTreeTestCase
 
         $this->expectedResult = [
             "id" => "parent",
-            "path" => "/de/eltern",
+            "path" => "de/eltern",
             "language" => "de",
         ];
 
@@ -121,7 +121,7 @@ class RouteTreeMiddlewareTest extends RouteTreeTestCase
 
         $this->expectedResult = [
             "id" => "parent",
-            "path" => "/en/parent",
+            "path" => "en/parent",
             "language" => "en",
         ];
 
@@ -153,7 +153,7 @@ class RouteTreeMiddlewareTest extends RouteTreeTestCase
 
         $this->expectedResult = [
             "id" => "parent.child",
-            "path" => "/de/eltern/kind",
+            "path" => "de/eltern/kind",
             "language" => "de",
         ];
 
@@ -185,7 +185,7 @@ class RouteTreeMiddlewareTest extends RouteTreeTestCase
 
         $this->expectedResult = [
             "id" => "parent.child",
-            "path" => "/en/parent/child",
+            "path" => "en/parent/child",
             "language" => "en",
         ];
 

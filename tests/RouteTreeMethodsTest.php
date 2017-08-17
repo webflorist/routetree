@@ -92,7 +92,7 @@ class RouteTreeMethodsTest extends RouteTreeTestCase
 
         // Visit the uri.
         try {
-            $result = json_decode($this->visit($visitUri)->response->getContent(), true);
+            $result = json_decode($this->get($visitUri)->baseResponse->getContent(), true);
         }
         catch(NotFoundHttpException $exception) {
             throw $exception;

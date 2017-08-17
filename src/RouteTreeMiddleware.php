@@ -45,7 +45,7 @@ class RouteTreeMiddleware
 
         //Set current locale default from Session
         if(!$this->session->has('locale')) {
-            $this->session->set('locale', \App::getLocale());
+            $this->session->put('locale', \App::getLocale());
         }
 
         \App::setLocale($this->session->get('locale'));
@@ -54,9 +54,10 @@ class RouteTreeMiddleware
         $locale = $request->segment(1);
 
         if ( array_key_exists($locale, \Config::get('app.locales'))) {
-            $this->session->set('locale', $locale);
+            $this->session->put('locale', $locale);
             \App::setLocale($locale);
         }
+
 
         // Generate all RouteTree routes.
         $this->routeTree->generateAllRoutes();

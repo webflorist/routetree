@@ -909,12 +909,17 @@ class RouteNode {
      */
     protected function performAutoTranslation($key, $parameters, $language) {
 
+        // Translation-Parameters for replacement should always be an array.
+        if (is_null($parameters)) {
+            $parameters = [];
+        }
+
         // Set the translation key to be used for getting the data.
         $translationKey = $this->langFile.'.'.$key;
 
         // If a translation for this language exists, we return that as the data.
         if (\Lang::hasForLocale($translationKey, $language)) {
-            return trans($translationKey, $parameters, 'messages', $language);
+            return trans($translationKey, $parameters, $language);
         }
 
         return false;
