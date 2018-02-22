@@ -15,11 +15,6 @@ class RouteTreeMiddleware
      * @var RouteTree
      */
     protected $routeTree;
-    
-    /**
-     * @var SessionManager
-     */
-    private $session;
 
     /**
      * Create a new throttle middleware instance.
@@ -27,10 +22,9 @@ class RouteTreeMiddleware
      * @param RouteTree $routeTree
      *
      */
-    public function __construct(RouteTree $routeTree, SessionManager $session)
+    public function __construct(RouteTree $routeTree)
     {
         $this->routeTree = $routeTree;
-        $this->session = $session;
     }
 
     /**
@@ -42,22 +36,12 @@ class RouteTreeMiddleware
      */
     public function handle($request, Closure $next)
     {
-
-        //Set current locale default from Session
-        if(!$this->session->has('locale')) {
-            $this->session->put('locale', \App::getLocale());
-        }
-
-        \App::setLocale($this->session->get('locale'));
-
         // Set current and session locale depending on first path-segment.
         $locale = $request->segment(1);
 
         if ( array_key_exists($locale, \Config::get('app.locales'))) {
-            $this->session->put('locale', $locale);
             \App::setLocale($locale);
         }
-
 
         // Generate all RouteTree routes.
         $this->routeTree->generateAllRoutes();
