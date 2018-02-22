@@ -5,11 +5,13 @@ namespace Nicat\RouteTree\Middleware;
 use Closure;
 use Illuminate\Session\SessionManager;
 use Nicat\RouteTree\RouteTree;
+use Nicat\RouteTree\Traits\HandleLocaleFromUrl;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 
-class PushLocalToSession
+class SetLocalFromSession
 {
+    use HandleLocaleFromUrl;
     /**
      * The RouteTree instance.
      *
@@ -37,20 +39,18 @@ class PushLocalToSession
      */
     public function handle($request, Closure $next)
     {
-        //Set current locale default from Session
-        if(!session()->has('locale')) {
+        //check if we have no session locale, and set a default
+        if (!session()->has('locale')) {
             session()->put('locale', \App::getLocale());
         }
 
-        \App::setLocale(session()->get('locale'));
-
-        // Set current and session locale depending on first path-segment.
-        $locale = $request->segment(1);
-
-        if ( array_key_exists($locale, \Config::get('app.locales'))) {
-            session()->put('locale', $locale);
-            \App::setLocale($locale);
+        //on valid locale in url let override session
+        if ($this->validLocaleInUrl()) {
+            session()->put('locale', $this->getLocaleFromUrl());
         }
+
+        //Set locale from Session
+        \App::setLocale(session()->get('locale'));
 
         return $next($request);
     }

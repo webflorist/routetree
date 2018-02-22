@@ -4,11 +4,15 @@ namespace Nicat\RouteTree;
 
 use Closure;
 use Illuminate\Session\SessionManager;
+use Nicat\RouteTree\Traits\HandleLocaleFromUrl;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 
 class RouteTreeMiddleware
 {
+
+    use HandleLocaleFromUrl;
+
     /**
      * The RouteTree instance.
      *
@@ -36,12 +40,8 @@ class RouteTreeMiddleware
      */
     public function handle($request, Closure $next)
     {
-        // Set current and session locale depending on first path-segment.
-        $locale = $request->segment(1);
-
-        if ( array_key_exists($locale, \Config::get('app.locales'))) {
-            \App::setLocale($locale);
-        }
+        // Set current locale depending on first path-segment.
+        $this->setLocaleFromUrl();
 
         // Generate all RouteTree routes.
         $this->routeTree->generateAllRoutes();
