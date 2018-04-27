@@ -3,7 +3,7 @@
             'id' => route_tree()->getCurrentNode()->getId(),
             'view' => 'test',
             'method' => \Request::getMethod(),
-            'path' => \Request::getPathInfo(),
+            'path' => trim(\Request::getPathInfo(),'/'),
             'title' => route_tree()->getCurrentNode()->getTitle()
         ])
  !!}

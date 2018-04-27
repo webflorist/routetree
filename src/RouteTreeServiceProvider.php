@@ -9,6 +9,7 @@
 namespace Nicat\RouteTree;
 
 use Illuminate\Support\ServiceProvider;
+use Nicat\RouteTree\Middleware\SetLocalFromSession;
 
 class RouteTreeServiceProvider extends ServiceProvider
 {
@@ -29,6 +30,10 @@ class RouteTreeServiceProvider extends ServiceProvider
 
         // Register the RouteTreeMiddleware.
         $this->app['Illuminate\Contracts\Http\Kernel']->pushMiddleware(RouteTreeMiddleware::class);
+
+        if($this->app['router']->hasMiddlewareGroup('web')) {
+        $this->app['router']->pushMiddlewareToGroup('web', SetLocalFromSession::class);
+    }
     }
 
     /**

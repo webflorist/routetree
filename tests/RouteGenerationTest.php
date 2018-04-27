@@ -23,7 +23,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                 'controller' => 'test',
                 'function' => 'get',
                 'method' => 'GET',
-                'path' => '/de',
+                'path' => 'de',
                 'title' => 'Startseite'
             ],
         ],
@@ -37,7 +37,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                 'controller' => 'test',
                 'function' => 'get',
                 'method' => 'GET',
-                'path' => '/en',
+                'path' => 'en',
                 'title' => 'Startpage'
             ],
         ]
@@ -55,7 +55,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                 return json_encode([
                     'id' => route_tree()->getCurrentNode()->getId(),
                     'method' => \Request::getMethod(),
-                    'path' => \Request::getPathInfo(),
+                    'path' => trim(\Request::getPathInfo(),'/'),
                     'title' => route_tree()->getCurrentNode()->getTitle()
                 ]);
             }]
@@ -70,7 +70,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                 "content" => [
                     'id' => '',
                     'method' => 'GET',
-                    'path' => '/de',
+                    'path' => 'de',
                     'title' => 'Startseite'
                 ],
             ],
@@ -82,7 +82,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                 "content" => [
                     'id' => '',
                     'method' => 'GET',
-                    'path' => '/en',
+                    'path' => 'en',
                     'title' => 'Startpage'
                 ],
             ]
@@ -108,7 +108,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'id' => '',
                     'view' => 'test',
                     'method' => 'GET',
-                    'path' => '/de',
+                    'path' => 'de',
                     'title' => 'Startseite'
                 ],
             ],
@@ -121,7 +121,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'id' => '',
                     'view' => 'test',
                     'method' => 'GET',
-                    'path' => '/en',
+                    'path' => 'en',
                     'title' => 'Startpage'
                 ],
             ]
@@ -155,7 +155,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/de/target',
+                    'path' => 'de/target',
                     'title' => 'Target'
                 ],
             ],
@@ -169,7 +169,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/en/target',
+                    'path' => 'en/target',
                     'title' => 'Target'
                 ],
             ],
@@ -183,7 +183,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/de/target',
+                    'path' => 'de/target',
                     'title' => 'Target'
                 ],
             ],
@@ -197,7 +197,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/en/target',
+                    'path' => 'en/target',
                     'title' => 'Target'
                 ],
             ]
@@ -235,7 +235,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/de/parent',
+                    'path' => 'de/parent',
                     'title' => 'Parent'
                 ],
             ],
@@ -249,7 +249,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/en/parent',
+                    'path' => 'en/parent',
                     'title' => 'Parent'
                 ],
             ],
@@ -263,7 +263,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/de/parent/child1',
+                    'path' => 'de/parent/child1',
                     'title' => 'Child1'
                 ],
             ],
@@ -277,7 +277,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/en/parent/child1',
+                    'path' => 'en/parent/child1',
                     'title' => 'Child1'
                 ],
             ],
@@ -291,7 +291,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/de/parent/child2',
+                    'path' => 'de/parent/child2',
                     'title' => 'Child2'
                 ],
             ],
@@ -305,7 +305,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/en/parent/child2',
+                    'path' => 'en/parent/child2',
                     'title' => 'Child2'
                 ],
             ],
@@ -336,7 +336,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/de/custom-segment',
+                    'path' => 'de/custom-segment',
                     'title' => 'Page'
                 ],
             ],
@@ -350,7 +350,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/en/custom-segment',
+                    'path' => 'en/custom-segment',
                     'title' => 'Page'
                 ],
             ]
@@ -384,7 +384,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/de/custom-segment-de',
+                    'path' => 'de/custom-segment-de',
                     'title' => 'Page'
                 ],
             ],
@@ -398,7 +398,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/en/custom-segment-en',
+                    'path' => 'en/custom-segment-en',
                     'title' => 'Page'
                 ],
             ]
@@ -428,7 +428,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'create',
                     'method' => 'GET',
-                    'path' => '/de/page',
+                    'path' => 'de/page',
                     'title' => 'Page'
                 ],
             ],
@@ -442,7 +442,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'create',
                     'method' => 'GET',
-                    'path' => '/en/page',
+                    'path' => 'en/page',
                     'title' => 'Page'
                 ],
             ]
@@ -473,7 +473,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/de/page',
+                    'path' => 'de/page',
                     'title' => 'Page'
                 ],
             ],
@@ -487,7 +487,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/en/page',
+                    'path' => 'en/page',
                     'title' => 'Page'
                 ],
             ],
@@ -501,7 +501,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'store',
                     'method' => 'POST',
-                    'path' => '/de/page',
+                    'path' => 'de/page',
                     'title' => 'Page'
                 ],
             ],
@@ -515,7 +515,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'store',
                     'method' => 'POST',
-                    'path' => '/en/page',
+                    'path' => 'en/page',
                     'title' => 'Page'
                 ],
             ]
@@ -547,7 +547,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'update',
                     'method' => 'PUT',
-                    'path' => '/de/page',
+                    'path' => 'de/page',
                     'title' => 'Page'
                 ],
             ],
@@ -561,7 +561,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'update',
                     'method' => 'PUT',
-                    'path' => '/en/page',
+                    'path' => 'en/page',
                     'title' => 'Page'
                 ],
             ],
@@ -575,7 +575,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'destroy',
                     'method' => 'DELETE',
-                    'path' => '/de/page',
+                    'path' => 'de/page',
                     'title' => 'Page'
                 ],
             ],
@@ -589,7 +589,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'destroy',
                     'method' => 'DELETE',
-                    'path' => '/en/page',
+                    'path' => 'en/page',
                     'title' => 'Page'
                 ],
             ],
@@ -603,7 +603,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'show',
                     'method' => 'GET',
-                    'path' => '/de/page',
+                    'path' => 'de/page',
                     'title' => 'Page'
                 ],
             ],
@@ -617,7 +617,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'show',
                     'method' => 'GET',
-                    'path' => '/en/page',
+                    'path' => 'en/page',
                     'title' => 'Page'
                 ],
             ]
@@ -648,7 +648,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'edit',
                     'method' => 'GET',
-                    'path' => '/de/page',
+                    'path' => 'de/page',
                     'title' => 'Page'
                 ],
             ],
@@ -662,7 +662,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'edit',
                     'method' => 'GET',
-                    'path' => '/en/page',
+                    'path' => 'en/page',
                     'title' => 'Page'
                 ],
             ]
@@ -695,7 +695,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/de/jobs',
+                    'path' => 'de/jobs',
                     'title' => 'Jobs'
                 ],
             ],
@@ -709,7 +709,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/en/jobs',
+                    'path' => 'en/jobs',
                     'title' => 'Jobs'
                 ],
             ],
@@ -723,7 +723,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'create',
                     'method' => 'GET',
-                    'path' => '/de/jobs/create',
+                    'path' => 'de/jobs/create',
                     'title' => 'Jobs'
                 ],
             ],
@@ -737,7 +737,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'create',
                     'method' => 'GET',
-                    'path' => '/en/jobs/create',
+                    'path' => 'en/jobs/create',
                     'title' => 'Jobs'
                 ],
             ],
@@ -751,7 +751,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'store',
                     'method' => 'POST',
-                    'path' => '/de/jobs',
+                    'path' => 'de/jobs',
                     'title' => 'Jobs'
                 ],
             ],
@@ -765,7 +765,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'store',
                     'method' => 'POST',
-                    'path' => '/en/jobs',
+                    'path' => 'en/jobs',
                     'title' => 'Jobs'
                 ],
             ],
@@ -779,7 +779,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'edit',
                     'method' => 'GET',
-                    'path' => '/de/jobs/{job}/edit',
+                    'path' => 'de/jobs/{job}/edit',
                     'title' => 'Jobs'
                 ],
             ],
@@ -793,7 +793,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'edit',
                     'method' => 'GET',
-                    'path' => '/en/jobs/{job}/edit',
+                    'path' => 'en/jobs/{job}/edit',
                     'title' => 'Jobs'
                 ],
             ],
@@ -807,7 +807,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'update',
                     'method' => 'PUT',
-                    'path' => '/de/jobs/{job}',
+                    'path' => 'de/jobs/{job}',
                     'title' => 'Jobs'
                 ],
             ],
@@ -821,7 +821,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'update',
                     'method' => 'PUT',
-                    'path' => '/en/jobs/{job}',
+                    'path' => 'en/jobs/{job}',
                     'title' => 'Jobs'
                 ],
             ],
@@ -835,7 +835,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'destroy',
                     'method' => 'DELETE',
-                    'path' => '/de/jobs/{job}',
+                    'path' => 'de/jobs/{job}',
                     'title' => 'Jobs'
                 ],
             ],
@@ -849,7 +849,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'destroy',
                     'method' => 'DELETE',
-                    'path' => '/en/jobs/{job}',
+                    'path' => 'en/jobs/{job}',
                     'title' => 'Jobs'
                 ],
             ],
@@ -863,7 +863,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'show',
                     'method' => 'GET',
-                    'path' => '/de/jobs/{job}',
+                    'path' => 'de/jobs/{job}',
                     'title' => 'Jobs'
                 ],
             ],
@@ -877,7 +877,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'show',
                     'method' => 'GET',
-                    'path' => '/en/jobs/{job}',
+                    'path' => 'en/jobs/{job}',
                     'title' => 'Jobs'
                 ],
             ]
@@ -911,7 +911,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/de/jobs',
+                    'path' => 'de/jobs',
                     'title' => 'Jobs'
                 ],
             ],
@@ -925,7 +925,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/en/jobs',
+                    'path' => 'en/jobs',
                     'title' => 'Jobs'
                 ],
             ],
@@ -939,7 +939,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'create',
                     'method' => 'GET',
-                    'path' => '/de/jobs/create',
+                    'path' => 'de/jobs/create',
                     'title' => 'Jobs'
                 ],
             ],
@@ -953,7 +953,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'create',
                     'method' => 'GET',
-                    'path' => '/en/jobs/create',
+                    'path' => 'en/jobs/create',
                     'title' => 'Jobs'
                 ],
             ],
@@ -988,7 +988,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/de/jobs',
+                    'path' => 'de/jobs',
                     'title' => 'Jobs'
                 ],
             ],
@@ -1002,7 +1002,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/en/jobs',
+                    'path' => 'en/jobs',
                     'title' => 'Jobs'
                 ],
             ],
@@ -1016,7 +1016,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'create',
                     'method' => 'GET',
-                    'path' => '/de/jobs/create',
+                    'path' => 'de/jobs/create',
                     'title' => 'Jobs'
                 ],
             ],
@@ -1030,7 +1030,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'create',
                     'method' => 'GET',
-                    'path' => '/en/jobs/create',
+                    'path' => 'en/jobs/create',
                     'title' => 'Jobs'
                 ],
             ],
@@ -1069,7 +1069,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/de/not_inherited',
+                    'path' => 'de/not_inherited',
                     'title' => 'Not_inherited'
                 ],
             ],
@@ -1083,7 +1083,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/en/not_inherited',
+                    'path' => 'en/not_inherited',
                     'title' => 'Not_inherited'
                 ],
             ],
@@ -1097,7 +1097,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/de/child1',
+                    'path' => 'de/child1',
                     'title' => 'Child1'
                 ],
             ],
@@ -1111,7 +1111,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/en/child1',
+                    'path' => 'en/child1',
                     'title' => 'Child1'
                 ],
             ],
@@ -1125,7 +1125,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/de/child2',
+                    'path' => 'de/child2',
                     'title' => 'Child2'
                 ],
             ],
@@ -1139,7 +1139,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/en/child2',
+                    'path' => 'en/child2',
                     'title' => 'Child2'
                 ],
             ],
@@ -1170,7 +1170,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'nested',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/de/nested',
+                    'path' => 'de/nested',
                     'title' => 'Nested'
                 ],
             ],
@@ -1184,7 +1184,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'nested',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/en/nested',
+                    'path' => 'en/nested',
                     'title' => 'Nested'
                 ],
             ]
@@ -1225,7 +1225,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/de/produkte',
+                    'path' => 'de/produkte',
                     'title' => 'Unsere Produkte'
                 ],
             ],
@@ -1239,7 +1239,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/en/products',
+                    'path' => 'en/products',
                     'title' => 'Our products'
                 ],
             ],
@@ -1253,7 +1253,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/de/produkte/produkt_1',
+                    'path' => 'de/produkte/produkt_1',
                     'title' => 'Produkt 1'
                 ],
             ],
@@ -1267,7 +1267,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/en/products/product_1',
+                    'path' => 'en/products/product_1',
                     'title' => 'Product 1'
                 ],
             ],
@@ -1281,7 +1281,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/de/produkte/produkt_2',
+                    'path' => 'de/produkte/produkt_2',
                     'title' => 'Produkt 2'
                 ],
             ],
@@ -1295,7 +1295,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/en/products/product_2',
+                    'path' => 'en/products/product_2',
                     'title' => 'Product 2'
                 ],
             ],
@@ -1309,7 +1309,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/de/kontakt',
+                    'path' => 'de/kontakt',
                     'title' => 'Kontaktieren Sie uns'
                 ],
             ],
@@ -1323,7 +1323,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'index',
                     'method' => 'GET',
-                    'path' => '/en/contact',
+                    'path' => 'en/contact',
                     'title' => 'Contact us'
                 ],
             ]
@@ -1355,7 +1355,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/de/page',
+                    'path' => 'de/page',
                     'title' => 'Custom Title'
                 ],
             ],
@@ -1369,7 +1369,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/en/page',
+                    'path' => 'en/page',
                     'title' => 'Custom Title'
                 ],
             ]
@@ -1402,7 +1402,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/de/page',
+                    'path' => 'de/page',
                     'title' => 'Benutzerdefinierter Titel'
                 ],
             ],
@@ -1416,7 +1416,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/en/page',
+                    'path' => 'en/page',
                     'title' => 'Custom Title'
                 ],
             ]
@@ -1452,7 +1452,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/de/page',
+                    'path' => 'de/page',
                     'title' => 'Benutzerdefinierter Titel'
                 ],
             ],
@@ -1466,7 +1466,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/en/page',
+                    'path' => 'en/page',
                     'title' => 'Custom Title'
                 ],
             ]
@@ -1534,7 +1534,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/de',
+                    'path' => 'de',
                     'title' => 'Startseite'
                 ],
             ],
@@ -1551,7 +1551,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/en',
+                    'path' => 'en',
                     'title' => 'Startpage'
                 ],
             ],
@@ -1568,7 +1568,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/de/page',
+                    'path' => 'de/page',
                     'title' => 'Page'
                 ],
             ],
@@ -1585,7 +1585,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
-                    'path' => '/en/page',
+                    'path' => 'en/page',
                     'title' => 'Page'
                 ],
             ],
@@ -1603,7 +1603,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'store',
                     'method' => 'POST',
-                    'path' => '/de/page',
+                    'path' => 'de/page',
                     'title' => 'Page'
                 ],
             ],
@@ -1621,7 +1621,7 @@ class RouteGenerationTest extends RouteTreeTestCase
                     'controller' => 'test',
                     'function' => 'store',
                     'method' => 'POST',
-                    'path' => '/en/page',
+                    'path' => 'en/page',
                     'title' => 'Page'
                 ],
             ],

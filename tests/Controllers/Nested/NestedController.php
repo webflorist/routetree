@@ -18,7 +18,7 @@ class NestedController extends Controller
             'controller' => 'nested',
             'function' => $name,
             'method' => \Request::getMethod(),
-            'path' => \Request::getPathInfo(),
+            'path' => trim(\Request::getPathInfo(),'/'),
             'title' => route_tree()->getCurrentNode()->getTitle()
         ]);
     }
