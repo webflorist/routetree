@@ -9,6 +9,7 @@
 namespace Nicat\RouteTree;
 
 use Nicat\RouteTree\Exceptions\ActionNotFoundException;
+use Nicat\RouteTree\Exceptions\NodeAlreadyHasChildWithSameNameException;
 use Nicat\RouteTree\Traits\CanHaveMiddleware;
 
 class RouteNode {
@@ -467,8 +468,13 @@ class RouteNode {
      * Add a child-node.
      *
      * @param RouteNode $childNode
+     * @throws NodeAlreadyHasChildWithSameNameException
      */
     protected function addChildNode(RouteNode $childNode) {
+        
+        if (isset($this->childNodes[$childNode->name])) {
+            throw new NodeAlreadyHasChildWithSameNameException('RouteNode with ID "'.$this->id.'" already has a child named "'.$childNode->name.'".');
+        }
         $this->childNodes[$childNode->name] = $childNode;
     }
 
