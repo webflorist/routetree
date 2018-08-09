@@ -87,11 +87,18 @@ class RouteNode {
     protected $actions = [];
 
     /**
-     * The language-file-key to be used for various auto-translations.
+     * The language-file-key to be used for auto-translation of meta-data.
      *
      * @var string
      */
-    protected $langFile = null;
+    protected $dataLangFile = null;
+
+    /**
+     * The language-file-key to be used for auto-translation of normal page-content.
+     *
+     * @var string
+     */
+    protected $contentLangFile = null;
 
     /**
      * If this route-node is a route-parameter, it's name is stored here.
@@ -124,14 +131,12 @@ class RouteNode {
         if (!is_null($parentNode)) {
             $this->setParentNode($parentNode);
         }
-        // If no parent is stated, we set the default langFile.
-        else
-        {
-            $this->setLangFile();
-        }
 
         // Append the route-name to the id.
         $this->id .= $this->name;
+
+        // Sets the language-files location.
+        $this->setLangFiles();
 
         // Set the path-segments.
         $this->setSegments($segment);
@@ -253,9 +258,6 @@ class RouteNode {
                 }
             }
         }
-
-        // Sets the language-file location.
-        $this->setLangFile();
     }
 
     /**
@@ -444,24 +446,46 @@ class RouteNode {
     }
 
     /**
-     * Set the language file of this node,
+     * Set the language files of this node,
      * representing the hierarchical structure of it's parents as a folder-structure.
      */
-    protected function setLangFile() {
+    protected function setLangFiles() {
+
+        $this->setDataLangFile();
+        $this->setContentLangFile();
+
+    }
+
+    /**
+     * Set the location of the language-file to be used for the translation of meta-data.
+     */
+    protected function setDataLangFile() {
 
         // Set the base-folder for localization-files as stated in the config.
-        $this->langFile = config('routetree.localization.base_folder').'/';
+        $this->dataLangFile = config('routetree.localization.base_folder').'/';
 
         // Every parent node is a subdirectory of the pages-directory.
         // So we just get the full name of the parent node (if one exists),
         // and replace the dots with slashes.
         if ((!is_null($this->parentNode) && strlen($this->parentNode->id)>0)) {
-            $this->langFile .= str_replace('.','/',$this->parentNode->id) . '/';
+            $this->dataLangFile .= str_replace('.','/',$this->parentNode->id) . '/';
         }
 
         // Finally append the file-name for route-tree related translations as set in the config.
-        $this->langFile .= config('routetree.localization.file_name');
+        $this->dataLangFile .= config('routetree.localization.file_name');
 
+    }
+
+    /**
+     * Set the location of the language-file to be used for the translation of page-content.
+     */
+    protected function setContentLangFile() {
+
+        // Set the base-folder for localization-files as stated in the config.
+        $this->contentLangFile = config('routetree.localization.base_folder').'/';
+
+        // We only have to replace dots with slashes in this node's id to get the rest.
+        $this->contentLangFile .= str_replace('.','/',$this->id);
     }
 
     /**
@@ -471,7 +495,7 @@ class RouteNode {
      * @throws NodeAlreadyHasChildWithSameNameException
      */
     protected function addChildNode(RouteNode $childNode) {
-        
+
         if (isset($this->childNodes[$childNode->name])) {
             throw new NodeAlreadyHasChildWithSameNameException('RouteNode with ID "'.$this->id.'" already has a child named "'.$childNode->name.'".');
         }
@@ -604,13 +628,13 @@ class RouteNode {
 
     /**
      * Checks, if the current node is active (optionally with the desired parameters).
-     * 
+     *
      * @param null $parameters
      * @return string
      */
     public function isActive($parameters=null)
     {
-        
+
         // Check, if the current node is identical to this node.
         if (route_tree()->getCurrentNode() === $this) {
 
@@ -821,7 +845,7 @@ class RouteNode {
 
     /**
      * Set custom data.
-     * 
+     *
      * @param $key
      * @param \Callable|array[]|mixed $data Can be either a callable, an associative array (language => value), or a string/bool (that is should be used for every language).
      * @return RouteNode
@@ -896,7 +920,7 @@ class RouteNode {
         if ($action !== null) {
             $translationKey .= '_'.$action;
         }
-        $autoTranslatedValue = $this->performAutoTranslation($translationKey, $parameters, $locale);
+        $autoTranslatedValue = $this->performDataAutoTranslation($translationKey, $parameters, $locale);
         if ($autoTranslatedValue !== false) {
             return $autoTranslatedValue;
         }
@@ -906,14 +930,14 @@ class RouteNode {
     }
 
     /**
-     * Tries to auto-translate a stated key into a stated language.
+     * Tries to auto-translate a stated key into a stated language within $this->dataLangFile.
      *
      * @param string $key The translation-key to be translated.
      * @param array $parameters An associative array of [parameterName => parameterValue] that should be passed to the translation (default=current route-parameters).
      * @param string $language The language to be used for translation.
      * @return bool|string
      */
-    protected function performAutoTranslation($key, $parameters, $language) {
+    protected function performDataAutoTranslation($key, $parameters, $language) {
 
         // Translation-Parameters for replacement should always be an array.
         if (is_null($parameters)) {
@@ -921,7 +945,7 @@ class RouteNode {
         }
 
         // Set the translation key to be used for getting the data.
-        $translationKey = $this->langFile.'.'.$key;
+        $translationKey = $this->dataLangFile.'.'.$key;
 
         // If a translation for this language exists, we return that as the data.
         if (\Lang::hasForLocale($translationKey, $language)) {
@@ -1063,7 +1087,7 @@ class RouteNode {
                 $pathSegment = $this->name;
 
                 // If a auto-translation segment for this language exists, we use that as path segment.
-                $autoTranslatedSegment = $this->performAutoTranslation($segmentTranslationKey, [], $language);
+                $autoTranslatedSegment = $this->performDataAutoTranslation($segmentTranslationKey, [], $language);
                 if ($autoTranslatedSegment !== false) {
                     $pathSegment = $autoTranslatedSegment;
                 }
@@ -1147,7 +1171,13 @@ class RouteNode {
         return $this;
     }
 
-
-
+    /**
+     * Returns the language-file to be used for the translation of page-content.
+     *
+     * @return RouteNode
+     */
+    public function getContentLangFile() {
+        return $this->contentLangFile;
+    }
 
 }

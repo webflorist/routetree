@@ -396,13 +396,13 @@ The could now call e.g. `route_tree()->getNode('contact')->getAction('show'))` t
 
 [TODO]
 
-###### **Custom parameters**:
+###### **Custom data**:
 
 You can also set any information your want with a RouteNode, using an array-key, that is not used for any of the fixed options described above.
 
 This information can then be retrieved by calling the `getData()`-method of a RouteNode-object, or by calling a corresponding magic-getter-method (e.g. `getData('abstract')` and `getAbstract()` would both retrieve any information set in the route-generation-array under the key `abstract`.
 
-Furthermore custom parameters are handled the same way as the `title` parameter above. This means you can set this information statically for all languages or per language using a language-array, or even set a closure. Just look at the examples above for setting a `title` and use any desired keyword instead. And as with the `title` usage, you can also handle custom parameters using auto-translation (as described below). 
+Furthermore custom data is handled the same way as the `title` above. This means you can set this information statically for all languages or per language using a language-array, or even set a closure. Just look at the examples above for setting a `title` and use any desired keyword instead. And as with the `title` usage, you can also handle custom parameters using auto-translation (as described below). 
  
 This is very useful to e.g.:
 
@@ -468,13 +468,19 @@ You can also add multiple (same-level) nodes at once using the `setNodes()` meth
 
 ### Auto-translation
 
-Auto-translation is used with several functions of routetree and provides an easy and intuitive way of configuring multi-language variants of the path-segment, page-title, or any other custom information for routes through laravel's localization-files.
- 
-The basic concept is to map the hierarchy of the route-tree to a folder-structure within the localization-folder. Each route-node is represented as a folder, and within the folder for a node resides a file, that contains all auto-translation-information. 
+Routetree also includes some magic regarding automatic translation. The basic concept is to map the hierarchy of the route-tree to a folder-structure within the localization-folder.
 
-There are 2 relevant config-items in the `routetree.php`-config-file published by this package:
-* **localization.base_folder**: This is the base-folder for the localization-files- and folders for route-tree. The default value is `pages`, which translates to the folder `\resources\lang\%locale%\pages`.
-* **localization.file_name**: This is the name of the files, route-tree should use for it's auto-translation functionality. The default value is `pages`, which means information on all 1st-level-pages should be placed in this file: `\resources\lang\%locale%\pages\pages.php`.
+The config-key `localization.base_folder` sets the base-folder for the localization-files- and folders for route-tree. The default value is `pages`, which translates to the folder `\resources\lang\%locale%\pages`.
+
+There are 2 seperate auto-translation-functionalities:
+1. Auto-translation of a node's (meta-)data (e.g. like path-segment, title, abstract, custom data, etc.)
+2. Auto-translation of regular page-content.
+
+#### Auto-translation of page-meta-data
+
+This provides an easy and intuitive way of configuring multi-language variants of the path-segment, page-title, or any other custom information for routes through laravel's localization-files.
+ 
+Each route-node is represented as a folder, and within the folder for a node resides a file, that contains all auto-translation-information. How this file is named is configured under the config-key `localization.file_name`. The default value is `pages`, which means information on all 1st-level-pages should be placed in this file: `\resources\lang\%locale%\pages\pages.php`
 
 **Example:**
 Let's assume, you have defined the following route-tree-array (any actions or other options are missing for simplicity's sake):
@@ -586,6 +592,12 @@ return [
 ];
 ```
 
+#### Auto-translation of regular page-content
+
+In many cases you will also want to translate page-content in your views. The RouteTree includes a handy helper-function called `trans_by_route()`, that will try and look for a translation in the current node's content-language-file.
+
+Using the example above the location of this file for the `office` page would be : `./company/team/office.php`
+
 ### Important RouteTree-methods
 
 For the already mentioned and explained methods `setRootNode`, `addNode` and `addNodes` please see the corresponding sections above.
@@ -637,3 +649,6 @@ Several helper-functions are included with this package:
       * string $action: The node-action for which this url is generated (defaults='index').
       * array $parameters: An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
       * string $language: The language this url should be generated for (default=current locale).
+      
+
+* **trans_by_route**: Translates page-content using the current node's content-language-file (see section `Auto-translation of regular page-content` above).

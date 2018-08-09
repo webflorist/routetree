@@ -64,7 +64,7 @@ if (! function_exists('trans_by_route')) {
     /**
      * Translate the given message and work with current route.
      *
-     * @param  string $id
+     * @param string $id
      * @param bool $useParentNode
      * @param string $nodeId
      * @param array $parameters
@@ -85,7 +85,7 @@ if (! function_exists('trans_by_route')) {
             $routeNode = $routeNode->getParentNode();
         }
 
-        $id = 'pages/' . str_replace('.', '/', $routeNode->getId()) . '.' . $id;
+        $id = $routeNode->getContentLangFile() . '.' . $id;
 
         return trans($id, $parameters, $locale);
     }
