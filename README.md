@@ -19,18 +19,16 @@ This package includes a special API for creating Laravel-routes, that intends to
 ```php 
 composer require webflorist/routetree
 ```
-2. Add the Service-Provider to config/app.php:
-```php 
-Webflorist\RouteTree\RouteTreeServiceProvider::class
-```
-3. Define all locales you want to ust on your website under the key `locales` inside your `app.php` config file. E.g.:
+2. Define all locales you want to ust on your website under the key `locales` inside your `app.php` config file. E.g.:
 ```
 'locales' => ['de' => 'Deutsch', 'en' => 'English'],
 ```
-4. Publish config (optional):
+3. Publish config (optional):
 ```
 php artisan vendor:publish --provider="Webflorist\RouteTree\RouteTreeServiceProvider"
 ```
+
+Note that this package is configured for automatic discovery for Laravel. Thus the package's Service Provider `Webflorist\RouteTree\RouteTreeServiceProvider` will be automatically registered with Laravel.
 
 ## Terminology
 To understand the usage of this package, you should know the meaning of the following terms:
