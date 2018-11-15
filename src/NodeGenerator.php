@@ -6,7 +6,7 @@
  * Time: 10:06
  */
 
-namespace Nicat\RouteTree;
+namespace Webflorist\RouteTree;
 
 
 class NodeGenerator

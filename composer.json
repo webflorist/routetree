@@ -1,10 +1,10 @@
 {
-    "name": "nicat/routetree",
+    "name": "webflorist/routetree",
     "description": "Advanded route management for Laravel 5",
     "authors": [
         {
             "name": "Gerald Buttinger",
-            "email": "gerald.buttinger@nic.at"
+            "email": "gerald@code.florist"
         }
     ],
     "require": {
@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Nicat\\RouteTree\\": "src/",
+            "Webflorist\\RouteTree\\": "src/",
 	        "RouteTreeTests\\": "tests/"
         },
         "files": [

@@ -6,12 +6,12 @@
  * Time: 16:39
  */
 
-namespace Nicat\RouteTree;
+namespace Webflorist\RouteTree;
 
 use Illuminate\Routing\Route;
 use Illuminate\Support\Collection;
-use Nicat\RouteTree\Exceptions\NodeNotFoundException;
-use Nicat\RouteTree\Exceptions\RouteNameAlreadyRegisteredException;
+use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
+use Webflorist\RouteTree\Exceptions\RouteNameAlreadyRegisteredException;
 
 class RouteTree {
 

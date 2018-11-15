@@ -1,10 +1,10 @@
 <?php
 
-namespace Nicat\RouteTree;
+namespace Webflorist\RouteTree;
 
 use Closure;
 use Illuminate\Session\SessionManager;
-use Nicat\RouteTree\Traits\HandleLocaleFromUrl;
+use Webflorist\RouteTree\Traits\HandleLocaleFromUrl;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 

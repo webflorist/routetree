@@ -1,13 +1,7 @@
 <?php
 
-namespace Nicat\RouteTree\Traits;
+namespace Webflorist\RouteTree\Traits;
 
-/**
- * Created by NIC.at GmbH.
- * User: marioo
- * Date: 22.02.2018
- * Time: 13:41
- */
 trait HandleLocaleFromUrl
 {
 

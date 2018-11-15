@@ -6,11 +6,11 @@
  * Time: 16:39
  */
 
-namespace Nicat\RouteTree;
+namespace Webflorist\RouteTree;
 
-use Nicat\RouteTree\Exceptions\ActionNotFoundException;
-use Nicat\RouteTree\Exceptions\NodeAlreadyHasChildWithSameNameException;
-use Nicat\RouteTree\Traits\CanHaveMiddleware;
+use Webflorist\RouteTree\Exceptions\ActionNotFoundException;
+use Webflorist\RouteTree\Exceptions\NodeAlreadyHasChildWithSameNameException;
+use Webflorist\RouteTree\Traits\CanHaveMiddleware;
 
 class RouteNode {
 

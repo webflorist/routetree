@@ -6,10 +6,10 @@
  * Time: 11:51
  */
 
-namespace Nicat\RouteTree;
+namespace Webflorist\RouteTree;
 
 use Illuminate\Support\ServiceProvider;
-use Nicat\RouteTree\Middleware\SetLocalFromSession;
+use Webflorist\RouteTree\Middleware\SetLocalFromSession;
 
 class RouteTreeServiceProvider extends ServiceProvider
 {
@@ -26,7 +26,7 @@ class RouteTreeServiceProvider extends ServiceProvider
         ]);
 
         // Load default translations.
-        $this->loadTranslationsFrom(__DIR__ . "/resources/lang","Nicat-RouteTree");
+        $this->loadTranslationsFrom(__DIR__ . "/resources/lang","Webflorist-RouteTree");
 
         // Register the RouteTreeMiddleware.
         $this->app['Illuminate\Contracts\Http\Kernel']->pushMiddleware(RouteTreeMiddleware::class);

@@ -6,11 +6,11 @@
  * Time: 14:51
  */
 
-namespace Nicat\RouteTree;
+namespace Webflorist\RouteTree;
 
 use Illuminate\Routing\Route;
-use Nicat\RouteTree\Exceptions\UrlParametersMissingException;
-use Nicat\RouteTree\Traits\CanHaveMiddleware;
+use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
+use Webflorist\RouteTree\Traits\CanHaveMiddleware;
 
 class RouteAction
 {
@@ -92,10 +92,10 @@ class RouteAction
                 'suffix' => 'create',
                 'parentAction' => 'index',
                 'defaultTitle' => function() {
-                    return trans('Nicat-RouteTree::routetree.createTitle', ['resource' => $this->routeNode->getTitle()]);
+                    return trans('Webflorist-RouteTree::routetree.createTitle', ['resource' => $this->routeNode->getTitle()]);
                 },
                 'defaultNavTitle' => function() {
-                    return trans('Nicat-RouteTree::routetree.createNavTitle');
+                    return trans('Webflorist-RouteTree::routetree.createNavTitle');
                 }
             ],
             'store' => [
@@ -118,10 +118,10 @@ class RouteAction
                 'suffix' => 'edit',
                 'parentAction' => 'show',
                 'defaultTitle' => function() {
-                    return trans('Nicat-RouteTree::routetree.editTitle', ['item' => $this->routeNode->getActiveValue()]);
+                    return trans('Webflorist-RouteTree::routetree.editTitle', ['item' => $this->routeNode->getActiveValue()]);
                 },
                 'defaultNavTitle' => function() {
-                    return trans('Nicat-RouteTree::routetree.editNavTitle');
+                    return trans('Webflorist-RouteTree::routetree.editNavTitle');
                 }
             ],
             'update' => [

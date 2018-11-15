@@ -6,7 +6,7 @@
  * Time: 13:04
  */
 
-namespace Nicat\RouteTree\Exceptions;
+namespace Webflorist\RouteTree\Exceptions;
 
 use \Exception;
 

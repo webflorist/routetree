@@ -1,12 +1,12 @@
 <?php
 
-use Nicat\RouteTree\RouteTree;
+use Webflorist\RouteTree\RouteTree;
 
 if (! function_exists('route_tree')) {
     /**
      * Gets the RouteTree singleton from Laravel's service-container
      *
-     * @return \Nicat\RouteTree\RouteTree
+     * @return \Webflorist\RouteTree\RouteTree
      */
     function route_tree()
     {

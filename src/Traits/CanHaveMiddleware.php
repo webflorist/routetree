@@ -6,7 +6,7 @@
  * Time: 13:51
  */
 
-namespace Nicat\RouteTree\Traits;
+namespace Webflorist\RouteTree\Traits;
 
 
 trait CanHaveMiddleware

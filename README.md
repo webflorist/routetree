@@ -1,4 +1,4 @@
-# nicat/routetree
+# webflorist/routetree
 Advanded route management for Laravel 5
 
 ## Description
@@ -17,11 +17,11 @@ This package includes a special API for creating Laravel-routes, that intends to
 ## Installation
 1. Require the package via composer:  
 ```php 
-composer require nicat/routetree
+composer require webflorist/routetree
 ```
 2. Add the Service-Provider to config/app.php:
 ```php 
-Nicat\RouteTree\RouteTreeServiceProvider::class
+Webflorist\RouteTree\RouteTreeServiceProvider::class
 ```
 3. Define all locales you want to ust on your website under the key `locales` inside your `app.php` config file. E.g.:
 ```
@@ -29,7 +29,7 @@ Nicat\RouteTree\RouteTreeServiceProvider::class
 ```
 4. Publish config (optional):
 ```
-php artisan vendor:publish --provider="Nicat\RouteTree\RouteTreeServiceProvider"
+php artisan vendor:publish --provider="Webflorist\RouteTree\RouteTreeServiceProvider"
 ```
 
 ## Terminology
@@ -46,7 +46,7 @@ To understand the usage of this package, you should know the meaning of the foll
 ### Accessing the RouteTree-service
 The best way to interact with the RouteTree-service is by using the helper-function `route_tree()`, which returns the RouteTree-singleton from Laravel's service container.
 
-Of course you can also retrieve the RouteTree-singleton directly from the service container using `app('Nicat\RouteTree\RouteTree')` or `app()['Nicat\RouteTree\RouteTree']`.
+Of course you can also retrieve the RouteTree-singleton directly from the service container using `app('Webflorist\RouteTree\RouteTree')` or `app()['Webflorist\RouteTree\RouteTree']`.
 
 ### Defining the RouteTree
 

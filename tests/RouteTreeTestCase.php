@@ -3,7 +3,7 @@
 namespace RouteTreeTests;
 
 use Illuminate\Routing\Route;
-use Nicat\RouteTree\RouteTreeServiceProvider;
+use Webflorist\RouteTree\RouteTreeServiceProvider;
 use Orchestra\Testbench\TestCase;
 use RouteTreeTests\Middleware\Test1Middleware;
 use RouteTreeTests\Middleware\Test2Middleware;
