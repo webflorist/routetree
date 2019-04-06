@@ -1,5 +1,5 @@
 # webflorist/routetree
-Advanded route management for Laravel 5
+**Advanded route management for Laravel 5.5 and later**
 
 ## Description
 This package includes a special API for creating Laravel-routes, that intends to solve some of the shortcomings of the standard routes-generation of Laravel (especially regarding multi-language sites). It's main features are:
