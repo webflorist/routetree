@@ -20,7 +20,7 @@ trait CanHaveMiddleware
     protected $middleware = [];
 
     /**
-     * Gets the middleware-array fot this node.
+     * Gets the middleware-array for this node.
      *
      * @return array
      */

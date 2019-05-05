@@ -34,6 +34,8 @@ class RouteTreeServiceProvider extends ServiceProvider
         if($this->app['router']->hasMiddlewareGroup('web')) {
         $this->app['router']->pushMiddlewareToGroup('web', SetLocalFromSession::class);
     }
+        // Load migrations
+        $this->loadMigrationsFrom(__DIR__.'/migrations');
     }
 
     /**

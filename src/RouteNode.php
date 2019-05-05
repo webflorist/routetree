@@ -58,6 +58,8 @@ class RouteNode {
 
     /**
      * An associative array with the languages as keys and the full path to this node as values.
+     * 
+     * Gets generated automatically
      *
      * @var array
      */
@@ -88,6 +90,8 @@ class RouteNode {
 
     /**
      * The language-file-key to be used for auto-translation of meta-data.
+     * 
+     * Gets determined automatically.
      *
      * @var string
      */
@@ -95,6 +99,8 @@ class RouteNode {
 
     /**
      * The language-file-key to be used for auto-translation of normal page-content.
+     * 
+     * Gets determined automatically.
      *
      * @var string
      */
