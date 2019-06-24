@@ -315,6 +315,90 @@ class RouteGenerationTest extends RouteTreeTestCase
         $this->performFullRoutesTest();
     }
 
+
+    public function testNodeWithChildrenWithoutLocaleInPath()
+    {
+
+        $this->app['config']->set('routetree.start_paths_with_locale', false);
+        $this->app['config']->set('app.locales', ['de' => 'Deutsch']);
+
+        $this->nodeTree = [
+            'parent' => [
+                'index' => ['uses' => 'TestController@get'],
+                'children' => [
+                    'child1' => [
+                        'index' => ['uses' => 'TestController@get'],
+                    ],
+                    'child2' => [
+                        'index' => ['uses' => 'TestController@get'],
+                    ]
+                ]
+            ]
+        ];
+
+        $this->expectedResult = [
+            "de.index" => [
+                "method" => "GET",
+                "uri" => "/",
+                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    'id' => '',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => '',
+                    'title' => 'Startseite'
+                ],
+            ],
+            "de.parent.index" => [
+                "method" => "GET",
+                "uri" => "parent",
+                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'parent',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => 'parent',
+                    'title' => 'Parent'
+                ],
+            ],
+            "de.parent.child1.index" => [
+                "method" => "GET",
+                "uri" => "parent/child1",
+                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'parent.child1',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => 'parent/child1',
+                    'title' => 'Child1'
+                ],
+            ],
+            "de.parent.child2.index" => [
+                "method" => "GET",
+                "uri" => "parent/child2",
+                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'parent.child2',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'method' => 'GET',
+                    'path' => 'parent/child2',
+                    'title' => 'Child2'
+                ],
+            ],
+
+        ];
+
+        $this->performFullRoutesTest();
+    }
+
     public function testCustomSegment()
     {
 

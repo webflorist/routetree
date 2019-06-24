@@ -1116,13 +1116,19 @@ class RouteNode {
                 $this->paths[$language] = $inheritedPaths[$language];
             }
             // If no inherited path could be determined, we start the full-path with the language.
-            else {
+            else if (config('routetree.start_paths_with_locale')) {
                 $this->paths[$language] = $language;
+            }
+            else {
+                $this->paths[$language] = '';
             }
 
             // Append the path segment for the current node.
             if (strlen($this->segments[$language]) > 0) {
-                $this->paths[$language] .= '/' . $this->segments[$language];
+                if (strlen($this->paths[$language])>0) {
+                    $this->paths[$language] .= '/';
+                }
+                $this->paths[$language] .= $this->segments[$language];
             }
         }
     }

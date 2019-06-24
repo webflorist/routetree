@@ -30,6 +30,17 @@ abstract class RouteTreeTestCase extends TestCase
 
         /*
         |--------------------------------------------------------------------------
+        | Start Paths with locale?
+        |--------------------------------------------------------------------------
+        |
+        | Set to false, if you don't want paths starting with locale.
+        |
+        */
+        'start_paths_with_locale' => true,
+
+
+        /*
+        |--------------------------------------------------------------------------
         | Translation Settings
         |--------------------------------------------------------------------------
         |

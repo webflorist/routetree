@@ -431,6 +431,6 @@ class RouteTree {
     {
         return $this->currentAction ? false : true;
     }
-    
+
 
 }
