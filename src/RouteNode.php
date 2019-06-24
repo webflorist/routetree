@@ -77,7 +77,7 @@ class RouteNode {
      *
      * @var string|null
      */
-    protected $namespace = 'App\Http\Controllers';
+    protected $namespace = '\App\Http\Controllers';
 
     /**
      * Array of RouteAction objects, this route-node should have.
