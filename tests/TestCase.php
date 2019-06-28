@@ -219,4 +219,33 @@ abstract class TestCase extends BaseTestCase
     }
 
 
+
+    protected function generateTestRoutes($visitUri='') {
+
+        route_tree()->setRootNode([
+            'namespace' => 'RouteTreeTests\Feature\Controllers',
+            'index' => ['uses' => 'TestController@get'],
+            'children' => [
+                'page1' => [
+                    'index' => ['uses' => 'TestController@get'],
+                    'children' => [
+                        'page1-1' => [
+                            'index' => ['uses' => 'TestController@get'],
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+
+        // Visit the uri.
+        try {
+            json_decode($this->get($visitUri)->baseResponse->getContent(), true);
+        }
+        catch(NotFoundHttpException $exception) {
+            throw $exception;
+        }
+
+    }
+
+
 }

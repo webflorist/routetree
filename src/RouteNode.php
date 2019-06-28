@@ -404,6 +404,7 @@ class RouteNode {
      * Returns false, if no action of the current node is currently in the rootline.
      *
      * @return RouteAction|bool
+     * @throws Exceptions\UrlParametersMissingException
      */
     public function getLowestRootLineAction() {
 
@@ -613,14 +614,15 @@ class RouteNode {
      * @param string $action The action name (e.g. index|show|get|post|update,etc.)
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
      * @param string $language The language this url should be generated for (default=current locale).
+     * @param bool $absolute Create absolute paths instead of relative paths (default=true).
      * @return string
      * @throws ActionNotFoundException
      * @throws Exceptions\UrlParametersMissingException
      */
-    public function getUrlByAction($action='index', $parameters=null, $language = null)
+    public function getUrlByAction($action='index', $parameters=null, $language = null, $absolute=true)
     {
         if ($this->hasAction($action)) {
-            return $this->getAction($action)->getUrl($parameters, $language);
+            return $this->getAction($action)->getUrl($parameters, $language, $absolute);
         }
 
         throw new ActionNotFoundException('Node with Id "'.$this->getId().'" does not have the action "'.$action.'""');

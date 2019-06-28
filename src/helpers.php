@@ -1,5 +1,8 @@
 <?php
 
+use Webflorist\RouteTree\Exceptions\ActionNotFoundException;
+use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
+use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
 use Webflorist\RouteTree\RouteTree;
 
 if (! function_exists('route_tree')) {
@@ -23,9 +26,13 @@ if ( ! function_exists('route_node_url()')) {
      * @param string $action The node-action for which this url is generated (default='index|get').
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
      * @param string $language The language this url should be generated for (default=current locale).
+     * @param bool $absolute Create absolute paths instead of relative paths (default=true).
      * @return string
+     * @throws ActionNotFoundException
+     * @throws NodeNotFoundException
+     * @throws UrlParametersMissingException
      */
-    function route_node_url($nodeId=null, $action=null, $parameters = null, $language=null)
+    function route_node_url($nodeId=null, $action=null, $parameters = null, $language=null, $absolute=true)
     {
         if (is_null($nodeId)) {
             $node = route_tree()->getCurrentNode();
@@ -43,7 +50,7 @@ if ( ! function_exists('route_node_url()')) {
             }
         }
 
-        return $node->getUrlByAction($action, $parameters, $language);
+        return $node->getUrlByAction($action, $parameters, $language, $absolute);
     }
 }
 

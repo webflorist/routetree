@@ -7,11 +7,9 @@ use RouteTreeTests\TestCase;
 class MethodsTest extends TestCase
 {
 
-    protected $result = [];
-
     public function testGetCurrentNode()
     {
-        $this->generateRoutes('/de/page1');
+        $this->generateTestRoutes('/de/page1');
 
         $this->assertEquals(
             'page1',
@@ -22,7 +20,7 @@ class MethodsTest extends TestCase
 
     public function testGetCurrentAction()
     {
-        $this->generateRoutes('/de/page1');
+        $this->generateTestRoutes('/de/page1');
 
         $this->assertEquals(
             'page1.index',
@@ -33,7 +31,7 @@ class MethodsTest extends TestCase
 
     public function testDoesNodeExist()
     {
-        $this->generateRoutes('/de/page1');
+        $this->generateTestRoutes('/de/page1');
 
         $this->assertEquals(
             true,
@@ -44,7 +42,7 @@ class MethodsTest extends TestCase
 
     public function testDoesNodeNotExist()
     {
-        $this->generateRoutes('/de/page1');
+        $this->generateTestRoutes('/de/page1');
 
         $this->assertEquals(
             false,
@@ -55,7 +53,7 @@ class MethodsTest extends TestCase
 
     public function testGetNodeByRouteName()
     {
-        $this->generateRoutes('/de/page1');
+        $this->generateTestRoutes('/de/page1');
 
         $this->assertEquals(
             'page1.page1-1',
@@ -66,39 +64,12 @@ class MethodsTest extends TestCase
 
     public function testGetActionByRoute()
     {
-        $this->generateRoutes('/de/page1');
+        $this->generateTestRoutes('/de/page1');
 
         $this->assertEquals(
             'index',
             route_tree()->getActionByRoute(\Route::current())->getAction()
         );
-
-    }
-
-    private function generateRoutes($visitUri='') {
-
-        route_tree()->setRootNode([
-            'namespace' => 'RouteTreeTests\Feature\Controllers',
-            'index' => ['uses' => 'TestController@get'],
-            'children' => [
-                'page1' => [
-                    'index' => ['uses' => 'TestController@get'],
-                    'children' => [
-                        'page1-1' => [
-                            'index' => ['uses' => 'TestController@get'],
-                        ]
-                    ]
-                ]
-            ]
-        ]);
-
-        // Visit the uri.
-        try {
-            $result = json_decode($this->get($visitUri)->baseResponse->getContent(), true);
-        }
-        catch(NotFoundHttpException $exception) {
-            throw $exception;
-        }
 
     }
 
