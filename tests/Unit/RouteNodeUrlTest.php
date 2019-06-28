@@ -29,4 +29,16 @@ class RouteNodeUrlTest extends TestCase
 
     }
 
+    public function testNodeUrlRelativeViaConfig()
+    {
+        config()->set('routetree.absolute_urls', false);
+        $this->generateTestRoutes('/de/page1');
+
+        $this->assertEquals(
+            '/de/page1',
+            route_node_url('page1')
+        );
+
+    }
+
 }

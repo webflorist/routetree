@@ -38,6 +38,16 @@ abstract class TestCase extends BaseTestCase
         */
         'start_paths_with_locale' => true,
 
+        /*
+        |--------------------------------------------------------------------------
+        | Create absolute paths instead of relative paths by default?
+        |--------------------------------------------------------------------------
+        |
+        | Can still be overridden with function-parameters.
+        |
+        */
+        'absolute_urls' => true,
+
 
         /*
         |--------------------------------------------------------------------------

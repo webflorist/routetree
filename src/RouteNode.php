@@ -614,12 +614,12 @@ class RouteNode {
      * @param string $action The action name (e.g. index|show|get|post|update,etc.)
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
      * @param string $language The language this url should be generated for (default=current locale).
-     * @param bool $absolute Create absolute paths instead of relative paths (default=true).
+     * @param bool $absolute Create absolute paths instead of relative paths (default=true/configurable).
      * @return string
      * @throws ActionNotFoundException
      * @throws Exceptions\UrlParametersMissingException
      */
-    public function getUrlByAction($action='index', $parameters=null, $language = null, $absolute=true)
+    public function getUrlByAction($action='index', $parameters=null, $language = null, $absolute=null)
     {
         if ($this->hasAction($action)) {
             return $this->getAction($action)->getUrl($parameters, $language, $absolute);
