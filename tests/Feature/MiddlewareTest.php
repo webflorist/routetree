@@ -1,10 +1,10 @@
 <?php
 
-namespace RouteTreeTests;
+namespace RouteTreeTests\Feature;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use RouteTreeTests\TestCase;
 
-class RouteTreeMiddlewareTest extends RouteTreeTestCase
+class MiddlewareTest extends TestCase
 {
 
     protected $standardClosure = null;

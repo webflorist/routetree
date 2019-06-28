@@ -1,13 +1,13 @@
 <?php
 
-namespace RouteTreeTests\Controllers\Nested;
+namespace RouteTreeTests\Feature\Controllers;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
-class NestedController extends Controller
+class TestController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
@@ -15,7 +15,7 @@ class NestedController extends Controller
     {
         return json_encode([
             'id' => route_tree()->getCurrentNode()->getId(),
-            'controller' => 'nested',
+            'controller' => 'test',
             'function' => $name,
             'method' => \Request::getMethod(),
             'path' => trim(\Request::getPathInfo(),'/'),

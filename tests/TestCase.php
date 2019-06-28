@@ -4,14 +4,14 @@ namespace RouteTreeTests;
 
 use Illuminate\Routing\Route;
 use Webflorist\RouteTree\RouteTreeServiceProvider;
-use Orchestra\Testbench\TestCase;
-use RouteTreeTests\Middleware\Test1Middleware;
-use RouteTreeTests\Middleware\Test2Middleware;
-use RouteTreeTests\Middleware\Test3Middleware;
-use RouteTreeTests\Middleware\Test4Middleware;
+use Orchestra\Testbench\TestCase as BaseTestCase;
+use RouteTreeTests\Feature\Middleware\Test1Middleware;
+use RouteTreeTests\Feature\Middleware\Test2Middleware;
+use RouteTreeTests\Feature\Middleware\Test3Middleware;
+use RouteTreeTests\Feature\Middleware\Test4Middleware;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-abstract class RouteTreeTestCase extends TestCase
+abstract class TestCase extends BaseTestCase
 {
 
     protected $rootNode = [];
@@ -85,7 +85,7 @@ abstract class RouteTreeTestCase extends TestCase
         $this->app['request']->setLaravelSession($this->app['session']->driver('array'));
 
         // Add Translations
-        $this->app['translator']->addNamespace('RouteTreeTests', __DIR__ . "/lang");
+        $this->app['translator']->addNamespace('RouteTreeTests', __DIR__ . "/Feature/lang");
 
         // Otherwise, register test-middlewares'.
         $this->app['router']->aliasMiddleware('test1', Test1Middleware::class);
@@ -112,7 +112,7 @@ abstract class RouteTreeTestCase extends TestCase
 
         // Set view config
         $app['config']->set('view.paths', [
-            dirname(__FILE__).'/Views'
+            dirname(__FILE__).'/Feature/Views'
         ]);
 
         // Set Test-Route

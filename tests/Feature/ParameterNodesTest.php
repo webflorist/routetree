@@ -1,9 +1,10 @@
 <?php
 
-namespace RouteTreeTests;
+namespace RouteTreeTests\Feature;
 
+use RouteTreeTests\TestCase;
 
-class ParameterNodesTest extends RouteTreeTestCase
+class ParameterNodesTest extends TestCase
 {
 
     protected $rootNode = [];

@@ -1,6 +1,6 @@
 <?php
 
-namespace RouteTreeTests\Middleware;
+namespace RouteTreeTests\Feature\Middleware;
 
 use Closure;
 

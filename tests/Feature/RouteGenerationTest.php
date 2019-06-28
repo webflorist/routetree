@@ -1,12 +1,14 @@
 <?php
 
-namespace RouteTreeTests;
+namespace RouteTreeTests\Feature;
 
-class RouteGenerationTest extends RouteTreeTestCase
+use RouteTreeTests\TestCase;
+
+class RouteGenerationTest extends TestCase
 {
 
     protected $rootNode = [
-        'namespace' => 'RouteTreeTests\Controllers',
+        'namespace' => 'RouteTreeTests\Feature\Controllers',
         'index' => ['uses' => 'TestController@get']
     ];
 
@@ -16,7 +18,7 @@ class RouteGenerationTest extends RouteTreeTestCase
         "de.index" => [
             "method" => "GET",
             "uri" => "de",
-            "action" => 'RouteTreeTests\Controllers\TestController@get',
+            "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
             "middleware" => [],
             "content" => [
                 'id' => '',
@@ -30,7 +32,7 @@ class RouteGenerationTest extends RouteTreeTestCase
         "en.index" => [
             "method" => "GET",
             "uri" => "en",
-            "action" => 'RouteTreeTests\Controllers\TestController@get',
+            "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
             "middleware" => [],
             "content" => [
                 'id' => '',
@@ -134,7 +136,7 @@ class RouteGenerationTest extends RouteTreeTestCase
     public function testRootNodeRedirect()
     {
         $this->rootNode = [
-            'namespace' => 'RouteTreeTests\Controllers',
+            'namespace' => 'RouteTreeTests\Feature\Controllers',
             'index' => ['redirect' => 'target']
         ];
 
@@ -176,7 +178,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.target.index" => [
                 "method" => "GET",
                 "uri" => "de/target",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'target',
@@ -190,7 +192,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.target.index" => [
                 "method" => "GET",
                 "uri" => "en/target",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'target',
@@ -228,7 +230,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.parent.index" => [
                 "method" => "GET",
                 "uri" => "de/parent",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'parent',
@@ -242,7 +244,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.parent.index" => [
                 "method" => "GET",
                 "uri" => "en/parent",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'parent',
@@ -256,7 +258,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.parent.child1.index" => [
                 "method" => "GET",
                 "uri" => "de/parent/child1",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'parent.child1',
@@ -270,7 +272,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.parent.child1.index" => [
                 "method" => "GET",
                 "uri" => "en/parent/child1",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'parent.child1',
@@ -284,7 +286,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.parent.child2.index" => [
                 "method" => "GET",
                 "uri" => "de/parent/child2",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'parent.child2',
@@ -298,7 +300,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.parent.child2.index" => [
                 "method" => "GET",
                 "uri" => "en/parent/child2",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'parent.child2',
@@ -340,7 +342,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.index" => [
                 "method" => "GET",
                 "uri" => "/",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => '',
@@ -354,7 +356,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.parent.index" => [
                 "method" => "GET",
                 "uri" => "parent",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'parent',
@@ -368,7 +370,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.parent.child1.index" => [
                 "method" => "GET",
                 "uri" => "parent/child1",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'parent.child1',
@@ -382,7 +384,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.parent.child2.index" => [
                 "method" => "GET",
                 "uri" => "parent/child2",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'parent.child2',
@@ -413,7 +415,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.page.index" => [
                 "method" => "GET",
                 "uri" => "de/custom-segment",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -427,7 +429,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.page.index" => [
                 "method" => "GET",
                 "uri" => "en/custom-segment",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -461,7 +463,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.page.index" => [
                 "method" => "GET",
                 "uri" => "de/custom-segment-de",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -475,7 +477,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.page.index" => [
                 "method" => "GET",
                 "uri" => "en/custom-segment-en",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -505,7 +507,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.page.create" => [
                 "method" => "GET",
                 "uri" => "de/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@create',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@create',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -519,7 +521,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.page.create" => [
                 "method" => "GET",
                 "uri" => "en/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@create',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@create',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -550,7 +552,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.page.index" => [
                 "method" => "GET",
                 "uri" => "de/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -564,7 +566,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.page.index" => [
                 "method" => "GET",
                 "uri" => "en/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -578,7 +580,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.page.store" => [
                 "method" => "POST",
                 "uri" => "de/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@store',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@store',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -592,7 +594,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.page.store" => [
                 "method" => "POST",
                 "uri" => "en/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@store',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@store',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -624,7 +626,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.page.update" => [
                 "method" => "PUT",
                 "uri" => "de/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@update',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@update',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -638,7 +640,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.page.update" => [
                 "method" => "PUT",
                 "uri" => "en/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@update',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@update',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -652,7 +654,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.page.destroy" => [
                 "method" => "DELETE",
                 "uri" => "de/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@destroy',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@destroy',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -666,7 +668,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.page.destroy" => [
                 "method" => "DELETE",
                 "uri" => "en/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@destroy',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@destroy',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -680,7 +682,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.page.show" => [
                 "method" => "GET",
                 "uri" => "de/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@show',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@show',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -694,7 +696,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.page.show" => [
                 "method" => "GET",
                 "uri" => "en/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@show',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@show',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -725,7 +727,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.page.edit" => [
                 "method" => "GET",
                 "uri" => "de/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@edit',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@edit',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -739,7 +741,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.page.edit" => [
                 "method" => "GET",
                 "uri" => "en/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@edit',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@edit',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -772,7 +774,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.jobs.index" => [
                 "method" => "GET",
                 "uri" => "de/jobs",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -786,7 +788,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.jobs.index" => [
                 "method" => "GET",
                 "uri" => "en/jobs",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -800,7 +802,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.jobs.create" => [
                 "method" => "GET",
                 "uri" => "de/jobs/create",
-                "action" => 'RouteTreeTests\Controllers\TestController@create',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@create',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -814,7 +816,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.jobs.create" => [
                 "method" => "GET",
                 "uri" => "en/jobs/create",
-                "action" => 'RouteTreeTests\Controllers\TestController@create',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@create',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -828,7 +830,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.jobs.store" => [
                 "method" => "POST",
                 "uri" => "de/jobs",
-                "action" => 'RouteTreeTests\Controllers\TestController@store',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@store',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -842,7 +844,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.jobs.store" => [
                 "method" => "POST",
                 "uri" => "en/jobs",
-                "action" => 'RouteTreeTests\Controllers\TestController@store',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@store',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -856,7 +858,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.jobs.edit" => [
                 "method" => "GET",
                 "uri" => "de/jobs/{job}/edit",
-                "action" => 'RouteTreeTests\Controllers\TestController@edit',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@edit',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -870,7 +872,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.jobs.edit" => [
                 "method" => "GET",
                 "uri" => "en/jobs/{job}/edit",
-                "action" => 'RouteTreeTests\Controllers\TestController@edit',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@edit',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -884,7 +886,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.jobs.update" => [
                 "method" => "PUT",
                 "uri" => "de/jobs/{job}",
-                "action" => 'RouteTreeTests\Controllers\TestController@update',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@update',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -898,7 +900,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.jobs.update" => [
                 "method" => "PUT",
                 "uri" => "en/jobs/{job}",
-                "action" => 'RouteTreeTests\Controllers\TestController@update',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@update',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -912,7 +914,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.jobs.destroy" => [
                 "method" => "DELETE",
                 "uri" => "de/jobs/{job}",
-                "action" => 'RouteTreeTests\Controllers\TestController@destroy',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@destroy',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -926,7 +928,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.jobs.destroy" => [
                 "method" => "DELETE",
                 "uri" => "en/jobs/{job}",
-                "action" => 'RouteTreeTests\Controllers\TestController@destroy',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@destroy',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -940,7 +942,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.jobs.show" => [
                 "method" => "GET",
                 "uri" => "de/jobs/{job}",
-                "action" => 'RouteTreeTests\Controllers\TestController@show',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@show',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -954,7 +956,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.jobs.show" => [
                 "method" => "GET",
                 "uri" => "en/jobs/{job}",
-                "action" => 'RouteTreeTests\Controllers\TestController@show',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@show',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -988,7 +990,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.jobs.index" => [
                 "method" => "GET",
                 "uri" => "de/jobs",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -1002,7 +1004,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.jobs.index" => [
                 "method" => "GET",
                 "uri" => "en/jobs",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -1016,7 +1018,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.jobs.create" => [
                 "method" => "GET",
                 "uri" => "de/jobs/create",
-                "action" => 'RouteTreeTests\Controllers\TestController@create',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@create',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -1030,7 +1032,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.jobs.create" => [
                 "method" => "GET",
                 "uri" => "en/jobs/create",
-                "action" => 'RouteTreeTests\Controllers\TestController@create',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@create',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -1065,7 +1067,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.jobs.index" => [
                 "method" => "GET",
                 "uri" => "de/jobs",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -1079,7 +1081,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.jobs.index" => [
                 "method" => "GET",
                 "uri" => "en/jobs",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -1093,7 +1095,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.jobs.create" => [
                 "method" => "GET",
                 "uri" => "de/jobs/create",
-                "action" => 'RouteTreeTests\Controllers\TestController@create',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@create',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -1107,7 +1109,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.jobs.create" => [
                 "method" => "GET",
                 "uri" => "en/jobs/create",
-                "action" => 'RouteTreeTests\Controllers\TestController@create',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@create',
                 "middleware" => [],
                 "content" => [
                     'id' => 'jobs',
@@ -1146,7 +1148,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.not_inherited.index" => [
                 "method" => "GET",
                 "uri" => "de/not_inherited",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'not_inherited',
@@ -1160,7 +1162,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.not_inherited.index" => [
                 "method" => "GET",
                 "uri" => "en/not_inherited",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'not_inherited',
@@ -1174,7 +1176,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.not_inherited.child1.index" => [
                 "method" => "GET",
                 "uri" => "de/child1",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'not_inherited.child1',
@@ -1188,7 +1190,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.not_inherited.child1.index" => [
                 "method" => "GET",
                 "uri" => "en/child1",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'not_inherited.child1',
@@ -1202,7 +1204,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.not_inherited.child2.index" => [
                 "method" => "GET",
                 "uri" => "de/child2",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'not_inherited.child2',
@@ -1216,7 +1218,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.not_inherited.child2.index" => [
                 "method" => "GET",
                 "uri" => "en/child2",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'not_inherited.child2',
@@ -1247,7 +1249,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.nested.index" => [
                 "method" => "GET",
                 "uri" => "de/nested",
-                "action" => 'RouteTreeTests\Controllers\Nested\NestedController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\Nested\NestedController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'nested',
@@ -1261,7 +1263,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.nested.index" => [
                 "method" => "GET",
                 "uri" => "en/nested",
-                "action" => 'RouteTreeTests\Controllers\Nested\NestedController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\Nested\NestedController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'nested',
@@ -1302,7 +1304,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.products.index" => [
                 "method" => "GET",
                 "uri" => "de/produkte",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'products',
@@ -1316,7 +1318,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.products.index" => [
                 "method" => "GET",
                 "uri" => "en/products",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'products',
@@ -1330,7 +1332,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.products.product1.index" => [
                 "method" => "GET",
                 "uri" => "de/produkte/produkt_1",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'products.product1',
@@ -1344,7 +1346,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.products.product1.index" => [
                 "method" => "GET",
                 "uri" => "en/products/product_1",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'products.product1',
@@ -1358,7 +1360,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.products.product2.index" => [
                 "method" => "GET",
                 "uri" => "de/produkte/produkt_2",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'products.product2',
@@ -1372,7 +1374,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.products.product2.index" => [
                 "method" => "GET",
                 "uri" => "en/products/product_2",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'products.product2',
@@ -1386,7 +1388,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.contact.index" => [
                 "method" => "GET",
                 "uri" => "de/kontakt",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'contact',
@@ -1400,7 +1402,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.contact.index" => [
                 "method" => "GET",
                 "uri" => "en/contact",
-                "action" => 'RouteTreeTests\Controllers\TestController@index',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@index',
                 "middleware" => [],
                 "content" => [
                     'id' => 'contact',
@@ -1432,7 +1434,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.page.index" => [
                 "method" => "GET",
                 "uri" => "de/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -1446,7 +1448,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.page.index" => [
                 "method" => "GET",
                 "uri" => "en/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -1479,7 +1481,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.page.index" => [
                 "method" => "GET",
                 "uri" => "de/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -1493,7 +1495,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.page.index" => [
                 "method" => "GET",
                 "uri" => "en/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -1529,7 +1531,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.page.index" => [
                 "method" => "GET",
                 "uri" => "de/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -1543,7 +1545,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.page.index" => [
                 "method" => "GET",
                 "uri" => "en/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [],
                 "content" => [
                     'id' => 'page',
@@ -1564,7 +1566,7 @@ class RouteGenerationTest extends RouteTreeTestCase
     {
 
         $this->rootNode = [
-            'namespace' => 'RouteTreeTests\Controllers',
+            'namespace' => 'RouteTreeTests\Feature\Controllers',
             'index' => ['uses' => 'TestController@get'],
             'middleware' => [
                 'test1' => [
@@ -1608,7 +1610,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.index" => [
                 "method" => "GET",
                 "uri" => "de",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [
                     'test1' => 'test1:value1,value2',
                     'test2' => 'test2'
@@ -1625,7 +1627,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.index" => [
                 "method" => "GET",
                 "uri" => "en",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [
                     'test1' => 'test1:value1,value2',
                     'test2' => 'test2'
@@ -1642,7 +1644,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.page.index" => [
                 "method" => "GET",
                 "uri" => "de/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [
                     'test1' => 'test1:value1,value2',
                     'test3' => 'test3:value3,value4'
@@ -1659,7 +1661,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.page.index" => [
                 "method" => "GET",
                 "uri" => "en/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@get',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@get',
                 "middleware" => [
                     'test1' => 'test1:value1,value2',
                     'test3' => 'test3:value3,value4'
@@ -1676,7 +1678,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "de.page.store" => [
                 "method" => "POST",
                 "uri" => "de/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@store',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@store',
                 "middleware" => [
                     'test1' => 'test1:value1,value2',
                     'test3' => 'test3:value3,value4',
@@ -1694,7 +1696,7 @@ class RouteGenerationTest extends RouteTreeTestCase
             "en.page.store" => [
                 "method" => "POST",
                 "uri" => "en/page",
-                "action" => 'RouteTreeTests\Controllers\TestController@store',
+                "action" => 'RouteTreeTests\Feature\Controllers\TestController@store',
                 "middleware" => [
                     'test1' => 'test1:value1,value2',
                     'test3' => 'test3:value3,value4',

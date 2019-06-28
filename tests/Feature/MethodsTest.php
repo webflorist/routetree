@@ -1,8 +1,10 @@
 <?php
 
-namespace RouteTreeTests;
+namespace RouteTreeTests\Feature;
 
-class RouteTreeMethodsTest extends RouteTreeTestCase
+use RouteTreeTests\TestCase;
+
+class MethodsTest extends TestCase
 {
 
     protected $result = [];
@@ -76,7 +78,7 @@ class RouteTreeMethodsTest extends RouteTreeTestCase
     private function generateRoutes($visitUri='') {
 
         route_tree()->setRootNode([
-            'namespace' => 'RouteTreeTests\Controllers',
+            'namespace' => 'RouteTreeTests\Feature\Controllers',
             'index' => ['uses' => 'TestController@get'],
             'children' => [
                 'page1' => [
