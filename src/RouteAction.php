@@ -485,7 +485,7 @@ class RouteAction
         }
 
         // Iterate through configured languages.
-        foreach (\Config::get('app.locales') as $language => $fullLanguage) {
+        foreach (RouteTree::getLocales() as $language => $fullLanguage) {
 
             // Generate and set route name.
             $action['as'] = $this->generateRouteName($language);

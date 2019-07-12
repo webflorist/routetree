@@ -55,6 +55,7 @@ class RouteTree {
      */
     public function __construct()
     {
+
         // Create an empty root-node.
         $this->rootNode = new RouteNode("");
 
@@ -128,6 +129,7 @@ class RouteTree {
      * @param string $nodeName Name of this node.
      * @param array $nodeData Node-data structured as array.
      * @param string $parentNodeId Node-ID of the parent node. If omitted, the root-node is used.
+     * @throws NodeNotFoundException
      */
     public function addNode($nodeName, $nodeData=[], $parentNodeId = "") {
 
@@ -143,6 +145,7 @@ class RouteTree {
      *
      * @param array $nodes Multi-dimensional array, whose key is the node-name and whose values are the node-data.
      * @param string $parentNodeId Node-ID of the parent node. If omitted, the root-node is used.
+     * @throws NodeNotFoundException
      */
     public function addNodes($nodes=[], $parentNodeId="") {
 
@@ -163,6 +166,7 @@ class RouteTree {
      *
      * @param string $nodeId
      * @return bool|RouteNode|null
+     * @throws NodeNotFoundException
      */
     protected function getOrGenerateNode($nodeId='') {
 
@@ -430,6 +434,22 @@ class RouteTree {
     public function pageNotFound()
     {
         return $this->currentAction ? false : true;
+    }
+
+    /**
+     * Returns array of available languages
+     * (either from config app.locales,
+     * or from app.locale).
+     */
+    public static function getLocales()
+    {
+        if (config()->has('app.locales')) {
+            return config()->get('app.locales');
+        }
+
+        return [
+            config()->get('app.locale') => 'locale'
+        ];
     }
 
 
