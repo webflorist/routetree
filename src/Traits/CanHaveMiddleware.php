@@ -42,7 +42,14 @@ trait CanHaveMiddleware
             if (!isset($middlewareData['inherit'])) {
                 $middlewareData['inherit'] = true;
             }
-            $this->addMiddleware($middlewareKey, $middlewareData['parameters'], $middlewareData['inherit']);
+
+            if(isset($middlewareData['skip']) and $middlewareData['skip']) {
+            	unset($this->middleware[$middlewareKey]);
+            }
+
+            if(!isset($middlewareData['skip']) or !$middlewareData['skip']) {
+	            $this->addMiddleware($middlewareKey, $middlewareData['parameters'], $middlewareData['inherit']);
+            }
         }
     }
 
