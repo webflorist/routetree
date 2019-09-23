@@ -1,15 +1,15 @@
 <?php
 
-namespace RouteTreeTests;
+namespace RouteTreeTests\Feature;
 
-class RouteTreeMethodsTest extends RouteTreeTestCase
+use RouteTreeTests\TestCase;
+
+class MethodsTest extends TestCase
 {
-
-    protected $result = [];
 
     public function testGetCurrentNode()
     {
-        $this->generateRoutes('/de/page1');
+        $this->generateTestRoutes('/de/page1');
 
         $this->assertEquals(
             'page1',
@@ -20,7 +20,7 @@ class RouteTreeMethodsTest extends RouteTreeTestCase
 
     public function testGetCurrentAction()
     {
-        $this->generateRoutes('/de/page1');
+        $this->generateTestRoutes('/de/page1');
 
         $this->assertEquals(
             'page1.index',
@@ -31,7 +31,7 @@ class RouteTreeMethodsTest extends RouteTreeTestCase
 
     public function testDoesNodeExist()
     {
-        $this->generateRoutes('/de/page1');
+        $this->generateTestRoutes('/de/page1');
 
         $this->assertEquals(
             true,
@@ -42,7 +42,7 @@ class RouteTreeMethodsTest extends RouteTreeTestCase
 
     public function testDoesNodeNotExist()
     {
-        $this->generateRoutes('/de/page1');
+        $this->generateTestRoutes('/de/page1');
 
         $this->assertEquals(
             false,
@@ -53,7 +53,7 @@ class RouteTreeMethodsTest extends RouteTreeTestCase
 
     public function testGetNodeByRouteName()
     {
-        $this->generateRoutes('/de/page1');
+        $this->generateTestRoutes('/de/page1');
 
         $this->assertEquals(
             'page1.page1-1',
@@ -64,39 +64,12 @@ class RouteTreeMethodsTest extends RouteTreeTestCase
 
     public function testGetActionByRoute()
     {
-        $this->generateRoutes('/de/page1');
+        $this->generateTestRoutes('/de/page1');
 
         $this->assertEquals(
             'index',
             route_tree()->getActionByRoute(\Route::current())->getAction()
         );
-
-    }
-
-    private function generateRoutes($visitUri='') {
-
-        route_tree()->setRootNode([
-            'namespace' => 'RouteTreeTests\Controllers',
-            'index' => ['uses' => 'TestController@get'],
-            'children' => [
-                'page1' => [
-                    'index' => ['uses' => 'TestController@get'],
-                    'children' => [
-                        'page1-1' => [
-                            'index' => ['uses' => 'TestController@get'],
-                        ]
-                    ]
-                ]
-            ]
-        ]);
-
-        // Visit the uri.
-        try {
-            $result = json_decode($this->get($visitUri)->baseResponse->getContent(), true);
-        }
-        catch(NotFoundHttpException $exception) {
-            throw $exception;
-        }
 
     }
 

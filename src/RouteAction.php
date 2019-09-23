@@ -375,15 +375,20 @@ class RouteAction
      *
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
      * @param string $locale The language this url should be generated for (default=current locale).
+     * @param bool $absolute Create absolute paths instead of relative paths (default=true/configurable).
      * @return mixed
      * @throws UrlParametersMissingException
      */
-    public function getUrl($parameters=null, $locale=null) {
+    public function getUrl($parameters=null, $locale=null, $absolute=null) {
 
         // If no language is specifically stated, we use the current locale.
         RouteTree::establishLocale($locale);
 
-        return route($this->generateRouteName($locale), $this->autoFillPathParameters($parameters, $locale, true));
+        if (is_null($absolute)) {
+            $absolute = config('routetree.absolute_urls');
+        }
+
+        return route($this->generateRouteName($locale), $this->autoFillPathParameters($parameters, $locale, true), $absolute);
 
     }
 
@@ -480,7 +485,7 @@ class RouteAction
         }
 
         // Iterate through configured languages.
-        foreach (\Config::get('app.locales') as $language => $fullLanguage) {
+        foreach (RouteTree::getLocales() as $language => $fullLanguage) {
 
             // Generate and set route name.
             $action['as'] = $this->generateRouteName($language);

@@ -2,6 +2,8 @@
 
 namespace Webflorist\RouteTree\Traits;
 
+use Webflorist\RouteTree\RouteTree;
+
 trait HandleLocaleFromUrl
 {
 
@@ -34,7 +36,7 @@ trait HandleLocaleFromUrl
      */
     public function validLocaleInUrl()
     {
-        return array_key_exists($this->getLocaleFromUrl(), \Config::get('app.locales'));
+        return array_key_exists($this->getLocaleFromUrl(), RouteTree::getLocales());
     }
 
 }

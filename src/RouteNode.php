@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: geraldb
- * Date: 20.04.2016
- * Time: 16:39
- */
 
 namespace Webflorist\RouteTree;
 
@@ -231,6 +225,7 @@ class RouteNode {
      * Sets the parent node of this node and overtakes certain data.
      *
      * @param RouteNode $parentNode
+     * @throws NodeAlreadyHasChildWithSameNameException
      */
     protected function setParentNode(RouteNode $parentNode) {
 
@@ -404,6 +399,7 @@ class RouteNode {
      * Returns false, if no action of the current node is currently in the rootline.
      *
      * @return RouteAction|bool
+     * @throws Exceptions\UrlParametersMissingException
      */
     public function getLowestRootLineAction() {
 
@@ -588,6 +584,7 @@ class RouteNode {
      * @param string $language The language this url should be generated for (default=current locale).
      * @return string
      * @throws ActionNotFoundException
+     * @throws Exceptions\UrlParametersMissingException
      */
     public function getUrl($parameters=null, $language = null)
     {
@@ -613,14 +610,15 @@ class RouteNode {
      * @param string $action The action name (e.g. index|show|get|post|update,etc.)
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
      * @param string $language The language this url should be generated for (default=current locale).
+     * @param bool $absolute Create absolute paths instead of relative paths (default=true/configurable).
      * @return string
      * @throws ActionNotFoundException
      * @throws Exceptions\UrlParametersMissingException
      */
-    public function getUrlByAction($action='index', $parameters=null, $language = null)
+    public function getUrlByAction($action='index', $parameters=null, $language = null, $absolute=null)
     {
         if ($this->hasAction($action)) {
-            return $this->getAction($action)->getUrl($parameters, $language);
+            return $this->getAction($action)->getUrl($parameters, $language, $absolute);
         }
 
         throw new ActionNotFoundException('Node with Id "'.$this->getId().'" does not have the action "'.$action.'""');
@@ -689,6 +687,7 @@ class RouteNode {
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
      * @param string $locale The language the title should be fetched for (default=current locale).
      * @return string
+     * @throws Exceptions\UrlParametersMissingException
      */
     public function getTitle($parameters=null, $locale=null)
     {
@@ -702,6 +701,7 @@ class RouteNode {
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
      * @param string $locale The language the title should be fetched for (default=current locale).
      * @return string
+     * @throws Exceptions\UrlParametersMissingException
      */
     public function getNavTitle($parameters=null, $locale=null)
     {
@@ -724,6 +724,7 @@ class RouteNode {
      * @param $locale
      * @param $title
      * @return array|mixed|string
+     * @throws Exceptions\UrlParametersMissingException
      */
     public function processTitle($parameters, $locale, $title)
     {
@@ -859,7 +860,7 @@ class RouteNode {
         }
         // In all other cases ($data is a string or bool), we set it's value for each language.
         else {
-            foreach (\Config::get('app.locales') as $language => $fullLanguage) {
+            foreach (route_tree()->getLocales() as $language => $fullLanguage) {
                 $this->data[$key][$language] = $data;
             }
         }
@@ -1036,7 +1037,7 @@ class RouteNode {
     public function setSegments($segments=null) {
 
         // Iterate through configured languages.
-        foreach (\Config::get('app.locales') as $language => $fullLanguage) {
+        foreach (RouteTree::getLocales() as $language => $fullLanguage) {
 
             // If $segments is an array and contains an entry for this language, we use that.
             if (is_array($segments) && isset($segments[$language])) {
@@ -1079,7 +1080,7 @@ class RouteNode {
         $segmentTranslationKey = 'segment.'.$this->name;
 
         // Iterate through configured languages.
-        foreach (\Config::get('app.locales') as $language => $fullLanguage) {
+        foreach (RouteTree::getLocales() as $language => $fullLanguage) {
 
             if (!isset($this->segments[$language])) {
 
@@ -1109,20 +1110,28 @@ class RouteNode {
         $inheritedPaths = $this->getInheritedPaths($this->isResourceChild);
 
         // Iterate through configured languages.
-        foreach (\Config::get('app.locales') as $language => $fullLanguage) {
+        foreach (route_tree()->getLocales() as $language => $fullLanguage) {
 
             // If an inherited path could be determined, we overtake that.
             if ($inheritedPaths !== false) {
                 $this->paths[$language] = $inheritedPaths[$language];
             }
-            // If no inherited path could be determined, we start the full-path with the language.
-            else {
+            // If no inherited path could be determined,
+            // and the config 'routetree.start_paths_with_locale' is not false,
+            // we start the full-path with the language.
+            else if (config('routetree.start_paths_with_locale') !== false) {
                 $this->paths[$language] = $language;
+            }
+            else {
+                $this->paths[$language] = '';
             }
 
             // Append the path segment for the current node.
             if (strlen($this->segments[$language]) > 0) {
-                $this->paths[$language] .= '/' . $this->segments[$language];
+                if (strlen($this->paths[$language])>0) {
+                    $this->paths[$language] .= '/';
+                }
+                $this->paths[$language] .= $this->segments[$language];
             }
         }
     }
@@ -1174,7 +1183,7 @@ class RouteNode {
     /**
      * Returns the language-file to be used for the translation of page-content.
      *
-     * @return RouteNode
+     * @return string
      */
     public function getContentLangFile() {
         return $this->contentLangFile;
