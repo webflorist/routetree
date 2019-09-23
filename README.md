@@ -178,20 +178,27 @@ The middlewares that should be attached to all generated routes for this node. T
         'index' => ['uses' => 'ContactController@index'],
         'middleware' => [
             'auth' => ['inherit' => false],
-            'role' => ['parameters' => ['editor','admin']]
+            'role' => ['parameters' => ['editor','admin']],
         ],
         'children' => [
             'support' => [
                 'index' => ['uses' => 'SupportController@index'],
                 'middleware' => [
-                    'throttle' => []
-                ]
-            ]
+                    'throttle' => [],
+                ],
+            ],
+            'public' => [
+                'index' => ['uses' => 'PublicController@index'],
+                'middleware' => [
+                    'role' => ['skip' => true],
+                ],
+            ],
         ]
     ]
 ```
 In this example the `index` action of the `contact`-node will have 2 middlewares attached: `auth` with no parameters and `role` with the parameters `editor,admin`.
 It's child node `support` will inherit the `role` middleware from it's parent, but not the `auth` middleware, because it has `inherit` set to  `false`. Additionally it will have the middleware `throttle` attached to it`s route.
+In the children node 'public' the middleware is skipped with the parameter 'skip', so the inherited middleware 'role' of 'contact' is removed from 'public' and is not loaded on this route.
 
 If you do not want to apply a middleware to all actions of a RouteNode, you can also set it within the specific action-array. Here is an example:
 
