@@ -19,7 +19,7 @@ This package includes a special API for creating Laravel-routes, that intends to
 ```php 
 composer require webflorist/routetree
 ```
-2. Define all locales you want to ust on your website under the key `locales` inside your `app.php` config file. E.g.:
+2. Define all locales you want to use on your website under the key `locales` inside your `app.php` config file. E.g.:
 ```
 'locales' => ['de' => 'Deutsch', 'en' => 'English'],
 ```
@@ -27,6 +27,8 @@ composer require webflorist/routetree
 ```
 php artisan vendor:publish --provider="Webflorist\RouteTree\RouteTreeServiceProvider"
 ```
+4. Setup for single language use (optional)
+Although this package is mainly targeted for use with multi-language websites, you can still use it with one language only. In this case you probably wouldn't want the locale-prefix in your URL-paths. You can disable the prefix via the `start_paths_with_locale` config. (Installation step 2 is not required in this case). 
 
 Note that this package is configured for automatic discovery for Laravel. Thus the package's Service Provider `Webflorist\RouteTree\RouteTreeServiceProvider` will be automatically registered with Laravel.
 
