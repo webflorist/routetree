@@ -582,23 +582,24 @@ class RouteNode {
      *
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
      * @param string $language The language this url should be generated for (default=current locale).
+     * @param bool $absolute Create absolute paths instead of relative paths (default=true/configurable).
      * @return string
      * @throws ActionNotFoundException
      * @throws Exceptions\UrlParametersMissingException
      */
-    public function getUrl($parameters=null, $language = null)
+    public function getUrl($parameters=null, $language = null, $absolute=null)
     {
 
         if ($this->hasAction('index')) {
-            return $this->getUrlByAction('index', $parameters, $language);
+            return $this->getUrlByAction('index', $parameters, $language, $absolute);
         }
 
         if ($this->hasAction('get')) {
-            return $this->getUrlByAction('get', $parameters, $language);
+            return $this->getUrlByAction('get', $parameters, $language, $absolute);
         }
 
         if (count($this->actions)>0) {
-            return $this->getUrlByAction(key($this->actions), $parameters, $language);
+            return $this->getUrlByAction(key($this->actions), $parameters, $language, $absolute);
         }
 
         throw new ActionNotFoundException('Node with Id "'.$this->getId().'" does not have any action to generate an URL to.');
