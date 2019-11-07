@@ -27,6 +27,7 @@ class RouteTreeServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishConfig();
+        $this->loadMigrations();
         $this->loadTranslations();
         $this->addMiddlewares();
     }
@@ -53,7 +54,9 @@ class RouteTreeServiceProvider extends ServiceProvider
 
     private function loadMigrations()
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        if (config('routetree.database.enabled')) {
+            $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        }
     }
 
     private function loadTranslations()

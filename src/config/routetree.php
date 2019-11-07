@@ -57,4 +57,22 @@ return [
 
     ],
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Database Settings
+    |--------------------------------------------------------------------------
+    |
+    | Here you may configure settings for DB-supported routes.
+    |
+    */
+    'database' => [
+
+        /*
+         * Enable DB-support (publishes migrations).
+         */
+        'enabled' => false,
+
+    ],
+
 ];

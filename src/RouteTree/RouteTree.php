@@ -9,6 +9,8 @@ use Illuminate\Routing\ViewController;
 use Illuminate\Support\Collection;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
 use Webflorist\RouteTree\Exceptions\RouteNameAlreadyRegisteredException;
+use Webflorist\RouteTree\Models\RouteActionModel;
+use Webflorist\RouteTree\Models\RouteNodeModel;
 
 class RouteTree extends Router
 {
@@ -477,6 +479,35 @@ class RouteTree extends Router
         }
 
         return [config()->get('app.locale')];
+    }
+
+    /**
+     * Loads routes from database
+     *
+     * @throws NodeNotFoundException
+     */
+    public function loadFromDb() {
+        $routeNodes = RouteNodeModel::all();
+        if (!$routeNodes->isEmpty()) {
+            foreach ($routeNodes as $nodeModel) {
+
+                $nodeData = $nodeModel->toArray();
+
+                foreach ($nodeModel->actions as $action) {
+                    /** @var RouteActionModel $action */
+                    $nodeData[$action->name] = [
+                        $action->type => $action->value,
+                        'middleware' => $action->middleware
+                    ];
+                }
+
+                $this->addNode(
+                    $nodeModel->name,
+                    $nodeData,
+                    $nodeModel->getParentNodeId()
+                );
+            }
+        }
     }
 
 }

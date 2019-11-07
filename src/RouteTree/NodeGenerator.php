@@ -49,7 +49,9 @@ class NodeGenerator
                     $routeNode->addMiddlewareFromArray($value);
                     break;
                 case 'namespace':
-                    $routeNode->namespace($value);
+                    if (!is_null($value)) {
+                        $routeNode->namespace($value);
+                    }
                     break;
                 case 'appendNamespace':
                     $routeNode->appendNamespace($value);
