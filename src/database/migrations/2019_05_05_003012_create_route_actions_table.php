@@ -41,8 +41,8 @@ class CreateRouteActionsTable extends Migration
             // Value of this action.
             $table->text('value');
 
-            // Array of middlewares, actions of this node should be registered with.
-            $table->jsonb('middleware', 255)->nullable()->default(null);
+            // Array of middleware, this action should be registered with.
+            $table->jsonb('middleware')->nullable()->default(null);
 
             $table->timestamps();
 

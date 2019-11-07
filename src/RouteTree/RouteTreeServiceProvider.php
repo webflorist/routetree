@@ -29,7 +29,7 @@ class RouteTreeServiceProvider extends ServiceProvider
         $this->publishConfig();
         $this->loadMigrations();
         $this->loadTranslations();
-        $this->addMiddlewares();
+        $this->addMiddleware();
     }
 
     protected function mergeConfig()
@@ -51,7 +51,6 @@ class RouteTreeServiceProvider extends ServiceProvider
         ]);
     }
 
-
     private function loadMigrations()
     {
         if (config('routetree.database.enabled')) {
@@ -64,8 +63,7 @@ class RouteTreeServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__ . "/../resources/lang", "Webflorist-PackageBlueprint");
     }
 
-
-    private function addMiddlewares()
+    private function addMiddleware()
     {
         $this->app['Illuminate\Contracts\Http\Kernel']->pushMiddleware(RouteTreeMiddleware::class);
         if ($this->app['router']->hasMiddlewareGroup('web')) {

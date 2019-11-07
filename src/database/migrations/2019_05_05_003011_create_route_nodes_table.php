@@ -30,7 +30,7 @@ class CreateRouteNodesTable extends Migration
             $table->string('namespace', 255)->nullable();
 
             // Array of middlewares, actions of this node should be registered with.
-            $table->jsonb('middleware', 255)->nullable()->default(null);
+            $table->jsonb('middleware')->nullable()->default(null);
 
             // Array of custom-data associated with this node.
             $table->jsonb('data')->nullable()->default(null);
