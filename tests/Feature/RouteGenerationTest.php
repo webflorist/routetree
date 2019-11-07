@@ -8,7 +8,53 @@ use Webflorist\RouteTree\RouteNode;
 class RouteGenerationTest extends TestCase
 {
 
-    public function test_root_node_with_all_methods()
+    public function test_root_node_with_closure()
+    {
+        $this->routeTree->root(function (RouteNode $rootNode) {
+
+            $rootNode->get(function() {
+                return json_encode([
+                    'id' => route_tree()->getCurrentNode()->getId(),
+                    'method' => \Request::getMethod(),
+                    'path' => trim(\Request::getPathInfo(),'/'),
+                    'title' => route_tree()->getCurrentNode()->getTitle()
+                ]);
+            });
+            
+        });
+
+        $this->routeTree->generateAllRoutes();
+
+        $this->assertRouteTree([
+            "de.get" => [
+                "method" => "GET",
+                "uri" => "de",
+                "action" => "Closure",
+                "middleware" => [],
+                "content" => [
+                    'id' => '',
+                    'method' => 'GET',
+                    'path' => 'de',
+                    'title' => 'Startseite'
+                ],
+            ],
+            "en.get" => [
+                "method" => "GET",
+                "uri" => "en",
+                "action" => "Closure",
+                "middleware" => [],
+                "content" => [
+                    'id' => '',
+                    'method' => 'GET',
+                    'path' => 'en',
+                    'title' => 'Startpage'
+                ],
+            ]
+
+        ]);
+    }
+
+    public function test_root_node_with_controller_action_and_all_methods()
     {
         $this->routeTree->root(function (RouteNode $rootNode) {
             $rootNode->get('\RouteTreeTests\Feature\Controllers\TestController@get');
@@ -33,7 +79,7 @@ class RouteGenerationTest extends TestCase
                     'function' => 'get',
                     'method' => 'GET',
                     'path' => 'de',
-                    'title' => ''
+                    'title' => 'Startseite'
                 ],
             ],
             "de.post" => [
@@ -47,7 +93,7 @@ class RouteGenerationTest extends TestCase
                     'function' => 'post',
                     'method' => 'POST',
                     'path' => 'de',
-                    'title' => ''
+                    'title' => 'Startseite'
                 ],
             ],
             "de.put" => [
@@ -61,7 +107,7 @@ class RouteGenerationTest extends TestCase
                     'function' => 'put',
                     'method' => 'PUT',
                     'path' => 'de',
-                    'title' => ''
+                    'title' => 'Startseite'
                 ],
             ],
             "de.patch" => [
@@ -75,7 +121,7 @@ class RouteGenerationTest extends TestCase
                     'function' => 'patch',
                     'method' => 'PATCH',
                     'path' => 'de',
-                    'title' => ''
+                    'title' => 'Startseite'
                 ],
             ],
             "de.delete" => [
@@ -89,7 +135,7 @@ class RouteGenerationTest extends TestCase
                     'function' => 'delete',
                     'method' => 'DELETE',
                     'path' => 'de',
-                    'title' => ''
+                    'title' => 'Startseite'
                 ],
             ],
             "de.options" => [
@@ -103,7 +149,7 @@ class RouteGenerationTest extends TestCase
                     'function' => 'options',
                     'method' => 'OPTIONS',
                     'path' => 'de',
-                    'title' => ''
+                    'title' => 'Startseite'
                 ],
             ],
             "en.get" => [
@@ -117,7 +163,7 @@ class RouteGenerationTest extends TestCase
                     'function' => 'get',
                     'method' => 'GET',
                     'path' => 'en',
-                    'title' => ''
+                    'title' => 'Startpage'
                 ],
             ],
             "en.post" => [
@@ -131,7 +177,7 @@ class RouteGenerationTest extends TestCase
                     'function' => 'post',
                     'method' => 'POST',
                     'path' => 'en',
-                    'title' => ''
+                    'title' => 'Startpage'
                 ],
             ],
             "en.put" => [
@@ -145,7 +191,7 @@ class RouteGenerationTest extends TestCase
                     'function' => 'put',
                     'method' => 'PUT',
                     'path' => 'en',
-                    'title' => ''
+                    'title' => 'Startpage'
                 ],
             ],
             "en.patch" => [
@@ -159,7 +205,7 @@ class RouteGenerationTest extends TestCase
                     'function' => 'patch',
                     'method' => 'PATCH',
                     'path' => 'en',
-                    'title' => ''
+                    'title' => 'Startpage'
                 ],
             ],
             "en.delete" => [
@@ -173,7 +219,7 @@ class RouteGenerationTest extends TestCase
                     'function' => 'delete',
                     'method' => 'DELETE',
                     'path' => 'en',
-                    'title' => ''
+                    'title' => 'Startpage'
                 ],
             ],
             "en.options" => [
@@ -187,7 +233,7 @@ class RouteGenerationTest extends TestCase
                     'function' => 'options',
                     'method' => 'OPTIONS',
                     'path' => 'en',
-                    'title' => ''
+                    'title' => 'Startpage'
                 ],
             ],
         ]);
@@ -211,7 +257,7 @@ class RouteGenerationTest extends TestCase
                     'id' => '',
                     'method' => 'GET',
                     'path' => 'de',
-                    'title' => '',
+                    'title' => 'Startseite',
                     'view' => 'test',
                     'foo' => 'bar'
                 ],
@@ -225,7 +271,7 @@ class RouteGenerationTest extends TestCase
                     'id' => '',
                     'method' => 'GET',
                     'path' => 'en',
-                    'title' => '',
+                    'title' => 'Startpage',
                     'view' => 'test',
                     'foo' => 'bar'
                 ],
@@ -351,6 +397,127 @@ class RouteGenerationTest extends TestCase
                 ],
             ]
         ]);
+    }
+
+    public function test_node_with_parameter_and_where()
+    {
+        $this->routeTree->node('my-node', function (RouteNode $node) {
+            $node->segment('{foobar}');
+            $node->where('foobar', '[0-9]+');
+            $node->get(function() {
+                return 'success';
+            });
+            $node->post(function() {
+                return 'success';
+            });
+            $node->patch(function() {
+                return 'success';
+            })->where('foobar','[5-9]+');
+        });
+
+        $this->routeTree->generateAllRoutes();
+
+        $this->get('de/123')->assertStatus(200)->assertSee('success');
+        $this->get('de/abc')->assertStatus(404);
+        $this->post('de/123')->assertStatus(200)->assertSee('success');
+        $this->post('de/abc')->assertStatus(404);
+        $this->patch('de/123')->assertStatus(405);
+        $this->patch('de/567')->assertStatus(200)->assertSee('success');
+        $this->patch('de/abc')->assertStatus(404);
+
+    }
+
+    public function test_node_with_middleware()
+    {
+        $this->routeTree->node('my-node', function (RouteNode $node) {
+            $node->middleware('test1', ['is-inherited', 'is-skipped-by-post-action']);
+            $node->middleware('test2', ['is-inherited-but-skipped-by-child'],true);
+            $node->middleware('test3', ['is-not-inherited'],false);
+            $node->get(function() {
+                return 'success';
+            });
+            $node->post(function() {
+                return 'success';
+            })->skipMiddleware('test1');
+
+            $node->child('my-child-node', function (RouteNode $node) {
+                $node->middleware('test4', ['is-only-on-child']);
+                $node->skipMiddleware('test2');
+                $node->get(function() {
+                    return 'success';
+                });
+            });
+        });
+
+        $this->routeTree->generateAllRoutes();
+
+
+        $this->assertRouteTree([
+            "de.my-node.get" => [
+                "method" => "GET",
+                "uri" => "de/my-node",
+                "action" => 'Closure',
+                "middleware" => [
+                    'test1' => 'test1:is-inherited,is-skipped-by-post-action',
+                    'test2' => 'test2:is-inherited-but-skipped-by-child',
+                    'test3' => 'test3:is-not-inherited'
+                ],
+                "content" => 'success',
+            ],
+            "en.my-node.get" => [
+                "method" => "GET",
+                "uri" => "en/my-node",
+                "action" => 'Closure',
+                "middleware" => [
+                    'test1' => 'test1:is-inherited,is-skipped-by-post-action',
+                    'test2' => 'test2:is-inherited-but-skipped-by-child',
+                    'test3' => 'test3:is-not-inherited'
+                ],
+                "content" => 'success',
+            ],
+            "de.my-node.post" => [
+                "method" => "POST",
+                "uri" => "de/my-node",
+                "action" => 'Closure',
+                "middleware" => [
+                    'test2' => 'test2:is-inherited-but-skipped-by-child',
+                    'test3' => 'test3:is-not-inherited'
+                ],
+                "content" => 'success',
+            ],
+            "en.my-node.post" => [
+                "method" => "POST",
+                "uri" => "en/my-node",
+                "action" => 'Closure',
+                "middleware" => [
+                    'test2' => 'test2:is-inherited-but-skipped-by-child',
+                    'test3' => 'test3:is-not-inherited'
+                ],
+                "content" => 'success',
+            ],
+
+            "de.my-node.my-child-node.get" => [
+                "method" => "GET",
+                "uri" => "de/my-node/my-child-node",
+                "action" => 'Closure',
+                "middleware" => [
+                    'test1' => 'test1:is-inherited,is-skipped-by-post-action',
+                    'test4' => 'test4:is-only-on-child'
+                ],
+                "content" => 'success',
+            ],
+            "en.my-node.my-child-node.get" => [
+                "method" => "GET",
+                "uri" => "en/my-node/my-child-node",
+                "action" => 'Closure',
+                "middleware" => [
+                    'test1' => 'test1:is-inherited,is-skipped-by-post-action',
+                    'test4' => 'test4:is-only-on-child'
+                ],
+                "content" => 'success',
+            ]
+        ]);
+
     }
 
 }

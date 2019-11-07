@@ -3,14 +3,16 @@
 namespace Webflorist\RouteTree;
 
 use Closure;
-use Illuminate\Routing\Route;
 use Webflorist\RouteTree\Exceptions\ActionNotFoundException;
 use Webflorist\RouteTree\Exceptions\NodeAlreadyHasChildWithSameNameException;
+use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
 use Webflorist\RouteTree\Traits\CanHaveMiddleware;
+use Webflorist\RouteTree\Traits\CanHaveParameterRegex;
 
-class RouteNode {
+class RouteNode
+{
 
-    use CanHaveMiddleware;
+    use CanHaveParameterRegex;
 
     /**
      * Parent node of this node.
@@ -113,12 +115,34 @@ class RouteNode {
     protected $data = [];
 
     /**
+     * Array of middleware, actions of this node should be registered with.
+     *
+     * @var array
+     */
+    protected $middleware = [];
+
+    /**
+     * Array of middleware that should be inherited to child-nodes.
+     *
+     * @var array
+     */
+    protected $inheritMiddleware = [];
+
+    /**
+     * Array of inherited middleware that should be skipped by actions of this node.
+     *
+     * @var array
+     */
+    protected $skipMiddleware = [];
+
+    /**
      * RouteNode constructor.
      * @param string $name
      * @param RouteNode $parentNode
      * @param null $segment
+     * @throws NodeAlreadyHasChildWithSameNameException
      */
-    public function __construct(string $name, RouteNode $parentNode = null, $segment=null)
+    public function __construct(string $name, RouteNode $parentNode = null, $segment = null)
     {
         // Set the name of this node.
         $this->name = $name;
@@ -134,11 +158,61 @@ class RouteNode {
         // Sets the language-files location.
         $this->setLangFiles();
 
-        // Set the path-segments.
-        $this->setSegments($segment);
+        // Set the path-segment(s).
+        $this->segment($segment);
 
         return $this;
 
+    }
+
+    /**
+     * Adds a single middleware to this node.
+     *
+     * @param string $name Name of the middleware.
+     * @param array $parameters Parameters the middleware should be called with.
+     * @param bool $inherit Should this middleware be inherited to all child-nodes?
+     * @return RouteNode
+     */
+    public function middleware(string $name, array$parameters=[], bool $inherit=true) {
+        $this->middleware[$name] = $parameters;
+        if ($inherit) {
+            $this->inheritMiddleware[] = $name;
+        }
+        return $this;
+    }
+
+    /**
+     * Skip an inherited middleware.
+     *
+     * @param string $name Name of the middleware.
+     * @return RouteNode
+     */
+    public function skipMiddleware(string $name) {
+        if (array_search($name,$this->skipMiddleware) === false) {
+            $this->skipMiddleware[] = $name;
+        }
+        if (isset($this->middleware[$name])) {
+            unset($this->middleware[$name]);
+        }
+        return $this;
+    }
+
+    /**
+     * Get this RouteNode's middleware.
+     *
+     * @param bool $inheritOnly
+     * @return array
+     */
+    public function getMiddleware(bool $inheritOnly=false) {
+        $middleware = $this->middleware;
+        if ($inheritOnly) {
+            foreach ($middleware as $middlewareKey => $middlewareParameters) {
+                if (array_search($middlewareKey, $this->inheritMiddleware) === false) {
+                    unset($middleware[$middlewareKey]);
+                }
+            }
+        }
+        return $middleware;
     }
 
     /**
@@ -150,14 +224,14 @@ class RouteNode {
      */
     public function __call($name, $arguments)
     {
-        if (substr($name,0,3) === 'get') {
-            array_unshift($arguments, lcfirst(substr($name,3)));
-            return call_user_func_array([$this,'getData'],$arguments);
+        if (substr($name, 0, 3) === 'get') {
+            array_unshift($arguments, lcfirst(substr($name, 3)));
+            return call_user_func_array([$this, 'getData'], $arguments);
         }
 
-        if (substr($name,0,3) === 'set') {
-            array_unshift($arguments, lcfirst(substr($name,3)));
-            return call_user_func_array([$this,'setData'],$arguments);
+        if (substr($name, 0, 3) === 'set') {
+            array_unshift($arguments, lcfirst(substr($name, 3)));
+            return call_user_func_array([$this, 'setData'], $arguments);
         }
 
         // TODO: return unknown method error.
@@ -172,7 +246,7 @@ class RouteNode {
      */
     public function __get($name)
     {
-            return $this->getData($name);
+        return $this->getData($name);
     }
 
     /**
@@ -206,7 +280,7 @@ class RouteNode {
      */
     public function appendNamespace($namespace)
     {
-        $this->namespace .= '\\'.$namespace;
+        $this->namespace .= '\\' . $namespace;
         return $this;
     }
 
@@ -217,7 +291,7 @@ class RouteNode {
      * @param null|string $namespace
      * @return RouteNode
      */
-    public function setNamespace($namespace)
+    public function namespace($namespace)
     {
         $this->namespace = $namespace;
         return $this;
@@ -229,7 +303,8 @@ class RouteNode {
      * @param RouteNode $parentNode
      * @throws NodeAlreadyHasChildWithSameNameException
      */
-    protected function setParentNode(RouteNode $parentNode) {
+    protected function setParentNode(RouteNode $parentNode)
+    {
 
         // Set the parent node.
         $this->parentNode = $parentNode;
@@ -238,21 +313,19 @@ class RouteNode {
         $this->parentNode->addChildNode($this);
 
         // Overtake id from parentNode into current node.
-        if (strlen($this->parentNode->id)>0) {
+        if (strlen($this->parentNode->id) > 0) {
             $this->id = $this->parentNode->id . '.';
         }
 
         // Overtake namespace from parentNode into current node.
-        if (strlen($this->parentNode->namespace)>0) {
+        if (strlen($this->parentNode->namespace) > 0) {
             $this->namespace = $this->parentNode->namespace;
         }
 
         // Overtake middleware from parentNode into current node.
-        if (count($parentNode->middleware)>0) {
-            foreach ($parentNode->middleware as $middlewareKey => $middlewareData) {
-                if (isset($middlewareData['inherit']) && ($middlewareData['inherit'] === true)) {
-                    $this->addMiddleware($middlewareKey, $middlewareData['parameters'], $middlewareData['inherit']);
-                }
+        foreach ($parentNode->getMiddleware(true) as $middlewareKey => $middlewareParameters) {
+            if (array_search($middlewareKey, $this->skipMiddleware) === false) {
+                $this->middleware($middlewareKey,$middlewareParameters,true);
             }
         }
     }
@@ -262,9 +335,10 @@ class RouteNode {
      *
      * @return RouteNode[]
      */
-    public function hasParentNode() {
+    public function hasParentNode()
+    {
 
-        return is_a($this->parentNode,RouteNode::class);
+        return is_a($this->parentNode, RouteNode::class);
     }
 
     /**
@@ -272,7 +346,8 @@ class RouteNode {
      *
      * @return RouteNode|null
      */
-    public function getParentNode() {
+    public function getParentNode()
+    {
 
         return $this->parentNode;
     }
@@ -283,7 +358,8 @@ class RouteNode {
      *
      * @return RouteNode[]
      */
-    public function getParentNodes() {
+    public function getParentNodes()
+    {
 
         $parentNodes = [];
 
@@ -299,8 +375,9 @@ class RouteNode {
      *
      * @param $parentNodes
      */
-    protected function accumulateParentNodes(&$parentNodes) {
-        if (is_a($this->parentNode,RouteNode::class)) {
+    protected function accumulateParentNodes(&$parentNodes)
+    {
+        if (is_a($this->parentNode, RouteNode::class)) {
             array_push($parentNodes, $this->parentNode);
             $this->parentNode->accumulateParentNodes($parentNodes);
         }
@@ -311,7 +388,8 @@ class RouteNode {
      *
      * @return bool
      */
-    public function hasParameter() {
+    public function hasParameter()
+    {
 
         return !is_null($this->parameter);
     }
@@ -321,7 +399,8 @@ class RouteNode {
      *
      * @return null|string
      */
-    public function getParameter() {
+    public function getParameter()
+    {
 
         return $this->parameter;
     }
@@ -334,7 +413,8 @@ class RouteNode {
      * @param bool $translateValues Values is are translated into the requested language.
      * @return array
      */
-    public function getParametersOfNodeAndParents($activeOnly=false, $language=null, $translateValues = false) {
+    public function getParametersOfNodeAndParents($activeOnly = false, $language = null, $translateValues = false)
+    {
 
         // Initialize the return-array.
         $parameters = [];
@@ -381,7 +461,8 @@ class RouteNode {
      *
      * @return RouteAction|bool
      */
-    public function getActiveAction() {
+    public function getActiveAction()
+    {
 
         if (route_tree()->getCurrentAction()->getRouteNode() === $this) {
             return route_tree()->getCurrentAction();
@@ -403,7 +484,8 @@ class RouteNode {
      * @return RouteAction|bool
      * @throws Exceptions\UrlParametersMissingException
      */
-    public function getLowestRootLineAction() {
+    public function getLowestRootLineAction()
+    {
 
         $currentActionUrl = route_tree()->getCurrentAction()->getUrl();
 
@@ -447,7 +529,8 @@ class RouteNode {
      * Set the language files of this node,
      * representing the hierarchical structure of it's parents as a folder-structure.
      */
-    protected function setLangFiles() {
+    protected function setLangFiles()
+    {
 
         $this->setDataLangFile();
         $this->setContentLangFile();
@@ -457,16 +540,17 @@ class RouteNode {
     /**
      * Set the location of the language-file to be used for the translation of meta-data.
      */
-    protected function setDataLangFile() {
+    protected function setDataLangFile()
+    {
 
         // Set the base-folder for localization-files as stated in the config.
-        $this->dataLangFile = config('routetree.localization.base_folder').'/';
+        $this->dataLangFile = config('routetree.localization.base_folder') . '/';
 
         // Every parent node is a subdirectory of the pages-directory.
         // So we just get the full name of the parent node (if one exists),
         // and replace the dots with slashes.
-        if ((!is_null($this->parentNode) && strlen($this->parentNode->id)>0)) {
-            $this->dataLangFile .= str_replace('.','/',$this->parentNode->id) . '/';
+        if ((!is_null($this->parentNode) && strlen($this->parentNode->id) > 0)) {
+            $this->dataLangFile .= str_replace('.', '/', $this->parentNode->id) . '/';
         }
 
         // Finally append the file-name for route-tree related translations as set in the config.
@@ -477,13 +561,14 @@ class RouteNode {
     /**
      * Set the location of the language-file to be used for the translation of page-content.
      */
-    protected function setContentLangFile() {
+    protected function setContentLangFile()
+    {
 
         // Set the base-folder for localization-files as stated in the config.
-        $this->contentLangFile = config('routetree.localization.base_folder').'/';
+        $this->contentLangFile = config('routetree.localization.base_folder') . '/';
 
         // We only have to replace dots with slashes in this node's id to get the rest.
-        $this->contentLangFile .= str_replace('.','/',$this->id);
+        $this->contentLangFile .= str_replace('.', '/', $this->id);
     }
 
     /**
@@ -618,15 +703,29 @@ class RouteNode {
     }
 
     /**
+     * Create a new child-node.
+     *
+     * @param string $name
+     * @param Closure $callback
+     * @return RouteNode
+     * @throws NodeNotFoundException
+     * @throws Exceptions\NodeAlreadyHasChildWithSameNameException
+     */
+    public function child(string $name, Closure $callback)
+    {
+        return route_tree()->node($name, $callback, $this);
+    }
+
+    /**
      * Add a child-node.
      *
      * @param RouteNode $childNode
      * @throws NodeAlreadyHasChildWithSameNameException
      */
-    protected function addChildNode(RouteNode $childNode) {
-
+    protected function addChildNode(RouteNode $childNode)
+    {
         if (isset($this->childNodes[$childNode->name])) {
-            throw new NodeAlreadyHasChildWithSameNameException('RouteNode with ID "'.$this->id.'" already has a child named "'.$childNode->name.'".');
+            throw new NodeAlreadyHasChildWithSameNameException('RouteNode with ID "' . $this->id . '" already has a child named "' . $childNode->name . '".');
         }
         $this->childNodes[$childNode->name] = $childNode;
     }
@@ -636,8 +735,9 @@ class RouteNode {
      *
      * @return bool
      */
-    public function hasChildNodes() {
-        if (count($this->childNodes)>0) {
+    public function hasChildNodes()
+    {
+        if (count($this->childNodes) > 0) {
             return true;
         }
         return false;
@@ -649,7 +749,8 @@ class RouteNode {
      *
      * @return RouteNode[]
      */
-    public function getChildNodes() {
+    public function getChildNodes()
+    {
         return $this->childNodes;
     }
 
@@ -660,11 +761,11 @@ class RouteNode {
      * @param string $nodeName
      * @return RouteNode
      */
-    public function getChildNode($nodeName='') {
+    public function getChildNode($nodeName = '')
+    {
         if ($this->hasChildNode($nodeName)) {
             return $this->childNodes[$nodeName];
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -675,11 +776,11 @@ class RouteNode {
      * @param string $nodeName
      * @return bool
      */
-    public function hasChildNode($nodeName='') {
+    public function hasChildNode($nodeName = '')
+    {
         if (isset($this->childNodes[$nodeName])) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -719,7 +820,7 @@ class RouteNode {
      * @throws ActionNotFoundException
      * @throws Exceptions\UrlParametersMissingException
      */
-    public function getUrl($parameters=null, $language = null)
+    public function getUrl($parameters = null, $language = null)
     {
 
         if ($this->hasAction('index')) {
@@ -730,11 +831,11 @@ class RouteNode {
             return $this->getUrlByAction('get', $parameters, $language);
         }
 
-        if (count($this->actions)>0) {
+        if (count($this->actions) > 0) {
             return $this->getUrlByAction(key($this->actions), $parameters, $language);
         }
 
-        throw new ActionNotFoundException('Node with Id "'.$this->getId().'" does not have any action to generate an URL to.');
+        throw new ActionNotFoundException('Node with Id "' . $this->getId() . '" does not have any action to generate an URL to.');
     }
 
     /**
@@ -748,13 +849,13 @@ class RouteNode {
      * @throws ActionNotFoundException
      * @throws Exceptions\UrlParametersMissingException
      */
-    public function getUrlByAction($action='index', $parameters=null, $language = null, $absolute=null)
+    public function getUrlByAction($action = 'index', $parameters = null, $language = null, $absolute = null)
     {
         if ($this->hasAction($action)) {
             return $this->getAction($action)->getUrl($parameters, $language, $absolute);
         }
 
-        throw new ActionNotFoundException('Node with Id "'.$this->getId().'" does not have the action "'.$action.'""');
+        throw new ActionNotFoundException('Node with Id "' . $this->getId() . '" does not have the action "' . $action . '""');
     }
 
     /**
@@ -763,7 +864,7 @@ class RouteNode {
      * @param null $parameters
      * @return string
      */
-    public function isActive($parameters=null)
+    public function isActive($parameters = null)
     {
 
         // Check, if the current node is identical to this node.
@@ -795,7 +896,7 @@ class RouteNode {
      * @param null $parameters
      * @return string
      */
-    public function nodeOrChildIsActive($parameters=null)
+    public function nodeOrChildIsActive($parameters = null)
     {
 
         // Check, if this node is active.
@@ -822,9 +923,9 @@ class RouteNode {
      * @return string
      * @throws Exceptions\UrlParametersMissingException
      */
-    public function getTitle($parameters=null, $locale=null)
+    public function getTitle($parameters = null, $locale = null)
     {
-        $title = $this->getData('title',$parameters, $locale);
+        $title = $this->getData('title', $parameters, $locale);
         return $this->processTitle($parameters, $locale, $title);
     }
 
@@ -836,11 +937,11 @@ class RouteNode {
      * @return string
      * @throws Exceptions\UrlParametersMissingException
      */
-    public function getNavTitle($parameters=null, $locale=null)
+    public function getNavTitle($parameters = null, $locale = null)
     {
 
         // Try retrieving title.
-        $title = $this->getData('navTitle',$parameters, $locale);
+        $title = $this->getData('navTitle', $parameters, $locale);
 
         // If no title could be determined, we fall back to the result of the $this->getTitle() call.
         if ($title === false) {
@@ -897,7 +998,7 @@ class RouteNode {
      * @param string $language The language the values should be fetched for (default=current locale).
      * @return array
      */
-    public function getValues($language=null)
+    public function getValues($language = null)
     {
         return $this->getData('values', null, $language);
     }
@@ -907,7 +1008,8 @@ class RouteNode {
      *
      * @return bool
      */
-    public function hasActiveParameter() {
+    public function hasActiveParameter()
+    {
         if (!is_null($this->parameter)) {
             return \Route::current()->hasParameter($this->parameter);
         }
@@ -953,14 +1055,14 @@ class RouteNode {
      * @param string $language The language the value should be fetched for (default=current locale).
      * @return false|string
      */
-    public function getValueSlug($value=null, $language=null)
+    public function getValueSlug($value = null, $language = null)
     {
         // If no value was handed over, we try using the current one.
         if (is_null($value)) {
             $value = $this->getActiveValue();
         }
 
-        if (strlen($value)>0) {
+        if (strlen($value) > 0) {
 
             // Fetch the whole list of available values and their translations in the requested language.
             $values = $this->getValues($language);
@@ -984,14 +1086,13 @@ class RouteNode {
      * @param \Callable|array[]|mixed $data Can be either a callable, an associative array (language => value), or a string/bool (that is should be used for every language).
      * @return RouteNode
      */
-    public function setData($key,$data)
+    public function setData($key, $data)
     {
 
         // If $data is callable or already a (locale-)array, we set it directly.
         if (is_callable($data) || is_array($data)) {
             $this->data[$key] = $data;
-        }
-        // In all other cases ($data is a string or bool), we set it's value for each locale.
+        } // In all other cases ($data is a string or bool), we set it's value for each locale.
         else {
             foreach (route_tree()->getLocales() as $locale) {
                 $this->data[$key][$locale] = $data;
@@ -1019,7 +1120,7 @@ class RouteNode {
      * @param null $action If an action is stated, you can set data action specific (e.g. "title_show" in node-generation or "mynode_show" with auto-translation).
      * @return mixed
      */
-    public function getData($key, $parameters=null, $locale=null, $action=null)
+    public function getData($key, $parameters = null, $locale = null, $action = null)
     {
         // If no language is specifically stated, we use the current locale
         RouteTree::establishLocale($locale);
@@ -1030,7 +1131,7 @@ class RouteNode {
         $array_key = $key;
         // If an action was explicitly stated, we use "$key_$action" as the array-key we are looking for.
         if ($action !== null) {
-            $array_key = $key.'_'.$action;
+            $array_key = $key . '_' . $action;
         }
 
         // If this data was specifically set...
@@ -1049,10 +1150,10 @@ class RouteNode {
         }
 
         // Try using auto-translation as next option.
-        $translationKey = $key.'.'.$this->name;
+        $translationKey = $key . '.' . $this->name;
         // If an action was explicitly stated, we append "_$action" to the translation-key.
         if ($action !== null) {
-            $translationKey .= '_'.$action;
+            $translationKey .= '_' . $action;
         }
         $autoTranslatedValue = $this->performDataAutoTranslation($translationKey, $parameters, $locale);
         if ($autoTranslatedValue !== false) {
@@ -1071,7 +1172,8 @@ class RouteNode {
      * @param string $language The language to be used for translation.
      * @return bool|string
      */
-    protected function performDataAutoTranslation($key, $parameters, $language) {
+    protected function performDataAutoTranslation($key, $parameters, $language)
+    {
 
         // Translation-Parameters for replacement should always be an array.
         if (is_null($parameters)) {
@@ -1079,7 +1181,7 @@ class RouteNode {
         }
 
         // Set the translation key to be used for getting the data.
-        $translationKey = $this->dataLangFile.'.'.$key;
+        $translationKey = $this->dataLangFile . '.' . $key;
 
         // If a translation for this language exists, we return that as the data.
         if (\Lang::hasForLocale($translationKey, $language)) {
@@ -1097,7 +1199,8 @@ class RouteNode {
      * @param \Closure|array|string|callable|null $action
      * @return RouteAction
      */
-    protected function addAction(string $method, $action) {
+    protected function addAction(string $method, $action)
+    {
 
         $this->actions[$method] = new RouteAction($method, $action, $this);
         return $this->actions[$method];
@@ -1109,11 +1212,11 @@ class RouteNode {
      * @param $action
      * @return bool|RouteAction
      */
-    public function getAction($action) {
-        if ($this->hasAction($action))  {
+    public function getAction($action)
+    {
+        if ($this->hasAction($action)) {
             return $this->actions[$action];
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -1124,7 +1227,8 @@ class RouteNode {
      * @param $action
      * @return bool
      */
-    public function hasAction($action) {
+    public function hasAction($action)
+    {
         if (isset($this->actions[$action])) {
             return true;
         }
@@ -1137,7 +1241,8 @@ class RouteNode {
      * @param bool $appendParameter If true, checks, if the parent has a parameter
      * @return array|bool
      */
-    protected function getInheritedPaths($appendParameter=false) {
+    protected function getInheritedPaths($appendParameter = false)
+    {
 
         if ($this->hasParentNode()) {
             if ($this->parentNode->inheritPath) {
@@ -1145,12 +1250,11 @@ class RouteNode {
                 if ($appendParameter && $this->parentNode->hasParameter()) {
                     foreach ($pathsToInherit as $language => $path) {
 
-                        $pathsToInherit[$language] .= '/{'.$this->parentNode->getParameter().'}';
+                        $pathsToInherit[$language] .= '/{' . $this->parentNode->getParameter() . '}';
                     }
                 }
                 return $pathsToInherit;
-            }
-            else {
+            } else {
                 return $this->parentNode->getInheritedPaths($appendParameter);
             }
         }
@@ -1159,25 +1263,30 @@ class RouteNode {
     }
 
     /**
-     * Sets the path-segments to be used for this node in all languages.
+     * Sets the path-segment(s) to be used for this node.
+     * Can either be an array of [locale => string] pairs,
+     * or a string (to be used for all locales).
      *
-     * @param null $segments
+     * @param array|string $segment
+     * @return RouteNode
      */
-    public function setSegments($segments=null) {
+    public function segment($segment)
+    {
 
         // Iterate through configured languages.
         foreach (RouteTree::getLocales() as $locale) {
 
             // If $segments is an array and contains an entry for this locale, we use that.
-            if (is_array($segments) && isset($segments[$locale])) {
-                $this->setSegmentForLanguage($segments[$locale], $locale);
-            }
-            // If $segments is a string, we use that.
-            else if (is_string($segments)){
-                $this->setSegmentForLanguage($segments, $locale);
+            if (is_array($segment) && isset($segment[$locale])) {
+                $this->setSegmentForLanguage($segment[$locale], $locale);
+            } // If $segments is a string, we use that.
+            else if (is_string($segment)) {
+                $this->setSegmentForLanguage($segment, $locale);
             }
 
         }
+
+        return $this;
 
     }
 
@@ -1187,13 +1296,14 @@ class RouteNode {
      * @param $segment
      * @param $language
      */
-    protected function setSegmentForLanguage($segment,$language) {
+    protected function setSegmentForLanguage($segment, $language)
+    {
 
         $this->segments[$language] = $segment;
 
         // If the path segment is a parameter, we also store it in $this->parameter.
-        if ((substr($segment,0,1) === '{') && (substr($segment,-1) === '}')) {
-            $this->parameter = str_replace('{','',str_replace('}','',$segment));
+        if ((substr($segment, 0, 1) === '{') && (substr($segment, -1) === '}')) {
+            $this->parameter = str_replace('{', '', str_replace('}', '', $segment));
         }
 
     }
@@ -1203,10 +1313,11 @@ class RouteNode {
      * It checks for each-language, if an auto-translation is set,
      * otherwise it uses the node-name as the path-segment.     *
      */
-    protected function setAutoSegments() {
+    protected function setAutoSegments()
+    {
 
         // Set the translation key to be used for getting localized path-segments.
-        $segmentTranslationKey = 'segment.'.$this->name;
+        $segmentTranslationKey = 'segment.' . $this->name;
 
         // Iterate through configured languages.
         foreach (RouteTree::getLocales() as $locale) {
@@ -1233,7 +1344,8 @@ class RouteNode {
      * Generates the full paths to be used for this node in all languages.
      *
      */
-    protected function generateFullPaths() {
+    protected function generateFullPaths()
+    {
 
         // Get the inherited paths.
         $inheritedPaths = $this->getInheritedPaths($this->isResourceChild);
@@ -1250,14 +1362,13 @@ class RouteNode {
             // we start the full-path with the locale.
             else if (config('routetree.start_paths_with_locale') !== false) {
                 $this->paths[$locale] = $locale;
-            }
-            else {
+            } else {
                 $this->paths[$locale] = '';
             }
 
             // Append the path segment for the current node.
             if (strlen($this->segments[$locale]) > 0) {
-                if (strlen($this->paths[$locale])>0) {
+                if (strlen($this->paths[$locale]) > 0) {
                     $this->paths[$locale] .= '/';
                 }
                 $this->paths[$locale] .= $this->segments[$locale];
@@ -1268,7 +1379,8 @@ class RouteNode {
     /**
      * Generates the routes for all actions of this node and it's child-nodes.
      */
-    public function generateRoutesOfNodeAndChildNodes() {
+    public function generateRoutesOfNodeAndChildNodes()
+    {
 
         // Make sure, paths for all languages are set.
         $this->setAutoSegments();
@@ -1289,8 +1401,9 @@ class RouteNode {
     /**
      * Generate the routes of all actions for this node.
      */
-    protected function generateRoutes() {
-        if (count($this->actions)>0) {
+    protected function generateRoutes()
+    {
+        if (count($this->actions) > 0) {
             foreach ($this->actions as $method => $routeAction) {
                 $routeAction->generateRoutes($method);
             }
@@ -1314,7 +1427,8 @@ class RouteNode {
      *
      * @return string
      */
-    public function getContentLangFile() {
+    public function getContentLangFile()
+    {
         return $this->contentLangFile;
     }
 

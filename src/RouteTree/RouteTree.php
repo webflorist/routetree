@@ -5,6 +5,7 @@ namespace Webflorist\RouteTree;
 use Closure;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
+use Illuminate\Routing\ViewController;
 use Illuminate\Support\Collection;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
 use Webflorist\RouteTree\Exceptions\RouteNameAlreadyRegisteredException;
@@ -80,15 +81,16 @@ class RouteTree extends Router
      *
      * @param string $name
      * @param Closure $callback
-     * @param string $parentNode
+     * @param string|RouteNode $parentNode
      * @return RouteNode
      * @throws NodeNotFoundException
+     * @throws Exceptions\NodeAlreadyHasChildWithSameNameException
      */
-    public function node(string $name, Closure $callback, $parentNode='')
+    public function node(string $name, Closure $callback, $parentNode = '')
     {
         return (new RouteNode(
             $name,
-            $this->getOrGenerateNode($parentNode)
+            ($parentNode instanceof RouteNode) ? $parentNode : $this->getOrGenerateNode($parentNode)
         ))->setUp($callback);
     }
 
@@ -184,35 +186,29 @@ class RouteTree extends Router
      * @param string $nodeId
      * @return bool|RouteNode|null
      * @throws NodeNotFoundException
+     * @throws Exceptions\NodeAlreadyHasChildWithSameNameException
      */
-    protected function getOrGenerateNode($nodeId = '')
+    protected function getOrGenerateNode(string $nodeId = '')
     {
 
-        // Check, if $parentNodePath exists
         if ($this->doesNodeExist($nodeId)) {
-
-            // If it exists, we return it.
             return $this->getNode($nodeId);
-        } else {
-
-            // If it does not exist, we check for the previous hierarchical level.
-            $lastSlashPosition = strrpos($nodeId, '.');
-
-            // In case, we are already at level 1, the parent node must be the root-node,
-            // so we create the node for $path with the root-node as it's parent and return it.
-            if ($lastSlashPosition === false) {
-                return new RouteNode($nodeId, $this->rootNode);
-            } else {
-
-                // Otherwise, we create the node using getOrGenerateNode() again for it's parent.
-                return new RouteNode(
-                    substr($nodeId, $lastSlashPosition + 1),
-                    $this->getOrGenerateNode(substr($nodeId, 0, $lastSlashPosition))
-                );
-
-            }
-
         }
+
+        // If it does not exist, we check for the previous hierarchical level.
+        $lastSlashPosition = strrpos($nodeId, '.');
+
+        // In case, we are already at level 1, the parent node must be the root-node,
+        // so we create the node for $path with the root-node as it's parent and return it.
+        if ($lastSlashPosition === false) {
+            return new RouteNode($nodeId, $this->rootNode);
+        }
+
+        // Otherwise, we create the node using getOrGenerateNode() again for it's parent.
+        return new RouteNode(
+            substr($nodeId, $lastSlashPosition + 1),
+            $this->getOrGenerateNode(substr($nodeId, 0, $lastSlashPosition))
+        );
     }
 
     /**
@@ -443,7 +439,14 @@ class RouteTree extends Router
     public static function establishRouteParameters(&$parameters)
     {
         if (is_null($parameters) and !is_null(\Route::current())) {
-            return $parameters = \Route::current()->parameters();
+            /** @var Route $currentRoute */
+            $currentRoute = \Route::current();
+            $currentRouteParameters = \Route::current()->parameters();
+            if ($currentRoute->getActionMethod() === '\Illuminate\Routing\ViewController') {
+                unset($currentRouteParameters['view']);
+                unset($currentRouteParameters['data']);
+            }
+            return $parameters = $currentRouteParameters;
         }
 
         return $parameters = [];
@@ -469,7 +472,7 @@ class RouteTree extends Router
     public static function getLocales()
     {
         $locales = config('routetree.locales');
-        if (count($locales)>0) {
+        if (count($locales) > 0) {
             return $locales;
         }
 

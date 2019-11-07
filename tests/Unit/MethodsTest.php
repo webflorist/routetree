@@ -2,9 +2,9 @@
 
 namespace RouteTreeTests\Feature;
 
-use RouteTreeTests\LegacyTestCase;
+use RouteTreeTests\TestCase;
 
-class MethodsLegacyTest extends LegacyTestCase
+class MethodsTest extends TestCase
 {
 
     public function testGetCurrentNode()
@@ -23,8 +23,8 @@ class MethodsLegacyTest extends LegacyTestCase
         $this->generateTestRoutes('/de/page1');
 
         $this->assertEquals(
-            'page1.index',
-            route_tree()->getCurrentAction()->getRouteNode()->getId().'.'.route_tree()->getCurrentAction()->getAction()
+            'page1.get',
+            route_tree()->getCurrentAction()->getRouteNode()->getId().'.'.route_tree()->getCurrentAction()->getName()
         );
 
     }
@@ -57,7 +57,7 @@ class MethodsLegacyTest extends LegacyTestCase
 
         $this->assertEquals(
             'page1.page1-1',
-            route_tree()->getNodeByRouteName('de.page1.page1-1.index')->getId()
+            route_tree()->getNodeByRouteName('de.page1.page1-1.get')->getId()
         );
 
     }
@@ -67,8 +67,8 @@ class MethodsLegacyTest extends LegacyTestCase
         $this->generateTestRoutes('/de/page1');
 
         $this->assertEquals(
-            'index',
-            route_tree()->getActionByRoute(\Route::current())->getAction()
+            'get',
+            route_tree()->getActionByRoute(\Route::current())->getName()
         );
 
     }

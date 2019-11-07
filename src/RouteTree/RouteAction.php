@@ -1,21 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: geraldb
- * Date: 21.04.2016
- * Time: 14:51
- */
 
 namespace Webflorist\RouteTree;
 
 use Illuminate\Routing\Route;
 use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
-use Webflorist\RouteTree\Traits\CanHaveMiddleware;
+use Webflorist\RouteTree\Traits\CanHaveParameterRegex;
 
 class RouteAction
 {
 
-    use CanHaveMiddleware;
+    use CanHaveParameterRegex;
 
     /**
      * The route-node this action belongs to.
@@ -29,7 +23,7 @@ class RouteAction
      *
      * @var string
      */
-    protected $action = null;
+    protected $name = null;
 
     /**
      * The closure to be used for this action.
@@ -69,11 +63,6 @@ class RouteAction
     /**
      * @var string
      */
-    private $name;
-
-    /**
-     * @var string
-     */
     private $view;
 
     /**
@@ -92,6 +81,20 @@ class RouteAction
     private $redirectStatus;
 
     /**
+     * Array of middleware, this action should be registered with.
+     *
+     * @var array
+     */
+    protected $middleware = [];
+
+    /**
+     * Array of inherited middleware that should be skipped by this action.
+     *
+     * @var array
+     */
+    protected $skipMiddleware = [];
+
+    /**
      * RouteAction constructor.
      *
      * @param string $method
@@ -106,8 +109,26 @@ class RouteAction
         return $this;
     }
 
+    /**
+     * Set the name of this action.
+     *
+     * @param string $name
+     */
     public function name(string $name) {
         $this->name = $name;
+    }
+
+    /**
+     * Get the name of this action.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        if (!is_null($this->name)) {
+            return $this->name;
+        }
+        return $this->method;
     }
 
     /**
@@ -185,6 +206,31 @@ class RouteAction
     }
 
     /**
+     * Adds a single middleware to this action.
+     *
+     * @param string $name Name of the middleware.
+     * @param array $parameters Parameters the middleware should be called with.
+     * @return RouteAction
+     */
+    public function middleware(string $name, array$parameters=[]) {
+        $this->middleware[$name] = $parameters;
+        return $this;
+    }
+
+    /**
+     * Skip an inherited middleware.
+     *
+     * @param string $name Name of the middleware.
+     * @return RouteAction
+     */
+    public function skipMiddleware(string $name) {
+        if (array_search($name,$this->skipMiddleware) === false) {
+            $this->skipMiddleware[] = $name;
+        }
+        return $this;
+    }
+
+    /**
      * Set the path-suffix, this action will have on top of it's node's path.
      *
      * @param string $pathSuffix
@@ -207,16 +253,6 @@ class RouteAction
     }
 
     /**
-     * Get the action-string.
-     *
-     * @return string
-     */
-    public function getAction()
-    {
-        return $this->action;
-    }
-
-    /**
      * Get the title of this action.
      *
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
@@ -227,15 +263,15 @@ class RouteAction
     {
 
         // Try to get a title specifically set for this action.
-        $title = $this->routeNode->getData('title', $parameters, $locale, $this->action);
+        $title = $this->routeNode->getData('title', $parameters, $locale, $this->name);
         if ($title !== false) {
             return $this->routeNode->processTitle($parameters, $locale, $title);
         }
 
         // Next try calling the closure for a default-title configured within $this->getActionConfigs().
         $actionConfigs = $this->getActionConfigs();
-        if (isset($actionConfigs[$this->action]['defaultTitle'])) {
-            return call_user_func_array($actionConfigs[$this->action]['defaultTitle'], []);
+        if (isset($actionConfigs[$this->name]['defaultTitle'])) {
+            return call_user_func_array($actionConfigs[$this->name]['defaultTitle'], []);
         }
 
         // The default-fallback is the RouteNode's title.
@@ -253,27 +289,27 @@ class RouteAction
     {
 
         // Try to get a navTitle specifically set for this action.
-        $title = $this->routeNode->getData('navTitle', $parameters, $locale, $this->action);
+        $title = $this->routeNode->getData('navTitle', $parameters, $locale, $this->name);
         if ($title !== false) {
             return $this->routeNode->processTitle($parameters, $locale, $title);
         }
 
         // Next try calling the closure for a default-navTitle configured within $this->getActionConfigs().
         $actionConfigs = $this->getActionConfigs();
-        if (isset($actionConfigs[$this->action]['defaultNavTitle'])) {
-            return call_user_func_array($actionConfigs[$this->action]['defaultNavTitle'], []);
+        if (isset($actionConfigs[$this->name]['defaultNavTitle'])) {
+            return call_user_func_array($actionConfigs[$this->name]['defaultNavTitle'], []);
         }
 
         // Try to get a title specifically set for this action.
-        $title = $this->routeNode->getData('title', $parameters, $locale, $this->action);
+        $title = $this->routeNode->getData('title', $parameters, $locale, $this->name);
         if ($title !== false) {
             return $this->routeNode->processTitle($parameters, $locale, $title);
         }
 
         // Next try calling the closure for a default-title configured within $this->getActionConfigs().
         $actionConfigs = $this->getActionConfigs();
-        if (isset($actionConfigs[$this->action]['defaultTitle'])) {
-            return call_user_func_array($actionConfigs[$this->action]['defaultTitle'], []);
+        if (isset($actionConfigs[$this->name]['defaultTitle'])) {
+            return call_user_func_array($actionConfigs[$this->name]['defaultTitle'], []);
         }
 
         // The default-fallback is the RouteNode's navTitle.
@@ -284,20 +320,23 @@ class RouteAction
      * Set the action (controller-method, view, redirect, closure, etc.)
      * this RouteAction should use.
      *
-     * @param \Closure|array|string|callable|null $action
+     * @param \Closure|array|string|callable|null $name
      * @return RouteAction
      */
-    public function setAction($action)
+    public function setAction($name)
     {
         // TODO: add support for various types of $action;
-        if (is_string($action) && strpos($action,'@') > 0) {
-            $this->setUses($action);
+        if (is_string($name) && strpos($name,'@') > 0) {
+            $this->setUses($name);
         }
-        if (is_array($action) && (count($action) === 2) && isset($action['view']) && isset($action['data'])) {
-            $this->setView($action['view'], $action['data']);
+        else if (is_array($name) && (count($name) === 2) && isset($name['view']) && isset($name['data'])) {
+            $this->setView($name['view'], $name['data']);
         }
-        if (is_array($action) && (count($action) === 2) && isset($action['redirect']) && isset($action['status'])) {
-            $this->setRedirect($action['redirect'], $action['status']);
+        else if (is_array($name) && (count($name) === 2) && isset($name['redirect']) && isset($name['status'])) {
+            $this->setRedirect($name['redirect'], $name['status']);
+        }
+        else if ($name instanceof \Closure) {
+            $this->setClosure($name);
         }
         return $this;
     }
@@ -314,7 +353,7 @@ class RouteAction
         if (!isset($actionConfigs[$action])) {
             // TODO: throw exception
         }
-        $this->action = $action;
+        $this->name = $action;
         return $this;
     }
 
@@ -379,8 +418,8 @@ class RouteAction
     {
 
         $actionConfigs = $this->getActionConfigs();
-        if (isset($actionConfigs[$this->action]['parentAction'])) {
-            $parentActionName = $actionConfigs[$this->action]['parentAction'];
+        if (isset($actionConfigs[$this->name]['parentAction'])) {
+            $parentActionName = $actionConfigs[$this->name]['parentAction'];
             $parentAction = $this->routeNode->getAction($parentActionName);
             array_push($parentActions, $parentAction);
             $parentAction->accumulateParentActions($parentActions);
@@ -536,15 +575,21 @@ class RouteAction
 
     /**
      * Generate routes in each language for this action.
+     *
+     * @throws Exceptions\RouteNameAlreadyRegisteredException
+     * @throws Exceptions\NodeNotFoundException
      */
     public function generateRoutes()
     {
 
-
         // Compile the middleware.
         $middleware = $this->compileMiddleware();
 
-        // Iterate through configured languages.
+        // Compile parameter regexes.
+        $parameterRegex = $this->compileParameterRegex();
+
+        // Iterate through configured languages
+        // and build routes.
         foreach (RouteTree::getLocales() as $locale) {
 
             $route = $this->createRoute($locale);
@@ -552,8 +597,13 @@ class RouteAction
             $route->name(
                 $this->generateRouteName($locale)
             );
+
             $route->middleware(
                 $middleware
+            );
+
+            $route->where(
+                $parameterRegex
             );
 
             // And register the generated route with the RouteTree service about this registered route,
@@ -572,24 +622,42 @@ class RouteAction
     private function compileMiddleware()
     {
 
-        // Get the middleware from the node.
-        $middleware = $this->routeNode->getMiddleware();
+        // Get the middleware from the node (except this action is configured to skip it).
+        $middleware = [];
+        foreach ($this->routeNode->getMiddleware() as $middlewareKey => $middlewareParams) {
+            if (array_search($middlewareKey, $this->skipMiddleware) === false) {
+                $middleware[$middlewareKey] = $middlewareParams;
+            }
+        }
 
         // Merge it with middleware set within this action.
-        $middleware = array_merge($middleware, $this->getMiddleware());
+        $middleware = array_merge($middleware, $this->middleware);
 
         // Compile it into laravel-syntax.
         $compiledMiddleware = [];
         if (count($middleware) > 0) {
-            foreach ($middleware as $middlewareName => $middlewareData) {
+            foreach ($middleware as $middlewareName => $middlewareParams) {
                 $compiledMiddleware[$middlewareName] = $middlewareName;
-                if (isset($middlewareData['parameters']) && (count($middlewareData['parameters']) > 0)) {
-                    $compiledMiddleware[$middlewareName] .= ':' . implode(',', $middlewareData['parameters']);
+                if (count($middlewareParams) > 0) {
+                    $compiledMiddleware[$middlewareName] .= ':' . implode(',', $middlewareParams);
                 }
             }
         }
 
         return $compiledMiddleware;
+    }
+
+
+
+    /**
+     * Generates the compiled array of parameter-regexes (wheres)
+     * to be handed over to the laravel-route-generator.
+     *
+     * @return array
+     */
+    private function compileParameterRegex()
+    {
+        return array_merge($this->routeNode->wheres, $this->wheres);
     }
 
     /**
@@ -666,22 +734,12 @@ class RouteAction
         return false;
     }
 
-    private function getName()
-    {
-        if (!is_null($this->name)) {
-            return $this->name;
-        }
-        return $this->method;
-    }
-
     /**
      * @param string $locale
-     * @return mixed
-     * @throws Exceptions\ActionNotFoundException
+     * @return Route
      * @throws Exceptions\NodeNotFoundException
-     * @throws UrlParametersMissingException
      */
-    private function createRoute(string $locale)
+    private function createRoute(string $locale) : Route
     {
         $uri = $this->generateUri($locale);
         

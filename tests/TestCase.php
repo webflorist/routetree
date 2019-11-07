@@ -6,6 +6,12 @@ use Illuminate\Contracts\Config\Repository;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use RouteTreeTests\Feature\Middleware\Test1Middleware;
+use RouteTreeTests\Feature\Middleware\Test2Middleware;
+use RouteTreeTests\Feature\Middleware\Test3Middleware;
+use RouteTreeTests\Feature\Middleware\Test4Middleware;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Webflorist\RouteTree\RouteNode;
 use Webflorist\RouteTree\RouteTree;
 use Webflorist\RouteTree\RouteTreeServiceProvider;
 
@@ -56,10 +62,21 @@ class TestCase extends BaseTestCase
         ]);
 
         $this->setConfig();
+
+        // Register test-middleware.
+        $this->router->aliasMiddleware('test1', Test1Middleware::class);
+        $this->router->aliasMiddleware('test2', Test2Middleware::class);
+        $this->router->aliasMiddleware('test3', Test3Middleware::class);
+        $this->router->aliasMiddleware('test4', Test4Middleware::class);
+
+        // Add Translations
+        $app['translator']->addNamespace('RouteTreeTests', __DIR__ . "/Feature/lang");
     }
 
     /**
      * Performs a test against all generated routes.
+     *
+     * @param array $expectedResult
      */
     protected function assertRouteTree(array $expectedResult)
     {
@@ -85,7 +102,11 @@ class TestCase extends BaseTestCase
                 $routeData['statusCode'] = $response->getStatusCode();
             }
             else {
-                $routeData['content'] = json_decode($response->baseResponse->getContent(), true);
+                $content = $response->baseResponse->getContent();
+                if($this->isJson()->evaluate($content,'',true)) {
+                    $content = json_decode($content, true);
+                }
+                $routeData['content'] = $content;
             }
 
             $routes[$route->getName()] = $routeData;
@@ -105,6 +126,34 @@ class TestCase extends BaseTestCase
     protected function setConfig()
     {
         $this->config->set('routetree.locales',['en','de']);
+        $this->config->set('routetree.localization.base_folder','RouteTreeTests::pages');
+    }
+
+
+    protected function generateTestRoutes($visitUri='') {
+
+        route_tree()->root(function (RouteNode $node) {
+            $node->namespace('RouteTreeTests\Feature\Controllers');
+            $node->get('TestController@get');
+
+            $node->child('page1', function(RouteNode $node) {
+                $node->get('TestController@get');
+
+                $node->child('page1-1', function(RouteNode $node) {
+                    $node->get('TestController@get');
+                });
+
+            });
+        });
+
+        // Visit the uri.
+        try {
+            json_decode($this->get($visitUri)->baseResponse->getContent(), true);
+        }
+        catch(NotFoundHttpException $exception) {
+            throw $exception;
+        }
+
     }
 
 

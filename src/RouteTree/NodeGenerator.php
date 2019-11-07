@@ -43,13 +43,13 @@ class NodeGenerator
         foreach ($nodeData as $key => $value) {
             switch($key) {
                 case 'segment':
-                    $routeNode->setSegments($value);
+                    $routeNode->segment($value);
                     break;
                 case 'middleware':
                     $routeNode->addMiddlewareFromArray($value);
                     break;
                 case 'namespace':
-                    $routeNode->setNamespace($value);
+                    $routeNode->namespace($value);
                     break;
                 case 'appendNamespace':
                     $routeNode->appendNamespace($value);
