@@ -2,9 +2,9 @@
 
 namespace RouteTreeTests\Feature;
 
-use RouteTreeTests\TestCase;
+use RouteTreeTests\LegacyTestCase;
 
-class RouteNodeUrlTest extends TestCase
+class RouteNodeUrlLegacyTest extends LegacyTestCase
 {
 
     public function testNodeUrlSimple()

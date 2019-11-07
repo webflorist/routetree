@@ -2,9 +2,9 @@
 
 namespace RouteTreeTests\Feature;
 
-use RouteTreeTests\TestCase;
+use RouteTreeTests\LegacyTestCase;
 
-class MethodsTest extends TestCase
+class MethodsLegacyTest extends LegacyTestCase
 {
 
     public function testGetCurrentNode()

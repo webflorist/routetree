@@ -2,9 +2,9 @@
 
 namespace RouteTreeTests\Feature;
 
-use RouteTreeTests\TestCase;
+use RouteTreeTests\LegacyTestCase;
 
-class MiddlewareTest extends TestCase
+class MiddlewareLegacyTest extends LegacyTestCase
 {
 
     protected $standardClosure = null;

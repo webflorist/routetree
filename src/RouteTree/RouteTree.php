@@ -1,19 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: geraldb
- * Date: 20.04.2016
- * Time: 16:39
- */
 
 namespace Webflorist\RouteTree;
 
+use Closure;
 use Illuminate\Routing\Route;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
 use Webflorist\RouteTree\Exceptions\RouteNameAlreadyRegisteredException;
 
-class RouteTree {
+class RouteTree extends Router
+{
 
     /**
      * Root-node of the route-tree (= the whole route-tree).
@@ -69,16 +66,30 @@ class RouteTree {
     /**
      * Set the root-node.
      *
-     * @param RouteNode|array $nodeData Can be either a RouteNode-object or an array of node-data.
+     * @param Closure $callback
+     * @return RouteNode
      */
-    public function setRootNode($nodeData) {
+    public function root(Closure $callback)
+    {
+        $this->rootNode = (new RouteNode(''))->setUp($callback);
+        return $this->rootNode;
+    }
 
-        if (is_a($nodeData,RouteNode::class)) {
-            $this->rootNode = $nodeData;
-        }
-        else if (is_array($nodeData)) {
-            $this->rootNode = $this->nodeGenerator->generateNode("",null,$nodeData);
-        }
+    /**
+     * Create a RouteNode.
+     *
+     * @param string $name
+     * @param Closure $callback
+     * @param string $parentNode
+     * @return RouteNode
+     * @throws NodeNotFoundException
+     */
+    public function node(string $name, Closure $callback, $parentNode='')
+    {
+        return (new RouteNode(
+            $name,
+            $this->getOrGenerateNode($parentNode)
+        ))->setUp($callback);
     }
 
     /**
@@ -86,7 +97,8 @@ class RouteTree {
      *
      * @return RouteNode|null
      */
-    public function getRootNode() {
+    public function getRootNode()
+    {
         return $this->rootNode;
     }
 
@@ -95,9 +107,10 @@ class RouteTree {
      *
      * @return RouteNode|null
      */
-    public function getCurrentNode() {
+    public function getCurrentNode()
+    {
         if ($this->pageNotFound()) {
-            return  $this->getRootNode();
+            return $this->getRootNode();
         }
         return $this->currentAction->getRouteNode();
     }
@@ -107,9 +120,10 @@ class RouteTree {
      *
      * @return RouteAction|null
      */
-    public function getCurrentAction() {
+    public function getCurrentAction()
+    {
         if ($this->pageNotFound()) {
-            return  $this->getRootNode()->getAction('index');
+            return $this->getRootNode()->getAction('index');
         }
         return $this->currentAction;
     }
@@ -119,7 +133,8 @@ class RouteTree {
      *
      * @param RouteAction $routeAction
      */
-    public function setCurrentAction(RouteAction $routeAction) {
+    public function setCurrentAction(RouteAction $routeAction)
+    {
         $this->currentAction = $routeAction;
     }
 
@@ -131,7 +146,8 @@ class RouteTree {
      * @param string $parentNodeId Node-ID of the parent node. If omitted, the root-node is used.
      * @throws NodeNotFoundException
      */
-    public function addNode($nodeName, $nodeData=[], $parentNodeId = "") {
+    public function addNode($nodeName, $nodeData = [], $parentNodeId = "")
+    {
 
         $this->nodeGenerator->generateNode(
             $nodeName,
@@ -147,7 +163,8 @@ class RouteTree {
      * @param string $parentNodeId Node-ID of the parent node. If omitted, the root-node is used.
      * @throws NodeNotFoundException
      */
-    public function addNodes($nodes=[], $parentNodeId="") {
+    public function addNodes($nodes = [], $parentNodeId = "")
+    {
 
         $parentNode = $this->getOrGenerateNode($parentNodeId);
 
@@ -168,30 +185,29 @@ class RouteTree {
      * @return bool|RouteNode|null
      * @throws NodeNotFoundException
      */
-    protected function getOrGenerateNode($nodeId='') {
+    protected function getOrGenerateNode($nodeId = '')
+    {
 
         // Check, if $parentNodePath exists
         if ($this->doesNodeExist($nodeId)) {
 
             // If it exists, we return it.
             return $this->getNode($nodeId);
-        }
-        else {
+        } else {
 
             // If it does not exist, we check for the previous hierarchical level.
-            $lastSlashPosition = strrpos($nodeId,'.');
+            $lastSlashPosition = strrpos($nodeId, '.');
 
             // In case, we are already at level 1, the parent node must be the root-node,
             // so we create the node for $path with the root-node as it's parent and return it.
             if ($lastSlashPosition === false) {
                 return new RouteNode($nodeId, $this->rootNode);
-            }
-            else {
+            } else {
 
                 // Otherwise, we create the node using getOrGenerateNode() again for it's parent.
                 return new RouteNode(
-                    substr($nodeId,$lastSlashPosition+1),
-                    $this->getOrGenerateNode(substr($nodeId,0,$lastSlashPosition))
+                    substr($nodeId, $lastSlashPosition + 1),
+                    $this->getOrGenerateNode(substr($nodeId, 0, $lastSlashPosition))
                 );
 
             }
@@ -205,11 +221,11 @@ class RouteTree {
      * @param string $nodeId
      * @return bool
      */
-    public function doesNodeExist($nodeId) {
+    public function doesNodeExist($nodeId)
+    {
         try {
             $this->getNode($nodeId);
-        }
-        catch (NodeNotFoundException $exception) {
+        } catch (NodeNotFoundException $exception) {
             return false;
         }
         return true;
@@ -222,7 +238,8 @@ class RouteTree {
      * @return RouteNode
      * @throws NodeNotFoundException
      */
-    public function getNode($nodeId) {
+    public function getNode($nodeId)
+    {
 
         // If path is an empty string or null, we return the root-node.
         if ($nodeId === "" || $nodeId === null) {
@@ -230,7 +247,7 @@ class RouteTree {
         }
 
         // Otherwise we explode the path into it's segments.
-        $pathSegments = explode('.',$nodeId);
+        $pathSegments = explode('.', $nodeId);
 
         // We start crawling beginning with the root-node.
         $crawlNode = $this->rootNode;
@@ -243,12 +260,11 @@ class RouteTree {
 
                 // If it was found, we set it as the new $crawlNode.
                 $crawlNode = $crawlNode->getChildNode($segment);
-            }
-            else {
+            } else {
 
                 // If it was not found, it is clear, that no node exists for $path.
                 // So we return false.
-                throw new NodeNotFoundException("Node with ID '".$nodeId."' could not be found.");
+                throw new NodeNotFoundException("Node with ID '" . $nodeId . "' could not be found.");
             }
         }
 
@@ -259,7 +275,8 @@ class RouteTree {
     /**
      * Generates all routes of the route-tree.
      */
-    public function generateAllRoutes() {
+    public function generateAllRoutes()
+    {
         if (!$this->routesGenerated) {
             $this->rootNode->generateRoutesOfNodeAndChildNodes();
         }
@@ -275,12 +292,13 @@ class RouteTree {
      * @param $language
      * @throws RouteNameAlreadyRegisteredException
      */
-    public function registerRoute(Route $route, RouteAction $routeAction, $language) {
+    public function registerRoute(Route $route, RouteAction $routeAction, $language)
+    {
 
-        $key = strtoupper($routeAction->getMethod()) . $route->getName();
+        $key = strtoupper($route->getActionMethod()) . $route->getName();
 
         if ($this->registeredRoutes->has($key)) {
-            throw new RouteNameAlreadyRegisteredException('Route with key "'.$key.'" already registered.');
+            throw new RouteNameAlreadyRegisteredException('Route with key "' . $key . '" already registered.');
         }
 
         $this->registeredRoutes->put(
@@ -289,7 +307,7 @@ class RouteTree {
                 'route' => $route,
                 'route_action' => $routeAction,
                 'language' => $language,
-                'method' => $routeAction->getMethod(),
+                'method' => $route->getActionMethod(),
                 'path' => $route->uri(),
                 'route_name' => $route->getName()
             ]
@@ -315,7 +333,7 @@ class RouteTree {
      * @param null|string $language
      * @return Collection
      */
-    public function getRegisteredRoutesByMethod($method, $language=null)
+    public function getRegisteredRoutesByMethod($method, $language = null)
     {
         $filteredRoutes = $this->registeredRoutes->where('method', strtolower($method));
 
@@ -333,7 +351,8 @@ class RouteTree {
      * @param null $method
      * @return bool|RouteNode|null
      */
-    public function getNodeByRouteName($routeName, $method=null) {
+    public function getNodeByRouteName($routeName, $method = null)
+    {
 
         $routeAction = $this->getActionByRouteName($routeName, $method);
 
@@ -353,7 +372,8 @@ class RouteTree {
      * @param null $method
      * @return bool|RouteAction|null
      */
-    public function getActionByRouteName($routeName, $method=null) {
+    public function getActionByRouteName($routeName, $method = null)
+    {
 
         // Since $routeName may be used for multiple methods,
         // we search for a matching registeredRoute in the following order.
@@ -371,7 +391,7 @@ class RouteTree {
         }
 
         foreach ($matchMethods as $matchMethod) {
-            $matchKey = $matchMethod.$routeName;
+            $matchKey = $matchMethod . $routeName;
             if ($this->registeredRoutes->has($matchKey)) {
                 return $this->registeredRoutes->get($matchKey)['route_action'];
             }
@@ -388,7 +408,8 @@ class RouteTree {
      * @param Route $route
      * @return bool|RouteAction|null
      */
-    public function getActionByRoute(Route $route) {
+    public function getActionByRoute(Route $route)
+    {
 
         $filteredRoutes = $this->registeredRoutes->where('route', $route);
 
@@ -406,7 +427,8 @@ class RouteTree {
      *
      * @param $locale
      */
-    public static function establishLocale(&$locale) {
+    public static function establishLocale(&$locale)
+    {
         if (is_null($locale)) {
             $locale = app()->getLocale();
         }
@@ -418,8 +440,9 @@ class RouteTree {
      * @param $parameters
      * @return array
      */
-    public static function establishRouteParameters(&$parameters) {
-        if (is_null($parameters) and  !is_null(\Route::current())) {
+    public static function establishRouteParameters(&$parameters)
+    {
+        if (is_null($parameters) and !is_null(\Route::current())) {
             return $parameters = \Route::current()->parameters();
         }
 
@@ -437,20 +460,20 @@ class RouteTree {
     }
 
     /**
-     * Returns array of available languages
-     * (either from config app.locales,
-     * or from app.locale).
+     * Returns array of locales
+     * configured in routetree.locales.
+     *
+     * Falls back to app.locale,
+     * if routetree.locales is empty.
      */
     public static function getLocales()
     {
-        if (config()->has('app.locales')) {
-            return config()->get('app.locales');
+        $locales = config('routetree.locales');
+        if (count($locales)>0) {
+            return $locales;
         }
 
-        return [
-            config()->get('app.locale') => 'locale'
-        ];
+        return [config()->get('app.locale')];
     }
-
 
 }

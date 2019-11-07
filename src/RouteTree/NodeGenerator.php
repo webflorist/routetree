@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: geraldb
- * Date: 28.04.2016
- * Time: 10:06
- */
 
 namespace Webflorist\RouteTree;
-
 
 class NodeGenerator
 {

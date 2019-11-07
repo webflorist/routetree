@@ -55,35 +55,76 @@ class RouteAction
     /**
      * The full paths, this action was generated with.
      *
+     * @var array
+     */
+    protected $paths = [];
+
+    /**
+     * HTTP verb for this action.
+     *
      * @var string
      */
-    protected $paths = null;
+    private $method;
+
+    /**
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @var string
+     */
+    private $view;
+
+    /**
+     * @var array
+     */
+    private $viewData;
+
+    /**
+     * @var string
+     */
+    private $redirect;
+
+    /**
+     * @var int
+     */
+    private $redirectStatus;
 
     /**
      * RouteAction constructor.
+     *
+     * @param string $method
      * @param string $action
+     * @param RouteNode $routeNode
      */
-    public function __construct($action)
+    public function __construct(string $method, $action, RouteNode $routeNode)
     {
+        $this->method = $method;
+        $this->routeNode = $routeNode;
         $this->setAction($action);
         return $this;
     }
 
+    public function name(string $name) {
+        $this->name = $name;
+    }
 
     /**
      * Returns list of all possible actions, their method, route-name-suffix, parent-action and title-closure.
      *
      * @return array
      */
-    public function getActionConfigs() {
+    public function getActionConfigs()
+    {
         return [
             'index' => [
                 'method' => 'get',
                 'suffix' => 'index',
-                'defaultTitle' => function() {
+                'defaultTitle' => function () {
                     return $this->routeNode->getTitle();
                 },
-                'defaultNavTitle' => function() {
+                'defaultNavTitle' => function () {
                     return $this->routeNode->getNavTitle();
                 }
             ],
@@ -91,10 +132,10 @@ class RouteAction
                 'method' => 'get',
                 'suffix' => 'create',
                 'parentAction' => 'index',
-                'defaultTitle' => function() {
+                'defaultTitle' => function () {
                     return trans('Webflorist-RouteTree::routetree.createTitle', ['resource' => $this->routeNode->getTitle()]);
                 },
-                'defaultNavTitle' => function() {
+                'defaultNavTitle' => function () {
                     return trans('Webflorist-RouteTree::routetree.createNavTitle');
                 }
             ],
@@ -106,10 +147,10 @@ class RouteAction
                 'method' => 'get',
                 'suffix' => 'show',
                 'parentAction' => 'index',
-                'defaultTitle' => function() {
+                'defaultTitle' => function () {
                     return $this->routeNode->getTitle() . ': ' . $this->routeNode->getActiveValue();
                 },
-                'defaultNavTitle' => function() {
+                'defaultNavTitle' => function () {
                     return $this->routeNode->getActiveValue();
                 }
             ],
@@ -117,10 +158,10 @@ class RouteAction
                 'method' => 'get',
                 'suffix' => 'edit',
                 'parentAction' => 'show',
-                'defaultTitle' => function() {
+                'defaultTitle' => function () {
                     return trans('Webflorist-RouteTree::routetree.editTitle', ['item' => $this->routeNode->getActiveValue()]);
                 },
-                'defaultNavTitle' => function() {
+                'defaultNavTitle' => function () {
                     return trans('Webflorist-RouteTree::routetree.editNavTitle');
                 }
             ],
@@ -156,18 +197,6 @@ class RouteAction
     }
 
     /**
-     * Set the route-node this action belongs to.
-     *
-     * @param RouteNode $routeNode
-     * @return RouteAction
-     */
-    public function setRouteNode($routeNode)
-    {
-        $this->routeNode = $routeNode;
-        return $this;
-    }
-
-    /**
      * Get the route-node this action belongs to.
      *
      * @return RouteNode
@@ -194,11 +223,11 @@ class RouteAction
      * @param string $locale The language the title should be fetched for (default=current locale).
      * @return string
      */
-    public function getTitle($parameters=null, $locale=null)
+    public function getTitle($parameters = null, $locale = null)
     {
 
         // Try to get a title specifically set for this action.
-        $title = $this->routeNode->getData('title',$parameters, $locale, $this->action);
+        $title = $this->routeNode->getData('title', $parameters, $locale, $this->action);
         if ($title !== false) {
             return $this->routeNode->processTitle($parameters, $locale, $title);
         }
@@ -206,7 +235,7 @@ class RouteAction
         // Next try calling the closure for a default-title configured within $this->getActionConfigs().
         $actionConfigs = $this->getActionConfigs();
         if (isset($actionConfigs[$this->action]['defaultTitle'])) {
-            return call_user_func_array($actionConfigs[$this->action]['defaultTitle'],[]);
+            return call_user_func_array($actionConfigs[$this->action]['defaultTitle'], []);
         }
 
         // The default-fallback is the RouteNode's title.
@@ -220,11 +249,11 @@ class RouteAction
      * @param string $locale The language the title should be fetched for (default=current locale).
      * @return string
      */
-    public function getNavTitle($parameters=null, $locale=null)
+    public function getNavTitle($parameters = null, $locale = null)
     {
 
         // Try to get a navTitle specifically set for this action.
-        $title = $this->routeNode->getData('navTitle',$parameters, $locale, $this->action);
+        $title = $this->routeNode->getData('navTitle', $parameters, $locale, $this->action);
         if ($title !== false) {
             return $this->routeNode->processTitle($parameters, $locale, $title);
         }
@@ -232,11 +261,11 @@ class RouteAction
         // Next try calling the closure for a default-navTitle configured within $this->getActionConfigs().
         $actionConfigs = $this->getActionConfigs();
         if (isset($actionConfigs[$this->action]['defaultNavTitle'])) {
-            return call_user_func_array($actionConfigs[$this->action]['defaultNavTitle'],[]);
+            return call_user_func_array($actionConfigs[$this->action]['defaultNavTitle'], []);
         }
 
         // Try to get a title specifically set for this action.
-        $title = $this->routeNode->getData('title',$parameters, $locale, $this->action);
+        $title = $this->routeNode->getData('title', $parameters, $locale, $this->action);
         if ($title !== false) {
             return $this->routeNode->processTitle($parameters, $locale, $title);
         }
@@ -244,23 +273,33 @@ class RouteAction
         // Next try calling the closure for a default-title configured within $this->getActionConfigs().
         $actionConfigs = $this->getActionConfigs();
         if (isset($actionConfigs[$this->action]['defaultTitle'])) {
-            return call_user_func_array($actionConfigs[$this->action]['defaultTitle'],[]);
+            return call_user_func_array($actionConfigs[$this->action]['defaultTitle'], []);
         }
 
         // The default-fallback is the RouteNode's navTitle.
         return $this->routeNode->getNavTitle();
     }
 
-
     /**
-     * Get the method to be used with this action.
+     * Set the action (controller-method, view, redirect, closure, etc.)
+     * this RouteAction should use.
      *
-     * @return string
+     * @param \Closure|array|string|callable|null $action
+     * @return RouteAction
      */
-    public function getMethod()
+    public function setAction($action)
     {
-        $actionConfigs = $this->getActionConfigs();
-        return $actionConfigs[$this->action]['method'];
+        // TODO: add support for various types of $action;
+        if (is_string($action) && strpos($action,'@') > 0) {
+            $this->setUses($action);
+        }
+        if (is_array($action) && (count($action) === 2) && isset($action['view']) && isset($action['data'])) {
+            $this->setView($action['view'], $action['data']);
+        }
+        if (is_array($action) && (count($action) === 2) && isset($action['redirect']) && isset($action['status'])) {
+            $this->setRedirect($action['redirect'], $action['status']);
+        }
+        return $this;
     }
 
     /**
@@ -269,7 +308,7 @@ class RouteAction
      * @param string $action
      * @return RouteAction
      */
-    public function setAction($action)
+    public function setAction_OLD($action)
     {
         $actionConfigs = $this->getActionConfigs();
         if (!isset($actionConfigs[$action])) {
@@ -296,7 +335,8 @@ class RouteAction
      *
      * @return RouteAction[]
      */
-    public function getRootLineActions() {
+    public function getRootLineActions()
+    {
 
         $rootLineActions = [];
 
@@ -312,7 +352,8 @@ class RouteAction
      *
      * @param $rootLineActions
      */
-    protected function accumulateRootLineActions(&$rootLineActions) {
+    protected function accumulateRootLineActions(&$rootLineActions)
+    {
 
         $this->accumulateParentActions($rootLineActions);
         if ($this->routeNode->hasParentNode()) {
@@ -334,7 +375,8 @@ class RouteAction
      *
      * @param $parentActions
      */
-    protected function accumulateParentActions(&$parentActions) {
+    protected function accumulateParentActions(&$parentActions)
+    {
 
         $actionConfigs = $this->getActionConfigs();
         if (isset($actionConfigs[$this->action]['parentAction'])) {
@@ -364,10 +406,37 @@ class RouteAction
      * @param string $uses
      * @return RouteAction
      */
-    public function setUses($uses)
+    private function setUses($uses)
     {
         $this->uses = $uses;
         return $this;
+    }
+
+    /**
+     * Set view and view-data, this action will use.
+     *
+     * @param string $view
+     * @param array $data
+     * @return void
+     */
+    private function setView(string $view, array $data=[])
+    {
+        $this->view = $view;
+        $this->viewData = $data;
+    }
+
+
+    /**
+     * Set redirect and status-code, this action will use.
+     *
+     * @param string $redirect
+     * @param int $status
+     * @return void
+     */
+    private function setRedirect(string $redirect, int $status=302)
+    {
+        $this->redirect = $redirect;
+        $this->redirectStatus = $status;
     }
 
     /**
@@ -379,7 +448,8 @@ class RouteAction
      * @return mixed
      * @throws UrlParametersMissingException
      */
-    public function getUrl($parameters=null, $locale=null, $absolute=null) {
+    public function getUrl($parameters = null, $locale = null, $absolute = null)
+    {
 
         // If no language is specifically stated, we use the current locale.
         RouteTree::establishLocale($locale);
@@ -400,11 +470,12 @@ class RouteAction
      *
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to use.
      * @param string $language The language to be used for auto-fetching the parameter-values.
-     * @param bool $translateValues: If true, the auto-fetched parameter-values are tried to be auto-translated.
+     * @param bool $translateValues : If true, the auto-fetched parameter-values are tried to be auto-translated.
      * @return array
      * @throws UrlParametersMissingException
      */
-    public function autoFillPathParameters($parameters, $language, $translateValues = false) {
+    public function autoFillPathParameters($parameters, $language, $translateValues = false)
+    {
 
         // Init the return-array.
         $return = [];
@@ -412,7 +483,7 @@ class RouteAction
         // Get all parameters needed for the path to this action.
         $requiredParameters = $this->getPathParameters($language);
 
-        if (count($requiredParameters)>0) {
+        if (count($requiredParameters) > 0) {
 
             // We try filling $return with the $requiredParameters from $parameters.
             $this->fillParameterArray($parameters, $requiredParameters, $return);
@@ -428,8 +499,8 @@ class RouteAction
                 $this->fillParameterArray($currentPathParameters, $requiredParameters, $return);
 
                 // If there are still undetermined parameters missing, we throw an error
-                if (count($requiredParameters)>0) {
-                    throw new UrlParametersMissingException('URL could not be generated due to the following undetermined parameter(s): '.implode(',',$requiredParameters));
+                if (count($requiredParameters) > 0) {
+                    throw new UrlParametersMissingException('URL could not be generated due to the following undetermined parameter(s): ' . implode(',', $requiredParameters));
                 }
             }
         }
@@ -445,16 +516,17 @@ class RouteAction
      * @param null $locale
      * @return array
      */
-    public function getPathParameters($locale=null) {
+    public function getPathParameters($locale = null)
+    {
 
         // If no language is specifically stated, we use the current locale.
         RouteTree::establishLocale($locale);
 
         $parameters = [];
-        $pathSegments = explode('/',$this->paths[$locale]);
+        $pathSegments = explode('/', $this->paths[$locale]);
         foreach ($pathSegments as $segment) {
-            if ((substr($segment,0,1) === '{') && (substr($segment,-1) === '}')) {
-                array_push($parameters, str_replace('{','',str_replace('}','',$segment)));
+            if ((substr($segment, 0, 1) === '{') && (substr($segment, -1) === '}')) {
+                array_push($parameters, str_replace('{', '', str_replace('}', '', $segment)));
             }
         }
 
@@ -465,52 +537,31 @@ class RouteAction
     /**
      * Generate routes in each language for this action.
      */
-    public function generateRoutes() {
+    public function generateRoutes()
+    {
 
-        // Get the method, that will be used for registering the route with laravel.
-        $method = $this->getMethod();
 
-        // Initialize the action-array, that is used to register the route with laravel.
-        $action = [];
-
-        // Add the compiled middlewares to the action-array.
-        $action['middleware'] = $this->compileMiddleware();
-
-        // Add the controller-method or the closure to the action-array.
-        if (!is_null($this->uses)) {
-            $action['uses'] = $this->routeNode->getNamespace().'\\'.$this->uses;
-        }
-        else if (is_callable($this->closure)) {
-            array_push($action,$this->closure);
-        }
+        // Compile the middleware.
+        $middleware = $this->compileMiddleware();
 
         // Iterate through configured languages.
-        foreach (RouteTree::getLocales() as $language => $fullLanguage) {
+        foreach (RouteTree::getLocales() as $locale) {
 
-            // Generate and set route name.
-            $action['as'] = $this->generateRouteName($language);
+            $route = $this->createRoute($locale);
 
-            // Get the path for this route-node and language to register this route with.
-            $path = $this->routeNode->getPath($language);
-
-            // Append any configured suffix.
-            if (strlen($this->pathSuffix)>0) {
-                $path .= $this->pathSuffix;
-            }
-
-            // Save the generated path to $this->paths
-            $this->paths[$language]  = $path;
-
-            // Now register the route with laravel.
-            /** @var Route $route */
-            $route = \Route::$method($path, $action);
+            $route->name(
+                $this->generateRouteName($locale)
+            );
+            $route->middleware(
+                $middleware
+            );
 
             // And register the generated route with the RouteTree service about this registered route,
             // so it can manage a static list.
-            route_tree()->registerRoute($route, $this, $language);
+            route_tree()->registerRoute($route, $this, $locale);
 
         }
-        
+
     }
 
     /**
@@ -529,11 +580,11 @@ class RouteAction
 
         // Compile it into laravel-syntax.
         $compiledMiddleware = [];
-        if (count($middleware)>0) {
+        if (count($middleware) > 0) {
             foreach ($middleware as $middlewareName => $middlewareData) {
                 $compiledMiddleware[$middlewareName] = $middlewareName;
-                if (isset($middlewareData['parameters']) && (count($middlewareData['parameters'])>0)) {
-                    $compiledMiddleware[$middlewareName] .= ':' . implode(',',$middlewareData['parameters']);
+                if (isset($middlewareData['parameters']) && (count($middlewareData['parameters']) > 0)) {
+                    $compiledMiddleware[$middlewareName] .= ':' . implode(',', $middlewareData['parameters']);
                 }
             }
         }
@@ -544,25 +595,21 @@ class RouteAction
     /**
      * Generates a full route-name for this action for a specific language.
      *
-     * @param $language
+     * @param $locale
      * @return string
      */
-    private function generateRouteName($language)
+    private function generateRouteName($locale)
     {
 
-        // A route name always starts with the language-key.
-        $routeName = $language;
+        // A route name always starts with the locale.
+        $routeName = $locale;
 
         // Then we append the id of the route-node.
         if (strlen($this->routeNode->getId()) > 0) {
             $routeName .= '.' . $this->routeNode->getId();
         }
 
-        // Append the suffix for this action, if defined.
-        $actionConfigs = $this->getActionConfigs();
-        if (isset($actionConfigs[$this->action]['suffix'])) {
-            $routeName .= '.' . $actionConfigs[$this->action]['suffix'];
-        }
+        $routeName .= '.'.$this->getName();
 
         return $routeName;
     }
@@ -593,7 +640,7 @@ class RouteAction
      * @param null $parameters
      * @return string
      */
-    public function isActive($parameters=null)
+    public function isActive($parameters = null)
     {
 
         // Check, if the current action is identical to this node.
@@ -617,6 +664,72 @@ class RouteAction
         }
 
         return false;
+    }
+
+    private function getName()
+    {
+        if (!is_null($this->name)) {
+            return $this->name;
+        }
+        return $this->method;
+    }
+
+    /**
+     * @param string $locale
+     * @return mixed
+     * @throws Exceptions\ActionNotFoundException
+     * @throws Exceptions\NodeNotFoundException
+     * @throws UrlParametersMissingException
+     */
+    private function createRoute(string $locale)
+    {
+        $uri = $this->generateUri($locale);
+        
+        // In case of a View Route...
+        if (!is_null($this->view)) {
+            return \Illuminate\Support\Facades\Route::view(
+                $uri,
+                $this->view,
+                $this->viewData
+            );
+        }
+
+        // In case of a Redirect Route...
+        if (!is_null($this->redirect)) {
+            return \Illuminate\Support\Facades\Route::redirect(
+                $uri,
+                route_tree()->getNode($this->redirect)->getPath($locale),
+                $this->redirectStatus
+            );
+        }
+
+        // In case of a regular action route...
+        $action = [];
+        if (!is_null($this->uses)) {
+            $action['uses'] = $this->uses;
+            if (substr($this->uses,0,1) !== '\\') {
+                $action['uses'] = $this->routeNode->getNamespace() . '\\' . $this->uses;
+            }
+        }
+        else if (is_callable($this->closure)) {
+            array_push($action, $this->closure);
+        }
+        return \Illuminate\Support\Facades\Route::{$this->method}($uri, $action);
+    }
+
+    /**
+     * @param string $locale
+     * @return string
+     */
+    private function generateUri(string $locale): string
+    {
+        // Get the uri for this route-node and locale to register this route with.
+        $uri = $this->routeNode->getPath($locale);
+
+        // Save the generated uri to $this->paths
+        $this->paths[$locale] = $uri;
+
+        return $uri;
     }
 
 }

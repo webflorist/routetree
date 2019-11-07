@@ -36,7 +36,7 @@ trait HandleLocaleFromUrl
      */
     public function validLocaleInUrl()
     {
-        return array_key_exists($this->getLocaleFromUrl(), RouteTree::getLocales());
+        return array_search($this->getLocaleFromUrl(), RouteTree::getLocales()) !== false;
     }
 
 }

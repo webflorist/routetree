@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Webflorist\\RouteTree\\": "src/",
+            "Webflorist\\RouteTree\\": "src/RouteTree/",
 	        "RouteTreeTests\\": "tests/"
         },
         "files": [
@@ -26,7 +26,10 @@
         "laravel": {
             "providers": [
                 "Webflorist\\RouteTree\\RouteTreeServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "RouteTree": "Webflorist\\RouteTree\\Facades\\RouteTree"
+            }
         }
     }
 }

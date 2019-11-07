@@ -2,9 +2,9 @@
 
 namespace RouteTreeTests\Feature;
 
-use RouteTreeTests\TestCase;
+use RouteTreeTests\LegacyTestCase;
 
-class ParameterNodesTest extends TestCase
+class ParameterNodesLegacyTest extends LegacyTestCase
 {
 
     protected $rootNode = [];

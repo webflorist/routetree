@@ -4,10 +4,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | App locales
+    |--------------------------------------------------------------------------
+    |
+    | Set all locales to use in this app.
+    | e.g. ['en','de']
+    |
+    */
+    'locales' => [],
+
+    /*
+    |--------------------------------------------------------------------------
     | Start Paths with locale?
     |--------------------------------------------------------------------------
     |
     | Set to false, if you don't want paths starting with locale.
+    | This only works, if only one locale is defined above
     |
     */
     'start_paths_with_locale' => true,

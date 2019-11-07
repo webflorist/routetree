@@ -4,6 +4,7 @@
             'view' => 'test',
             'method' => \Request::getMethod(),
             'path' => trim(\Request::getPathInfo(),'/'),
-            'title' => route_tree()->getCurrentNode()->getTitle()
+            'title' => route_tree()->getCurrentNode()->getTitle(),
+            'foo' => $foo ?? null
         ])
  !!}
