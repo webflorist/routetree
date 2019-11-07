@@ -293,4 +293,64 @@ class RouteGenerationTest extends TestCase
         ]);
     }
 
+    public function test_root_node_with_permanent_redirect()
+    {
+        $this->routeTree->root(function (RouteNode $rootNode) {
+            $rootNode->permanentRedirect('destination');
+        });
+
+        $this->routeTree->node('destination', function (RouteNode $rootNode) {
+            $rootNode->view('test');
+        });
+
+        $this->routeTree->generateAllRoutes();
+
+        $this->assertRouteTree([
+            "de.get" => [
+                "method" => "GET|POST|PUT|PATCH|DELETE|OPTIONS",
+                "uri" => "de",
+                "action" => '\Illuminate\Routing\RedirectController',
+                "middleware" => [],
+                "redirectTarget" => 'de/destination',
+                "statusCode" => 301
+            ],
+            "en.get" => [
+                "method" => "GET|POST|PUT|PATCH|DELETE|OPTIONS",
+                "uri" => "en",
+                "action" => '\Illuminate\Routing\RedirectController',
+                "middleware" => [],
+                "redirectTarget" => 'en/destination',
+                "statusCode" => 301
+            ],
+            "de.destination.get" => [
+                "method" => "GET",
+                "uri" => "de/destination",
+                "action" => '\Illuminate\Routing\ViewController',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'destination',
+                    'method' => 'GET',
+                    'path' => 'de/destination',
+                    'title' => 'Destination',
+                    'view' => 'test',
+                    'foo' => null
+                ],
+            ],
+            "en.destination.get" => [
+                "method" => "GET",
+                "uri" => "en/destination",
+                "action" => '\Illuminate\Routing\ViewController',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'destination',
+                    'method' => 'GET',
+                    'path' => 'en/destination',
+                    'title' => 'Destination',
+                    'view' => 'test',
+                    'foo' => null
+                ],
+            ]
+        ]);
+    }
+
 }
