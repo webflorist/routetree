@@ -1,4 +1,9 @@
-# Reease Notes
+# Release Notes
+
+## [v2.0.0 (????-??-??)](https://github.com/laravel/laravel/compare/v1.1.0...v2.0.0)
+### Changed
+- Rename config `start_paths_with_locale` to (bool-inversed!) `no_locale_prefix`.
+
 
 ## [v1.1.0 (2019-09-23)](https://github.com/laravel/laravel/compare/v1.0.2...v1.1.0)
 ### Added

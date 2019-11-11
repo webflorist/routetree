@@ -11,7 +11,7 @@ use RouteTreeTests\Feature\Middleware\Test2Middleware;
 use RouteTreeTests\Feature\Middleware\Test3Middleware;
 use RouteTreeTests\Feature\Middleware\Test4Middleware;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Webflorist\RouteTree\RouteNode;
+use Webflorist\RouteTree\Domain\RouteNode;
 use Webflorist\RouteTree\RouteTree;
 use Webflorist\RouteTree\RouteTreeServiceProvider;
 
@@ -155,6 +155,20 @@ class TestCase extends BaseTestCase
         }
 
     }
+
+    protected function assertJsonResponse(string $uri, array $expected, bool$followRedirects=false)
+    {
+        $response = $this->get($uri);
+        if ($followRedirects) {
+            $response = $this->followRedirects($response);
+        }
+        $this->assertEquals(
+            $expected,
+            json_decode($response->baseResponse->getContent(), true)
+        );
+
+    }
+
 
 
 }

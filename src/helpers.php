@@ -4,6 +4,7 @@ use Webflorist\RouteTree\Exceptions\ActionNotFoundException;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
 use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
 use Webflorist\RouteTree\RouteTree;
+use Webflorist\RouteTree\Services\RouteUrlBuilder;
 
 if (! function_exists('route_tree')) {
     /**
@@ -25,32 +26,13 @@ if ( ! function_exists('route_node_url()')) {
      * @param string $nodeId The node-id for which this url is generated (default=current node).
      * @param string $action The node-action for which this url is generated (default='index|get').
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
-     * @param string $language The language this url should be generated for (default=current locale).
+     * @param string $locale The language this url should be generated for (default=current locale).
      * @param bool $absolute Create absolute paths instead of relative paths (default=true/configurable).
-     * @return string
-     * @throws ActionNotFoundException
-     * @throws NodeNotFoundException
-     * @throws UrlParametersMissingException
+     * @return RouteUrlBuilder
      */
-    function route_node_url($nodeId=null, $action=null, $parameters = null, $language=null, $absolute=null)
+    function route_node_url($nodeId=null, $action=null, $parameters = null, $locale=null, $absolute=null) : RouteUrlBuilder
     {
-        if (is_null($nodeId)) {
-            $node = route_tree()->getCurrentNode();
-        }
-        else {
-            $node = route_tree()->getNode($nodeId);
-        }
-
-        if (is_null($action)) {
-            if ($node->hasAction('index')) {
-                $action = 'index';
-            }
-            else if ($node->hasAction('get')) {
-                $action = 'get';
-            }
-        }
-
-        return $node->getUrlByAction($action, $parameters, $language, $absolute);
+        return new RouteUrlBuilder($nodeId, $action, $parameters, $locale, $absolute);
     }
 }
 

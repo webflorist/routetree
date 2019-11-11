@@ -1,12 +1,12 @@
 <?php
 
-namespace Webflorist\RouteTree;
+namespace Webflorist\RouteTree\Middleware;
 
 use Closure;
-use Illuminate\Session\SessionManager;
+use Webflorist\RouteTree\Domain\RouteAction;
+use Webflorist\RouteTree\RouteTree;
 use Webflorist\RouteTree\Traits\HandleLocaleFromUrl;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 
 class RouteTreeMiddleware
 {
@@ -40,6 +40,7 @@ class RouteTreeMiddleware
      */
     public function handle($request, Closure $next)
     {
+
         // Set current locale depending on first path-segment.
         $this->setLocaleFromUrl();
 

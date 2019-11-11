@@ -1,8 +1,6 @@
 <?php
 
-namespace Webflorist\RouteTree\Traits;
-
-use Webflorist\RouteTree\RouteNode;
+namespace Webflorist\RouteTree\Domain\Traits;
 
 trait CanHaveParameterRegex
 {

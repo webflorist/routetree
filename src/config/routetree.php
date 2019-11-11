@@ -15,14 +15,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Start Paths with locale?
+    | Do not prefix URI with locale?
     |--------------------------------------------------------------------------
     |
-    | Set to false, if you don't want paths starting with locale.
-    | This only works, if only one locale is defined above
+    | Set to true, if you don't want paths starting with locale.
+    | This will result in a single-language-page (using config 'app.locale')
+    | with URIs not starting with e.g. /en/.
     |
     */
-    'start_paths_with_locale' => true,
+    'no_locale_prefix' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -54,24 +55,6 @@ return [
          * The name of the file, in which auto-translations reside.
          */
         'file_name' => 'pages',
-
-    ],
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Database Settings
-    |--------------------------------------------------------------------------
-    |
-    | Here you may configure settings for DB-supported routes.
-    |
-    */
-    'database' => [
-
-        /*
-         * Enable DB-support (publishes migrations).
-         */
-        'enabled' => false,
 
     ],
 

@@ -4,15 +4,13 @@ namespace Webflorist\RouteTree;
 
 use Closure;
 use Illuminate\Routing\Route;
-use Illuminate\Routing\Router;
-use Illuminate\Routing\ViewController;
 use Illuminate\Support\Collection;
+use Webflorist\RouteTree\Domain\RouteAction;
+use Webflorist\RouteTree\Domain\RouteNode;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
 use Webflorist\RouteTree\Exceptions\RouteNameAlreadyRegisteredException;
-use Webflorist\RouteTree\Models\RouteActionModel;
-use Webflorist\RouteTree\Models\RouteNodeModel;
 
-class RouteTree extends Router
+class RouteTree
 {
 
     /**
@@ -71,6 +69,7 @@ class RouteTree extends Router
      *
      * @param Closure $callback
      * @return RouteNode
+     * @throws Exceptions\NodeAlreadyHasChildWithSameNameException
      */
     public function root(Closure $callback)
     {
@@ -140,45 +139,6 @@ class RouteTree extends Router
     public function setCurrentAction(RouteAction $routeAction)
     {
         $this->currentAction = $routeAction;
-    }
-
-    /**
-     * Adds a new node to the route-tree.
-     *
-     * @param string $nodeName Name of this node.
-     * @param array $nodeData Node-data structured as array.
-     * @param string $parentNodeId Node-ID of the parent node. If omitted, the root-node is used.
-     * @throws NodeNotFoundException
-     */
-    public function addNode($nodeName, $nodeData = [], $parentNodeId = "")
-    {
-
-        $this->nodeGenerator->generateNode(
-            $nodeName,
-            $this->getOrGenerateNode($parentNodeId),
-            $nodeData
-        );
-    }
-
-    /**
-     * Adds an array of nodes to the route-tree.
-     *
-     * @param array $nodes Multi-dimensional array, whose key is the node-name and whose values are the node-data.
-     * @param string $parentNodeId Node-ID of the parent node. If omitted, the root-node is used.
-     * @throws NodeNotFoundException
-     */
-    public function addNodes($nodes = [], $parentNodeId = "")
-    {
-
-        $parentNode = $this->getOrGenerateNode($parentNodeId);
-
-        foreach ($nodes as $nodeName => $nodeData) {
-            $this->nodeGenerator->generateNode(
-                $nodeName,
-                $parentNode,
-                $nodeData
-            );
-        }
     }
 
     /**
@@ -292,8 +252,9 @@ class RouteTree extends Router
      */
     public function registerRoute(Route $route, RouteAction $routeAction, $language)
     {
+        $method = str_replace('|HEAD', '', implode('|', $route->methods()));
 
-        $key = strtoupper($route->getActionMethod()) . $route->getName();
+        $key = strtoupper($method) . $route->getName();
 
         if ($this->registeredRoutes->has($key)) {
             throw new RouteNameAlreadyRegisteredException('Route with key "' . $key . '" already registered.');
@@ -305,7 +266,7 @@ class RouteTree extends Router
                 'route' => $route,
                 'route_action' => $routeAction,
                 'language' => $language,
-                'method' => $route->getActionMethod(),
+                'method' => strtolower($method),
                 'path' => $route->uri(),
                 'route_name' => $route->getName()
             ]
@@ -479,35 +440,6 @@ class RouteTree extends Router
         }
 
         return [config()->get('app.locale')];
-    }
-
-    /**
-     * Loads routes from database
-     *
-     * @throws NodeNotFoundException
-     */
-    public function loadFromDb() {
-        $routeNodes = RouteNodeModel::all();
-        if (!$routeNodes->isEmpty()) {
-            foreach ($routeNodes as $nodeModel) {
-
-                $nodeData = $nodeModel->toArray();
-
-                foreach ($nodeModel->actions as $action) {
-                    /** @var RouteActionModel $action */
-                    $nodeData[$action->name] = [
-                        $action->type => $action->value,
-                        'middleware' => $action->middleware
-                    ];
-                }
-
-                $this->addNode(
-                    $nodeModel->name,
-                    $nodeData,
-                    $nodeModel->getParentNodeId()
-                );
-            }
-        }
     }
 
 }

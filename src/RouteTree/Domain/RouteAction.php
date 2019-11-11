@@ -1,15 +1,17 @@
 <?php
 
-namespace Webflorist\RouteTree;
+namespace Webflorist\RouteTree\Domain;
 
 use Illuminate\Routing\Route;
 use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
-use Webflorist\RouteTree\Traits\CanHaveParameterRegex;
+use Webflorist\RouteTree\RouteTree;
+use Webflorist\RouteTree\Domain\Traits\CanHaveParameterRegex;
+use Webflorist\RouteTree\Domain\Traits\CanHaveSegments;
 
 class RouteAction
 {
 
-    use CanHaveParameterRegex;
+    use CanHaveSegments, CanHaveParameterRegex;
 
     /**
      * The route-node this action belongs to.
@@ -38,13 +40,6 @@ class RouteAction
      * @var string
      */
     protected $uses = null;
-
-    /**
-     * The path-suffix, this action will have on top of it's node's path.
-     *
-     * @var string
-     */
-    protected $pathSuffix = null;
 
     /**
      * The full paths, this action was generated with.
@@ -100,12 +95,16 @@ class RouteAction
      * @param string $method
      * @param string $action
      * @param RouteNode $routeNode
+     * @param string|null $name
      */
-    public function __construct(string $method, $action, RouteNode $routeNode)
+    public function __construct(string $method, $action, RouteNode $routeNode, ?string $name=null)
     {
         $this->method = $method;
         $this->routeNode = $routeNode;
         $this->setAction($action);
+        if (!is_null($name)) {
+            $this->name($name);
+        }
         return $this;
     }
 
@@ -227,18 +226,6 @@ class RouteAction
         if (array_search($name,$this->skipMiddleware) === false) {
             $this->skipMiddleware[] = $name;
         }
-        return $this;
-    }
-
-    /**
-     * Set the path-suffix, this action will have on top of it's node's path.
-     *
-     * @param string $pathSuffix
-     * @return RouteAction
-     */
-    public function setPathSuffix($pathSuffix)
-    {
-        $this->pathSuffix = $pathSuffix;
         return $this;
     }
 
@@ -497,7 +484,7 @@ class RouteAction
             $absolute = config('routetree.absolute_urls');
         }
 
-        return route($this->generateRouteName($locale), $this->autoFillPathParameters($parameters, $locale, true), $absolute);
+        return route($this->getRouteName($locale), $this->autoFillPathParameters($parameters, $locale, true), $absolute);
 
     }
 
@@ -590,12 +577,12 @@ class RouteAction
 
         // Iterate through configured languages
         // and build routes.
-        foreach (RouteTree::getLocales() as $locale) {
+        foreach ($this->routeNode->getLocales() as $locale) {
 
             $route = $this->createRoute($locale);
 
             $route->name(
-                $this->generateRouteName($locale)
+                $this->getRouteName($locale)
             );
 
             $route->middleware(
@@ -661,12 +648,12 @@ class RouteAction
     }
 
     /**
-     * Generates a full route-name for this action for a specific language.
+     * Get full route-name for this action for a specific language.
      *
      * @param $locale
      * @return string
      */
-    private function generateRouteName($locale)
+    public function getRouteName($locale)
     {
 
         // A route name always starts with the locale.
@@ -784,10 +771,25 @@ class RouteAction
         // Get the uri for this route-node and locale to register this route with.
         $uri = $this->routeNode->getPath($locale);
 
+        // Append any action specific segment.
+        if ($this->hasSegment($locale)) {
+            $uri .= '/' . $this->getSegment($locale);
+        }
+
         // Save the generated uri to $this->paths
         $this->paths[$locale] = $uri;
 
         return $uri;
+    }
+
+    /**
+     * Get all locales this RouteAction should be registered with.
+     *
+     * @return array
+     */
+    public function getLocales()
+    {
+        return $this->routeNode->getLocales();
     }
 
 }

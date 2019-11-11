@@ -3,6 +3,7 @@
 namespace Webflorist\RouteTree;
 
 use Illuminate\Support\ServiceProvider;
+use Webflorist\RouteTree\Middleware\RouteTreeMiddleware;
 use Webflorist\RouteTree\Middleware\SetLocalFromSession;
 
 class RouteTreeServiceProvider extends ServiceProvider
@@ -27,7 +28,6 @@ class RouteTreeServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishConfig();
-        $this->loadMigrations();
         $this->loadTranslations();
         $this->addMiddleware();
     }
@@ -51,16 +51,9 @@ class RouteTreeServiceProvider extends ServiceProvider
         ]);
     }
 
-    private function loadMigrations()
-    {
-        if (config('routetree.database.enabled')) {
-            $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        }
-    }
-
     private function loadTranslations()
     {
-        $this->loadTranslationsFrom(__DIR__ . "/../resources/lang", "Webflorist-PackageBlueprint");
+        $this->loadTranslationsFrom(__DIR__ . "/../resources/lang", "Webflorist-RouteTree");
     }
 
     private function addMiddleware()

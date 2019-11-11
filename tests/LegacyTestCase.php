@@ -22,8 +22,6 @@ abstract class LegacyTestCase extends BaseTestCase
 
     protected $expectedResult = [];
 
-    protected $useDatabase = false;
-
     protected $appConfig = [
 
         'locale' => 'de',
@@ -107,11 +105,6 @@ abstract class LegacyTestCase extends BaseTestCase
         $this->app['router']->aliasMiddleware('test3', Test3Middleware::class);
         $this->app['router']->aliasMiddleware('test4', Test4Middleware::class);
 
-        // Migrate Database, if required.
-        if ($this->useDatabase) {
-            $this->artisan('migrate', ['--database' => 'testbench']);
-        }
-
     }
 
     /**
@@ -133,16 +126,6 @@ abstract class LegacyTestCase extends BaseTestCase
         $app['config']->set('view.paths', [
             dirname(__FILE__).'/Feature/Views'
         ]);
-
-        // Set database config.
-        if ($this->useDatabase) {
-            $app['config']->set('database.default', 'testbench');
-            $app['config']->set('database.connections.testbench', [
-                'driver' => 'sqlite',
-                'database' => ':memory:',
-                'prefix' => '',
-            ]);
-        }
 
         // Set Test-Route
         //$app['router']->get($this->testRoute, ['uses' => TestController::class.'@test']);
@@ -245,121 +228,9 @@ abstract class LegacyTestCase extends BaseTestCase
         // Set root-node.
         route_tree()->setRootNode($this->rootNode);
 
-        if ($this->useDatabase) {
-            foreach ($this->nodeTree as $nodeName => $nodeData) {
-                $this->insertNodeIntoDb($nodeName, $nodeData);
-            }
-            route_tree()->loadFromDb();
-        }
-        else {
-
-            // Set nodes.
-            route_tree()->addNodes($this->nodeTree);
-
-        }
+        // Set nodes.
+        route_tree()->addNodes($this->nodeTree);
     }
-
-    private function insertNodeIntoDb(string $nodeName, array $nodeData, int $parentId=null)
-    {
-        $routeNode = new RouteNodeModel;
-        $routeNode->name = $nodeName;
-        $routeNode->parent_id = $parentId;
-
-        $actions = [];
-        $data = [];
-
-        // We traverse each key set in $nodeData and perform the needed tasks on $routeNode.
-        foreach ($nodeData as $key => $value) {
-            switch($key) {
-                case 'segment':
-                    $routeNode->segments = $value;
-                    break;
-                case 'middleware':
-                    $routeNode->middleware = $value;
-                    break;
-                case 'namespace':
-                    $routeNode->namespace = $value;
-                    break;
-                case 'inheritPath':
-                    $routeNode->inherit_path = $value;
-                    break;
-                case 'index':
-                case 'create':
-                case 'store':
-                case 'show':
-                case 'edit':
-                case 'update':
-                case 'destroy':
-                case 'get':
-                case 'post':
-                    $actions[$key] = $value;
-                    break;
-                case 'resource':
-                    // Todo
-                    break;
-                default:
-                    $data[$key] = $value;
-            }
-        }
-
-        if (count($data)>0) {
-            $routeNode->data = $data;
-        }
-
-        $routeNode->save();
-
-        if (count($actions)>0) {
-            foreach ($actions as $actionName => $actionData) {
-                $this->insertActionIntoDb($actionName, $actionData, $routeNode->id);
-            }
-        }
-
-        if (isset($nodeData['children'])) {
-            foreach($nodeData['children'] as $childName => $childData) {
-                $this->insertNodeIntoDb($childName, $childData, $routeNode->id);
-            }
-        }
-    }
-
-    private function insertActionIntoDb(string $actionName, array $actionData, int $nodeId)
-    {
-        $routeAction = new RouteActionModel;
-
-        $actionType = null;
-        $actionValue = null;
-        $middleware = null;
-
-        if (isset($actionData['closure'])) {
-            $actionType = 'closure';
-            $actionValue = $actionData['closure'];
-        }
-        else if (isset($actionData['view'])) {
-            $actionType = 'view';
-            $actionValue = $actionData['view'];
-        }
-        else if (isset($actionData['redirect'])) {
-            $actionType = 'redirect';
-            $actionValue = $actionData['redirect'];
-        }
-        else if (isset($actionData['uses'])) {
-            $actionType = 'uses';
-            $actionValue = $actionData['uses'];
-        }
-
-        if (isset($actionData['middleware'])) {
-            $middleware = $actionData['middleware'];
-        }
-
-        $routeAction->node_id = $nodeId;
-        $routeAction->name = $actionName;
-        $routeAction->type = $actionType;
-        $routeAction->value = $actionValue;
-        $routeAction->middleware = $middleware;
-
-        $routeAction->save();
-    }
-
-
 
     protected function generateTestRoutes($visitUri='') {
 
