@@ -3,12 +3,14 @@
 namespace Webflorist\RouteTree\Domain;
 
 use Closure;
+use Webflorist\RouteTree\Domain\Traits\CanHaveParameterRegex;
+use Webflorist\RouteTree\Domain\Traits\CanHaveSegments;
 use Webflorist\RouteTree\Exceptions\ActionNotFoundException;
 use Webflorist\RouteTree\Exceptions\NodeAlreadyHasChildWithSameNameException;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
+use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
 use Webflorist\RouteTree\RouteTree;
-use Webflorist\RouteTree\Domain\Traits\CanHaveParameterRegex;
-use Webflorist\RouteTree\Domain\Traits\CanHaveSegments;
+use Webflorist\RouteTree\Services\RouteUrlBuilder;
 
 class RouteNode
 {
@@ -50,7 +52,7 @@ class RouteNode
 
     /**
      * An associative array with the languages as keys and the full path to this node as values.
-     * 
+     *
      * Gets generated automatically
      *
      * @var array
@@ -82,7 +84,7 @@ class RouteNode
 
     /**
      * The language-file-key to be used for auto-translation of normal page-content.
-     * 
+     *
      * Gets determined automatically.
      *
      * @var string
@@ -187,7 +189,8 @@ class RouteNode
      * @param bool $inherit Should this middleware be inherited to all child-nodes?
      * @return RouteNode
      */
-    public function middleware(string $name, array$parameters=[], bool $inherit=true) {
+    public function middleware(string $name, array $parameters = [], bool $inherit = true)
+    {
         $this->middleware[$name] = $parameters;
         if ($inherit) {
             $this->inheritMiddleware[] = $name;
@@ -201,8 +204,9 @@ class RouteNode
      * @param string $name Name of the middleware.
      * @return RouteNode
      */
-    public function skipMiddleware(string $name) {
-        if (array_search($name,$this->skipMiddleware) === false) {
+    public function skipMiddleware(string $name)
+    {
+        if (array_search($name, $this->skipMiddleware) === false) {
             $this->skipMiddleware[] = $name;
         }
         if (isset($this->middleware[$name])) {
@@ -217,7 +221,8 @@ class RouteNode
      * @param bool $inheritOnly
      * @return array
      */
-    public function getMiddleware(bool $inheritOnly=false) {
+    public function getMiddleware(bool $inheritOnly = false)
+    {
         $middleware = $this->middleware;
         if ($inheritOnly) {
             foreach ($middleware as $middlewareKey => $middlewareParameters) {
@@ -250,12 +255,11 @@ class RouteNode
      * @param null|string $namespace
      * @return RouteNode
      */
-    public function namespace(string $namespace) : RouteNode
+    public function namespace(string $namespace): RouteNode
     {
-        if (substr($namespace,0,1) === '\\') {
+        if (substr($namespace, 0, 1) === '\\') {
             $this->namespace = $namespace;
-        }
-        else {
+        } else {
             $this->namespace .= '\\' . $namespace;
         }
         return $this;
@@ -294,18 +298,18 @@ class RouteNode
         // Overtake middleware from parentNode into current node.
         foreach ($parentNode->getMiddleware(true) as $middlewareKey => $middlewareParameters) {
             if (array_search($middlewareKey, $this->skipMiddleware) === false) {
-                $this->middleware($middlewareKey,$middlewareParameters,true);
+                $this->middleware($middlewareKey, $middlewareParameters, true);
             }
         }
     }
 
-    public function resource(string $name, string $controller) : RouteResource
+    public function resource(string $name, string $controller): RouteResource
     {
         $this->resource = new RouteResource($name, $controller, $this);
         return $this->resource;
     }
 
-    public function isResource() : bool
+    public function isResource(): bool
     {
         return $this->resource instanceof RouteResource;
     }
@@ -569,7 +573,7 @@ class RouteNode
      * @param string|null $name Name of the action (defaults to method-name).
      * @return RouteAction
      */
-    public function get($action, string $name=null)
+    public function get($action, string $name = null)
     {
         return $this->addAction('get', $action, $name);
     }
@@ -581,7 +585,7 @@ class RouteNode
      * @param string|null $name Name of the action (defaults to method-name).
      * @return RouteAction
      */
-    public function post($action, string $name=null)
+    public function post($action, string $name = null)
     {
         return $this->addAction('post', $action, $name);
     }
@@ -593,7 +597,7 @@ class RouteNode
      * @param string|null $name Name of the action (defaults to method-name).
      * @return RouteAction
      */
-    public function put($action, string $name=null)
+    public function put($action, string $name = null)
     {
         return $this->addAction('put', $action, $name);
     }
@@ -605,7 +609,7 @@ class RouteNode
      * @param string|null $name Name of the action (defaults to method-name).
      * @return RouteAction
      */
-    public function patch($action, string $name=null)
+    public function patch($action, string $name = null)
     {
         return $this->addAction('patch', $action, $name);
     }
@@ -617,7 +621,7 @@ class RouteNode
      * @param string|null $name Name of the action (defaults to method-name).
      * @return RouteAction
      */
-    public function delete($action, string $name=null)
+    public function delete($action, string $name = null)
     {
         return $this->addAction('delete', $action, $name);
     }
@@ -628,7 +632,7 @@ class RouteNode
      * @param string|callable $action
      * @return RouteAction
      */
-    public function options($action, string $name=null)
+    public function options($action, string $name = null)
     {
         return $this->addAction('options', $action);
     }
@@ -822,27 +826,25 @@ class RouteNode
      * using the following order: 'index' -> 'get' -> the first element of the action-array.
      *
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
-     * @param string $language The language this url should be generated for (default=current locale).
-     * @return string
+     * @param string $locale The language this url should be generated for (default=current locale).
+     * @param bool $absolute Create absolute paths instead of relative paths (default=true/configurable).
+     * @return RouteUrlBuilder
      * @throws ActionNotFoundException
-     * @throws Exceptions\UrlParametersMissingException
+     * @throws NodeNotFoundException
      */
-    public function getUrl($parameters = null, $language = null)
+    public function getUrl($parameters = null, $locale = null, $absolute = null) : RouteUrlBuilder
     {
 
-        if ($this->hasAction('index')) {
-            return $this->getUrlByAction('index', $parameters, $language);
+        $action = $this->hasAction('index') ? 'index' :
+            $this->hasAction('get') ? 'get' :
+                count($this->actions) > 0 ? key($this->actions) :
+                    null;
+
+        if ($action === null) {
+            throw new ActionNotFoundException('Node with Id "' . $this->getId() . '" does not have any action to generate an URL to.');
         }
 
-        if ($this->hasAction('get')) {
-            return $this->getUrlByAction('get', $parameters, $language);
-        }
-
-        if (count($this->actions) > 0) {
-            return $this->getUrlByAction(key($this->actions), $parameters, $language);
-        }
-
-        throw new ActionNotFoundException('Node with Id "' . $this->getId() . '" does not have any action to generate an URL to.');
+        return $this->getUrlByAction($action, $parameters, $locale, $absolute );
     }
 
     /**
@@ -850,16 +852,16 @@ class RouteNode
      *
      * @param string $action The action name (e.g. index|show|get|post|update,etc.)
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
-     * @param string $language The language this url should be generated for (default=current locale).
+     * @param string $locale The language this url should be generated for (default=current locale).
      * @param bool $absolute Create absolute paths instead of relative paths (default=true/configurable).
-     * @return string
+     * @return RouteUrlBuilder
      * @throws ActionNotFoundException
-     * @throws Exceptions\UrlParametersMissingException
+     * @throws NodeNotFoundException
      */
-    public function getUrlByAction($action = 'index', $parameters = null, $language = null, $absolute = null)
+    public function getUrlByAction($action, $parameters = null, $locale = null, $absolute = null) : RouteUrlBuilder
     {
         if ($this->hasAction($action)) {
-            return $this->getAction($action)->getUrl($parameters, $language, $absolute);
+            return $this->getAction($action)->getUrl($parameters, $locale, $absolute);
         }
 
         throw new ActionNotFoundException('Node with Id "' . $this->getId() . '" does not have the action "' . $action . '""');
@@ -1144,7 +1146,7 @@ class RouteNode
     protected function generateFullPaths()
     {
         foreach ($this->getLocales() as $locale) {
-            $this->paths[$locale] =  $this->compilePath($locale);
+            $this->paths[$locale] = $this->compilePath($locale);
         }
     }
 
@@ -1188,7 +1190,7 @@ class RouteNode
      * @param boolean $inheritSegment
      * @return RouteNode
      */
-    public function inheritSegment(bool $inheritSegment=true)
+    public function inheritSegment(bool $inheritSegment = true)
     {
         $this->inheritSegment = $inheritSegment;
         return $this;

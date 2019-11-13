@@ -73,4 +73,38 @@ class RouteNodeUrlTest extends TestCase
 
     }
 
+    public function test_node_url_via_get_url_method_simple()
+    {
+        $this->routeTree->node('page', function (RouteNode $node) {
+            $node->resource('resource', '\RouteTreeTests\Feature\Controllers\TestController');
+        });
+        $this->routeTree->generateAllRoutes();
+
+        $this->assertEquals(
+            'http://localhost/de/page',
+            route_tree()->getNode('page')->getUrl()->__toString()
+        );
+
+    }
+
+    public function test_node_url_via_get_url_method_complex()
+    {
+        $this->routeTree->node('page', function (RouteNode $node) {
+            $node->resource('resource', '\RouteTreeTests\Feature\Controllers\TestController');
+        });
+        $this->routeTree->generateAllRoutes();
+
+        $this->assertEquals(
+            'http://localhost/en/page/my-slug/edit',
+            route_tree()->getNode('page')->getUrl()
+                ->locale('en')
+                ->action('edit')
+                ->absolute()
+                ->parameters([
+                    'resource' => 'my-slug'
+                ])->__toString()
+        );
+
+    }
+
 }

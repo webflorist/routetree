@@ -63,7 +63,7 @@ class RouteUrlBuilder
      * @param bool|null $absolute
      * @return RouteUrlBuilder
      */
-    public function absolute(bool $absolute=true): RouteUrlBuilder
+    public function absolute(bool $absolute = true): RouteUrlBuilder
     {
         $this->absolute = $absolute;
         return $this;
@@ -77,31 +77,32 @@ class RouteUrlBuilder
     /**
      * RouteUrlBuilder constructor.
      *
-     * @param string $nodeId The node-id for which this url is generated (default=current node).
+     * @param string|RouteNode $node The node-id for which this url is generated, or a RouteNode object. (default=current node).
      * @param string $action The node-action for which this url is generated (default='index|get').
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
      * @param string $locale The language this url should be generated for (default=current locale).
      * @param bool $absolute Create absolute paths instead of relative paths (default=true/configurable).
      * @return string
+     * @throws \Webflorist\RouteTree\Exceptions\NodeNotFoundException
      */
-    public function __construct($nodeId=null, $action=null, $parameters = null, $locale=null, $absolute=null)
+    public function __construct($node = null, $action = null, $parameters = null, $locale = null, $absolute = null)
     {
 
-        if (is_null($nodeId)) {
-            $this->routeNode = route_tree()->getCurrentNode();
-        }
-        else {
-            $this->routeNode = route_tree()->getNode($nodeId);
-        }
+        $this->routeNode =
+            is_string($node) ? route_tree()->getNode($node) : (
+            $node instanceof RouteNode ? $node : route_tree()->getCurrentNode()
+            );
 
-        if (is_null($action)) {
-            if ($this->routeNode->hasAction('index')) {
-                $this->action = 'index';
-            }
-            else if ($this->routeNode->hasAction('get')) {
-                $this->action = 'get';
-            }
-        }
+        $this->action =
+            $action ??
+            (
+            $this->routeNode->hasAction('index') ? 'index' :
+                (
+                $this->routeNode->hasAction('get') ? 'get' :
+                    null
+                )
+            );
+
         $this->parameters = $parameters;
         $this->locale = $locale;
         $this->absolute = $absolute;
@@ -127,7 +128,7 @@ class RouteUrlBuilder
         );
     }
 
-    private function getRouteAction() : RouteAction
+    private function getRouteAction(): RouteAction
     {
         if ($this->routeNode->hasAction($this->action)) {
             return $this->routeNode->getAction($this->action);

@@ -3,10 +3,12 @@
 namespace Webflorist\RouteTree\Domain;
 
 use Illuminate\Routing\Route;
+use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
 use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
 use Webflorist\RouteTree\RouteTree;
 use Webflorist\RouteTree\Domain\Traits\CanHaveParameterRegex;
 use Webflorist\RouteTree\Domain\Traits\CanHaveSegments;
+use Webflorist\RouteTree\Services\RouteUrlBuilder;
 
 class RouteAction
 {
@@ -408,20 +410,11 @@ class RouteAction
      * @param string $locale The language this url should be generated for (default=current locale).
      * @param bool $absolute Create absolute paths instead of relative paths (default=true/configurable).
      * @return mixed
-     * @throws UrlParametersMissingException
+     * @throws NodeNotFoundException
      */
     public function getUrl($parameters = null, $locale = null, $absolute = null)
     {
-
-        // If no language is specifically stated, we use the current locale.
-        RouteTree::establishLocale($locale);
-
-        if (is_null($absolute)) {
-            $absolute = config('routetree.absolute_urls');
-        }
-
-        return route($this->getRouteName($locale), $this->autoFillPathParameters($parameters, $locale, true), $absolute);
-
+        return new RouteUrlBuilder($this->routeNode, $this->getName(), $parameters, $locale, $absolute);
     }
 
     /**
