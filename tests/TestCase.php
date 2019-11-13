@@ -125,6 +125,7 @@ class TestCase extends BaseTestCase
 
     protected function setConfig()
     {
+        $this->config->set('app.locale','de');
         $this->config->set('routetree.locales',['en','de']);
         $this->config->set('routetree.localization.base_folder','RouteTreeTests::pages');
     }

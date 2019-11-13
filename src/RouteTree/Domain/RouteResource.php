@@ -2,10 +2,7 @@
 
 namespace Webflorist\RouteTree\Domain;
 
-use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Lang;
-use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
-use Webflorist\RouteTree\RouteTree;
 
 class RouteResource
 {
@@ -30,6 +27,19 @@ class RouteResource
      * @var string
      */
     private $name;
+    /**
+     * @var RouteAction
+     */
+    private $index;
+    /**
+     * @var Traits\CanHaveSegments
+     */
+    private $create;
+
+    /**
+     * @var string
+     */
+    private $transKey;
 
     /**
      * RouteAction constructor.
@@ -45,6 +55,7 @@ class RouteResource
         $this->name = $name;
         $this->controller = $controller;
         $this->routeNode = $routeNode;
+        $this->transKey = 'Webflorist-RouteTree::routetree.resource';
 
         $this->setupActions();
 
@@ -52,105 +63,31 @@ class RouteResource
     }
 
     /**
-     * Set the name of this action.
-     *
-     * @param string $name
-     */
-    public function name(string $name) {
-        $this->name = $name;
-    }
-
-    /**
-     * Get the name of this action.
+     * Get the name of this resource.
      *
      * @return string
      */
     public function getName()
     {
-        if (!is_null($this->name)) {
-            return $this->name;
-        }
-        return $this->method;
+        return $this->name;
     }
 
     /**
-     * Returns list of all possible actions, their method, route-name-suffix, parent-action and title-closure.
+     * Set the translation-key for a resource.
      *
-     * @return array
+     * @param string $transKey
+     * @return RouteResource
      */
-    public function getActionConfigs()
+    public function transKey(string $transKey)
     {
-        return [
-            'index' => [
-                'method' => 'get',
-                'suffix' => 'index',
-                'defaultTitle' => function () {
-                    return $this->routeNode->getTitle();
-                },
-                'defaultNavTitle' => function () {
-                    return $this->routeNode->getNavTitle();
-                }
-            ],
-            'create' => [
-                'method' => 'get',
-                'suffix' => 'create',
-                'parentAction' => 'index',
-                'defaultTitle' => function () {
-                    return trans('Webflorist-RouteTree::routetree.createTitle', ['resource' => $this->routeNode->getTitle()]);
-                },
-                'defaultNavTitle' => function () {
-                    return trans('Webflorist-RouteTree::routetree.createNavTitle');
-                }
-            ],
-            'store' => [
-                'method' => 'post',
-                'suffix' => 'store'
-            ],
-            'show' => [
-                'method' => 'get',
-                'suffix' => 'show',
-                'parentAction' => 'index',
-                'defaultTitle' => function () {
-                    return $this->routeNode->getTitle() . ': ' . $this->routeNode->getActiveValue();
-                },
-                'defaultNavTitle' => function () {
-                    return $this->routeNode->getActiveValue();
-                }
-            ],
-            'edit' => [
-                'method' => 'get',
-                'suffix' => 'edit',
-                'parentAction' => 'show',
-                'defaultTitle' => function () {
-                    return trans('Webflorist-RouteTree::routetree.editTitle', ['item' => $this->routeNode->getActiveValue()]);
-                },
-                'defaultNavTitle' => function () {
-                    return trans('Webflorist-RouteTree::routetree.editNavTitle');
-                }
-            ],
-            'update' => [
-                'method' => 'put',
-                'suffix' => 'update',
-                'parentAction' => 'index'
-            ],
-            'destroy' => [
-                'method' => 'delete',
-                'suffix' => 'destroy',
-                'parentAction' => 'index'
-            ],
-            'get' => [
-                'method' => 'get'
-            ],
-            'post' => [
-                'method' => 'post'
-            ],
-        ];
+        $this->transKey = $transKey;
+        return $this;
     }
 
     private function setupActions()
     {
         $controller = $this->controller;
-        $paramSegment = '{'.$this->name.'}';
+        $paramSegment = '{' . $this->name . '}';
 
         $this->routeNode->get("$controller@index", 'index');
         $this->routeNode->get("$controller@create", 'create')->segment($this->getCreateActionSegments());
@@ -174,12 +111,12 @@ class RouteResource
 
     private function getEditActionSegments()
     {
-        $paramSegment = '{'.$this->name.'}';
+        $paramSegment = '{' . $this->name . '}';
         $segments = [];
         foreach ($this->routeNode->getLocales() as $locale) {
             $translationKey = 'Webflorist-RouteTree::routetree.editPathSegment';
             $translationLocale = Lang::hasForLocale($translationKey, $locale) ? $locale : 'en';
-            $segments[$locale] = $paramSegment.'/'.__($translationKey, [], $translationLocale);
+            $segments[$locale] = $paramSegment . '/' . __($translationKey, [], $translationLocale);
         }
         return $segments;
     }
@@ -187,18 +124,50 @@ class RouteResource
     public function only(array $actionsOnly)
     {
         foreach ($this->routeNode->getActions() as $actionName => $routeAction) {
-            if (array_search($actionName,$actionsOnly) === false) {
+            if (array_search($actionName, $actionsOnly) === false) {
                 $this->routeNode->removeAction($actionName);
             }
         }
+        return $this;
     }
 
     public function except(array $actionsExcept)
     {
         foreach ($this->routeNode->getActions() as $actionName => $routeAction) {
-            if (array_search($actionName,$actionsExcept) !== false) {
+            if (array_search($actionName, $actionsExcept) !== false) {
                 $this->routeNode->removeAction($actionName);
             }
+        }
+        return $this;
+    }
+
+    public function getActionTitle(string $actionName, ?array $parameters = null, ?string $locale = null)
+    {
+        $resourceSingular = trans_choice($this->transKey, 1, [], $locale);
+        $resourcePlural = trans_choice($this->transKey, 2, [], $locale);
+        switch ($actionName) {
+            case 'create':
+                return trans('Webflorist-RouteTree::routetree.createTitle', ['resource' => $resourceSingular], $locale);
+            case 'show':
+                return trans('Webflorist-RouteTree::routetree.showTitle', ['resource' => $resourceSingular], $locale);
+            case 'edit':
+                return trans('Webflorist-RouteTree::routetree.editTitle', ['resource' => $resourceSingular], $locale);
+            default:
+                return $resourcePlural;
+        }
+    }
+
+    public function getActionNavTitle(string $actionName, ?array $parameters = null, ?string $locale = null)
+    {
+        switch ($actionName) {
+            case 'create':
+                return trans('Webflorist-RouteTree::routetree.createNavTitle', [], $locale);
+            case 'show':
+                return $this->routeNode->getActiveValue();
+            case 'edit':
+                return trans('Webflorist-RouteTree::routetree.editNavTitle', [], $locale);
+            default:
+                return $this->routeNode->payload->getNavTitle(null, $locale, false);
         }
     }
 

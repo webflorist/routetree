@@ -2,11 +2,13 @@
 
 return [
 
-    'editTitle' => 'Bearbeiten: :item',
+    'showTitle' => ':resource anzeigen',
+    'editTitle' => ':resource bearbeiten',
     'editNavTitle' => 'Bearbeiten',
     'editPathSegment' => 'bearbeiten',
-    'createTitle' => 'Erstellen: :resource',
+    'createTitle' => ':resource erstellen',
     'createNavTitle' => 'Erstellen',
     'createPathSegment' => 'erstellen',
+    'resource' => 'Ressource|Ressourcen'
 
 ];

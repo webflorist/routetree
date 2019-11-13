@@ -143,6 +143,8 @@ class RouteNode
      */
     public $payload;
 
+    private $locales;
+
     /**
      * RouteNode constructor.
      * @param string $name
@@ -162,6 +164,8 @@ class RouteNode
 
         // Append the route-name to the id.
         $this->id .= $this->name;
+
+        $this->locales = RouteTree::getLocales();
 
         // Sets the language-files location.
         $this->setLangFiles();
@@ -299,6 +303,32 @@ class RouteNode
     {
         $this->resource = new RouteResource($name, $controller, $this);
         return $this->resource;
+    }
+
+    public function isResource() : bool
+    {
+        return $this->resource instanceof RouteResource;
+    }
+
+    public function exceptLocales(array $exceptLocales)
+    {
+        foreach ($exceptLocales as $locale) {
+            $localeKey = array_search($locale, $this->locales);
+            if ($localeKey !== false) {
+                unset($this->locales[$localeKey]);
+            }
+        }
+        return $this;
+    }
+
+    public function onlyLocales(array $onlyLocales)
+    {
+        foreach ($this->locales as $localeKey => $locale) {
+            if (array_search($locale, $onlyLocales) === false) {
+                unset($this->locales[$localeKey]);
+            }
+        }
+        return $this;
     }
 
     /**
@@ -685,7 +715,7 @@ class RouteNode
      */
     public function getLocales()
     {
-        $locales = RouteTree::getLocales();
+        $locales = $this->locales;
 
         if (config('routetree.no_locale_prefix') || $this->noLocalePrefix) {
             return [config('app.locale')];
@@ -892,82 +922,6 @@ class RouteNode
         return false;
     }
 
-    /**
-     * Get the page title of this node (defaults to the ucfirst-ified node-name).
-     *
-     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
-     * @param string $locale The language the title should be fetched for (default=current locale).
-     * @return string
-     * @throws Exceptions\UrlParametersMissingException
-     */
-    public function getTitle($parameters = null, $locale = null)
-    {
-        $title = $this->payload->trans('title', $locale, $parameters);
-        return $this->processTitle($parameters, $locale, $title);
-    }
-
-    /**
-     * Get the page title to be used in navigations (e.g. breadcrumbs or menus) of this node (defaults to the result of $this->getTitle()).
-     *
-     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
-     * @param string $locale The language the title should be fetched for (default=current locale).
-     * @return string
-     * @throws Exceptions\UrlParametersMissingException
-     */
-    public function getNavTitle($parameters = null, $locale = null)
-    {
-
-        // Try retrieving title.
-        $title = $this->payload->trans('navTitle', $parameters, $locale);
-
-        // If no title could be determined, we fall back to the result of the $this->getTitle() call.
-        if ($title === false) {
-            return $this->getTitle($parameters, $locale);
-        }
-
-        return $this->processTitle($parameters, $locale, $title);
-    }
-
-    /**
-     * Processes the value, that was returned as the title.
-     *
-     * @param $parameters
-     * @param $locale
-     * @param $title
-     * @return array|mixed|string
-     * @throws Exceptions\UrlParametersMissingException
-     */
-    public function processTitle($parameters, $locale, $title)
-    {
-        // If $title is an array, and this node has a parameter, and a requested parameter was handed in $parameters,
-        // we return the appropriate value, if the parameter exists as a key within $title,
-        // otherwise we just return the handed-over parameter.
-        if (is_array($title) && $this->hasParameter()) {
-
-            // If this node or a child node is active, we can try to obtain any missing parameters from the current url.
-            if ($this->nodeOrChildIsActive()) {
-                $parameters = route_tree()->getCurrentAction()->autoFillPathParameters($parameters, $locale, false);
-            }
-
-            if (isset($title[$parameters[$this->getParameter()]])) {
-                $title = $title[$parameters[$this->getParameter()]];
-            } else {
-                $title = $parameters[$this->getParameter()];
-            }
-
-        }
-
-        if (is_array($title)) {
-            $title = key($title);
-        }
-
-        // Per default we just return the upper-cased node-name.
-        if ($title === false) {
-            $title = ucfirst($this->name);
-            return $title;
-        }
-        return $title;
-    }
 
     /**
      * Get the possible parameter-values and their slugs, if this node is a parameter-node.

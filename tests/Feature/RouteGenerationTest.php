@@ -12,12 +12,16 @@ class RouteGenerationTest extends TestCase
     {
         $this->routeTree->root(function (RouteNode $rootNode) {
 
-            $rootNode->get(function() {
+            $rootNode->get(function () {
                 return json_encode([
                     'id' => route_tree()->getCurrentNode()->getId(),
                     'method' => \Request::getMethod(),
-                    'path' => trim(\Request::getPathInfo(),'/'),
-                    'title' => route_tree()->getCurrentNode()->getTitle()
+                    'path' => trim(\Request::getPathInfo(), '/'),
+                    'locale' => app()->getLocale(),
+                    'payload' => route_tree()->getCurrentNode()->payload,
+                    'navTitle' => route_tree()->getCurrentNode()->payload->getNavTitle(),
+                    'h1Title' => route_tree()->getCurrentNode()->payload->getH1Title(),
+                    'title' => route_tree()->getCurrentNode()->payload->getTitle()
                 ]);
             });
 
@@ -34,7 +38,11 @@ class RouteGenerationTest extends TestCase
                 "content" => [
                     'id' => '',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de',
+                    'navTitle' => 'Startseite',
+                    'h1Title' => 'Startseite',
                     'title' => 'Startseite'
                 ],
             ],
@@ -46,7 +54,11 @@ class RouteGenerationTest extends TestCase
                 "content" => [
                     'id' => '',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en',
+                    'navTitle' => 'Startpage',
+                    'h1Title' => 'Startpage',
                     'title' => 'Startpage'
                 ],
             ]
@@ -78,7 +90,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de',
+                    'navTitle' => 'Startseite',
+                    'h1Title' => 'Startseite',
                     'title' => 'Startseite'
                 ],
             ],
@@ -92,7 +108,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'post',
                     'method' => 'POST',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de',
+                    'navTitle' => 'Startseite',
+                    'h1Title' => 'Startseite',
                     'title' => 'Startseite'
                 ],
             ],
@@ -106,7 +126,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'put',
                     'method' => 'PUT',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de',
+                    'navTitle' => 'Startseite',
+                    'h1Title' => 'Startseite',
                     'title' => 'Startseite'
                 ],
             ],
@@ -120,7 +144,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'patch',
                     'method' => 'PATCH',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de',
+                    'navTitle' => 'Startseite',
+                    'h1Title' => 'Startseite',
                     'title' => 'Startseite'
                 ],
             ],
@@ -134,7 +162,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'delete',
                     'method' => 'DELETE',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de',
+                    'navTitle' => 'Startseite',
+                    'h1Title' => 'Startseite',
                     'title' => 'Startseite'
                 ],
             ],
@@ -148,7 +180,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'options',
                     'method' => 'OPTIONS',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de',
+                    'navTitle' => 'Startseite',
+                    'h1Title' => 'Startseite',
                     'title' => 'Startseite'
                 ],
             ],
@@ -162,7 +198,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en',
+                    'navTitle' => 'Startpage',
+                    'h1Title' => 'Startpage',
                     'title' => 'Startpage'
                 ],
             ],
@@ -176,7 +216,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'post',
                     'method' => 'POST',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en',
+                    'navTitle' => 'Startpage',
+                    'h1Title' => 'Startpage',
                     'title' => 'Startpage'
                 ],
             ],
@@ -190,7 +234,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'put',
                     'method' => 'PUT',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en',
+                    'navTitle' => 'Startpage',
+                    'h1Title' => 'Startpage',
                     'title' => 'Startpage'
                 ],
             ],
@@ -204,7 +252,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'patch',
                     'method' => 'PATCH',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en',
+                    'navTitle' => 'Startpage',
+                    'h1Title' => 'Startpage',
                     'title' => 'Startpage'
                 ],
             ],
@@ -218,7 +270,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'delete',
                     'method' => 'DELETE',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en',
+                    'navTitle' => 'Startpage',
+                    'h1Title' => 'Startpage',
                     'title' => 'Startpage'
                 ],
             ],
@@ -232,7 +288,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'options',
                     'method' => 'OPTIONS',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en',
+                    'navTitle' => 'Startpage',
+                    'h1Title' => 'Startpage',
                     'title' => 'Startpage'
                 ],
             ],
@@ -256,7 +316,11 @@ class RouteGenerationTest extends TestCase
                 "content" => [
                     'id' => '',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de',
+                    'navTitle' => 'Startseite',
+                    'h1Title' => 'Startseite',
                     'title' => 'Startseite',
                     'view' => 'test',
                     'foo' => 'bar'
@@ -270,7 +334,11 @@ class RouteGenerationTest extends TestCase
                 "content" => [
                     'id' => '',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en',
+                    'navTitle' => 'Startpage',
+                    'h1Title' => 'Startpage',
                     'title' => 'Startpage',
                     'view' => 'test',
                     'foo' => 'bar'
@@ -316,7 +384,11 @@ class RouteGenerationTest extends TestCase
                 "content" => [
                     'id' => 'destination',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de/destination',
+                    'navTitle' => 'Destination',
+                    'h1Title' => 'Destination',
                     'title' => 'Destination',
                     'view' => 'test',
                     'foo' => null
@@ -330,7 +402,11 @@ class RouteGenerationTest extends TestCase
                 "content" => [
                     'id' => 'destination',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en/destination',
+                    'navTitle' => 'Destination',
+                    'h1Title' => 'Destination',
                     'title' => 'Destination',
                     'view' => 'test',
                     'foo' => null
@@ -376,7 +452,11 @@ class RouteGenerationTest extends TestCase
                 "content" => [
                     'id' => 'destination',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de/destination',
+                    'navTitle' => 'Destination',
+                    'h1Title' => 'Destination',
                     'title' => 'Destination',
                     'view' => 'test',
                     'foo' => null
@@ -390,7 +470,11 @@ class RouteGenerationTest extends TestCase
                 "content" => [
                     'id' => 'destination',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en/destination',
+                    'navTitle' => 'Destination',
+                    'h1Title' => 'Destination',
                     'title' => 'Destination',
                     'view' => 'test',
                     'foo' => null
@@ -429,7 +513,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de/parent',
+                    'navTitle' => 'Parent',
+                    'h1Title' => 'Parent',
                     'title' => 'Parent'
                 ],
             ],
@@ -443,7 +531,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en/parent',
+                    'navTitle' => 'Parent',
+                    'h1Title' => 'Parent',
                     'title' => 'Parent'
                 ],
             ],
@@ -457,7 +549,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de/parent/child1',
+                    'navTitle' => 'Child1',
+                    'h1Title' => 'Child1',
                     'title' => 'Child1'
                 ],
             ],
@@ -471,7 +567,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en/parent/child1',
+                    'navTitle' => 'Child1',
+                    'h1Title' => 'Child1',
                     'title' => 'Child1'
                 ],
             ],
@@ -485,7 +585,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de/parent/child2',
+                    'navTitle' => 'Child2',
+                    'h1Title' => 'Child2',
                     'title' => 'Child2'
                 ],
             ],
@@ -499,7 +603,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en/parent/child2',
+                    'navTitle' => 'Child2',
+                    'h1Title' => 'Child2',
                     'title' => 'Child2'
                 ],
             ],
@@ -513,7 +621,7 @@ class RouteGenerationTest extends TestCase
         $this->config->set('routetree.no_locale_prefix', true);
         $this->config->set('routetree.locales', []);
         $this->config->set('app.locale', 'de');
-        
+
         $this->routeTree->root(function (RouteNode $node) {
             $node->namespace('\RouteTreeTests\Feature\Controllers');
             $node->get('TestController@get');
@@ -543,6 +651,10 @@ class RouteGenerationTest extends TestCase
                     'function' => 'get',
                     'method' => 'GET',
                     'path' => '',
+                    'locale' => 'de',
+                    'payload' => [],
+                    'navTitle' => 'Startseite',
+                    'h1Title' => 'Startseite',
                     'title' => 'Startseite'
                 ],
             ],
@@ -556,7 +668,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'parent',
+                    'navTitle' => 'Parent',
+                    'h1Title' => 'Parent',
                     'title' => 'Parent'
                 ],
             ],
@@ -570,7 +686,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'parent/child1',
+                    'navTitle' => 'Child1',
+                    'h1Title' => 'Child1',
                     'title' => 'Child1'
                 ],
             ],
@@ -584,7 +704,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'parent/child2',
+                    'navTitle' => 'Child2',
+                    'h1Title' => 'Child2',
                     'title' => 'Child2'
                 ],
             ],
@@ -625,7 +749,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de',
+                    'navTitle' => 'Startseite',
+                    'h1Title' => 'Startseite',
                     'title' => 'Startseite'
                 ],
             ],
@@ -639,7 +767,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en',
+                    'navTitle' => 'Startpage',
+                    'h1Title' => 'Startpage',
                     'title' => 'Startpage'
                 ],
             ],
@@ -653,7 +785,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de/parent',
+                    'navTitle' => 'Parent',
+                    'h1Title' => 'Parent',
                     'title' => 'Parent'
                 ],
             ],
@@ -667,7 +803,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en/parent',
+                    'navTitle' => 'Parent',
+                    'h1Title' => 'Parent',
                     'title' => 'Parent'
                 ],
             ],
@@ -681,7 +821,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de/parent/child1',
+                    'navTitle' => 'Child1',
+                    'h1Title' => 'Child1',
                     'title' => 'Child1'
                 ],
             ],
@@ -695,11 +839,15 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en/parent/child1',
+                    'navTitle' => 'Child1',
+                    'h1Title' => 'Child1',
                     'title' => 'Child1'
                 ],
             ],
-            "en.parent.child2.get" => [
+            "de.parent.child2.get" => [
                 "method" => "GET",
                 "uri" => "parent/child2",
                 "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
@@ -709,7 +857,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'parent/child2',
+                    'navTitle' => 'Child2',
+                    'h1Title' => 'Child2',
                     'title' => 'Child2'
                 ],
             ]
@@ -720,7 +872,7 @@ class RouteGenerationTest extends TestCase
 
     public function test_custom_segment()
     {
-        $this->routeTree->node('page', function(RouteNode $node) {
+        $this->routeTree->node('page', function (RouteNode $node) {
             $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
             $node->segment('custom-segment');
         });
@@ -738,7 +890,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de/custom-segment',
+                    'navTitle' => 'Page',
+                    'h1Title' => 'Page',
                     'title' => 'Page'
                 ],
             ],
@@ -752,7 +908,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en/custom-segment',
+                    'navTitle' => 'Page',
+                    'h1Title' => 'Page',
                     'title' => 'Page'
                 ],
             ]
@@ -763,7 +923,7 @@ class RouteGenerationTest extends TestCase
     public function test_custom_segment_per_language()
     {
 
-        $this->routeTree->node('page', function(RouteNode $node) {
+        $this->routeTree->node('page', function (RouteNode $node) {
             $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
             $node->segment([
                 'de' => 'custom-segment-de',
@@ -784,7 +944,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de/custom-segment-de',
+                    'navTitle' => 'Page',
+                    'h1Title' => 'Page',
                     'title' => 'Page'
                 ],
             ],
@@ -798,7 +962,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en/custom-segment-en',
+                    'navTitle' => 'Page',
+                    'h1Title' => 'Page',
                     'title' => 'Page'
                 ],
             ]
@@ -806,366 +974,10 @@ class RouteGenerationTest extends TestCase
         ]);
     }
 
-
-    public function test_resource()
-    {
-
-        $this->routeTree->node('jobs', function(RouteNode $node) {
-            $node->resource('job','\RouteTreeTests\Feature\Controllers\TestController');
-        });
-
-        $this->routeTree->generateAllRoutes();
-
-        $this->assertRouteTree([
-            "de.jobs.index" => [
-                "method" => "GET",
-                "uri" => "de/jobs",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@index',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'index',
-                    'method' => 'GET',
-                    'path' => 'de/jobs',
-                    'title' => 'Jobs'
-                ],
-            ],
-            "en.jobs.index" => [
-                "method" => "GET",
-                "uri" => "en/jobs",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@index',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'index',
-                    'method' => 'GET',
-                    'path' => 'en/jobs',
-                    'title' => 'Jobs'
-                ],
-            ],
-            "de.jobs.create" => [
-                "method" => "GET",
-                "uri" => "de/jobs/erstellen",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@create',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'create',
-                    'method' => 'GET',
-                    'path' => 'de/jobs/erstellen',
-                    'title' => 'Jobs'
-                ],
-            ],
-            "en.jobs.create" => [
-                "method" => "GET",
-                "uri" => "en/jobs/create",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@create',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'create',
-                    'method' => 'GET',
-                    'path' => 'en/jobs/create',
-                    'title' => 'Jobs'
-                ],
-            ],
-            "de.jobs.store" => [
-                "method" => "POST",
-                "uri" => "de/jobs",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@store',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'store',
-                    'method' => 'POST',
-                    'path' => 'de/jobs',
-                    'title' => 'Jobs'
-                ],
-            ],
-            "en.jobs.store" => [
-                "method" => "POST",
-                "uri" => "en/jobs",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@store',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'store',
-                    'method' => 'POST',
-                    'path' => 'en/jobs',
-                    'title' => 'Jobs'
-                ],
-            ],
-            "de.jobs.edit" => [
-                "method" => "GET",
-                "uri" => "de/jobs/{job}/bearbeiten",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@edit',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'edit',
-                    'method' => 'GET',
-                    'path' => 'de/jobs/{job}/bearbeiten',
-                    'title' => 'Jobs'
-                ],
-            ],
-            "en.jobs.edit" => [
-                "method" => "GET",
-                "uri" => "en/jobs/{job}/edit",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@edit',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'edit',
-                    'method' => 'GET',
-                    'path' => 'en/jobs/{job}/edit',
-                    'title' => 'Jobs'
-                ],
-            ],
-            "de.jobs.update" => [
-                "method" => "PUT",
-                "uri" => "de/jobs/{job}",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@update',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'update',
-                    'method' => 'PUT',
-                    'path' => 'de/jobs/{job}',
-                    'title' => 'Jobs'
-                ],
-            ],
-            "en.jobs.update" => [
-                "method" => "PUT",
-                "uri" => "en/jobs/{job}",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@update',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'update',
-                    'method' => 'PUT',
-                    'path' => 'en/jobs/{job}',
-                    'title' => 'Jobs'
-                ],
-            ],
-            "de.jobs.destroy" => [
-                "method" => "DELETE",
-                "uri" => "de/jobs/{job}",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@destroy',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'destroy',
-                    'method' => 'DELETE',
-                    'path' => 'de/jobs/{job}',
-                    'title' => 'Jobs'
-                ],
-            ],
-            "en.jobs.destroy" => [
-                "method" => "DELETE",
-                "uri" => "en/jobs/{job}",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@destroy',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'destroy',
-                    'method' => 'DELETE',
-                    'path' => 'en/jobs/{job}',
-                    'title' => 'Jobs'
-                ],
-            ],
-            "de.jobs.show" => [
-                "method" => "GET",
-                "uri" => "de/jobs/{job}",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@show',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'show',
-                    'method' => 'GET',
-                    'path' => 'de/jobs/{job}',
-                    'title' => 'Jobs'
-                ],
-            ],
-            "en.jobs.show" => [
-                "method" => "GET",
-                "uri" => "en/jobs/{job}",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@show',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'show',
-                    'method' => 'GET',
-                    'path' => 'en/jobs/{job}',
-                    'title' => 'Jobs'
-                ],
-            ]
-
-        ]);
-    }
-
-
-    public function test_resource_using_only()
-    {
-
-        $this->routeTree->node('jobs', function(RouteNode $node) {
-            $node->resource('job','\RouteTreeTests\Feature\Controllers\TestController')->only([
-                'index', 'create'
-            ]);
-        });
-
-        $this->routeTree->generateAllRoutes();
-
-        $this->assertRouteTree([
-            "de.jobs.index" => [
-                "method" => "GET",
-                "uri" => "de/jobs",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@index',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'index',
-                    'method' => 'GET',
-                    'path' => 'de/jobs',
-                    'title' => 'Jobs'
-                ],
-            ],
-            "en.jobs.index" => [
-                "method" => "GET",
-                "uri" => "en/jobs",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@index',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'index',
-                    'method' => 'GET',
-                    'path' => 'en/jobs',
-                    'title' => 'Jobs'
-                ],
-            ],
-            "de.jobs.create" => [
-                "method" => "GET",
-                "uri" => "de/jobs/erstellen",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@create',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'create',
-                    'method' => 'GET',
-                    'path' => 'de/jobs/erstellen',
-                    'title' => 'Jobs'
-                ],
-            ],
-            "en.jobs.create" => [
-                "method" => "GET",
-                "uri" => "en/jobs/create",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@create',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'create',
-                    'method' => 'GET',
-                    'path' => 'en/jobs/create',
-                    'title' => 'Jobs'
-                ],
-            ],
-
-        ]);
-    }
-
-
-    public function test_resource_using_except()
-    {
-        $this->routeTree->node('jobs', function(RouteNode $node) {
-            $node->resource('job','\RouteTreeTests\Feature\Controllers\TestController')->except([
-                'show', 'update', 'destroy', 'edit', 'store'
-            ]);
-        });
-
-        $this->routeTree->generateAllRoutes();
-
-        $this->assertRouteTree([
-            "de.jobs.index" => [
-                "method" => "GET",
-                "uri" => "de/jobs",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@index',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'index',
-                    'method' => 'GET',
-                    'path' => 'de/jobs',
-                    'title' => 'Jobs'
-                ],
-            ],
-            "en.jobs.index" => [
-                "method" => "GET",
-                "uri" => "en/jobs",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@index',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'index',
-                    'method' => 'GET',
-                    'path' => 'en/jobs',
-                    'title' => 'Jobs'
-                ],
-            ],
-            "de.jobs.create" => [
-                "method" => "GET",
-                "uri" => "de/jobs/erstellen",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@create',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'create',
-                    'method' => 'GET',
-                    'path' => 'de/jobs/erstellen',
-                    'title' => 'Jobs'
-                ],
-            ],
-            "en.jobs.create" => [
-                "method" => "GET",
-                "uri" => "en/jobs/create",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@create',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'jobs',
-                    'controller' => 'test',
-                    'function' => 'create',
-                    'method' => 'GET',
-                    'path' => 'en/jobs/create',
-                    'title' => 'Jobs'
-                ],
-            ],
-
-        ]);
-    }
-
     public function test_no_inherit_segment()
     {
 
-        $this->routeTree->node('not_inherited', function(RouteNode $node) {
+        $this->routeTree->node('not_inherited', function (RouteNode $node) {
             $node->namespace('\RouteTreeTests\Feature\Controllers');
             $node->inheritSegment(false);
             $node->get('TestController@get');
@@ -1190,7 +1002,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de/not_inherited',
+                    'navTitle' => 'Not_inherited',
+                    'h1Title' => 'Not_inherited',
                     'title' => 'Not_inherited'
                 ],
             ],
@@ -1204,7 +1020,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en/not_inherited',
+                    'navTitle' => 'Not_inherited',
+                    'h1Title' => 'Not_inherited',
                     'title' => 'Not_inherited'
                 ],
             ],
@@ -1218,7 +1038,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de/child1',
+                    'navTitle' => 'Child1',
+                    'h1Title' => 'Child1',
                     'title' => 'Child1'
                 ],
             ],
@@ -1232,7 +1056,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en/child1',
+                    'navTitle' => 'Child1',
+                    'h1Title' => 'Child1',
                     'title' => 'Child1'
                 ],
             ],
@@ -1246,7 +1074,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de/child2',
+                    'navTitle' => 'Child2',
+                    'h1Title' => 'Child2',
                     'title' => 'Child2'
                 ],
             ],
@@ -1260,7 +1092,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en/child2',
+                    'navTitle' => 'Child2',
+                    'h1Title' => 'Child2',
                     'title' => 'Child2'
                 ],
             ],
@@ -1271,11 +1107,11 @@ class RouteGenerationTest extends TestCase
     public function test_append_namespace()
     {
 
-        $this->routeTree->root(function(RouteNode $node) {
+        $this->routeTree->root(function (RouteNode $node) {
             $node->namespace('\RouteTreeTests\Feature\Controllers');
             $node->child('nested', function (RouteNode $node) {
                 $node->namespace('Nested');
-                $node->get( 'NestedController@get');
+                $node->get('NestedController@get');
             });
         });
 
@@ -1292,7 +1128,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'nested',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de/nested',
+                    'navTitle' => 'Nested',
+                    'h1Title' => 'Nested',
                     'title' => 'Nested'
                 ],
             ],
@@ -1306,7 +1146,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'nested',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en/nested',
+                    'navTitle' => 'Nested',
+                    'h1Title' => 'Nested',
                     'title' => 'Nested'
                 ],
             ]
@@ -1319,11 +1163,11 @@ class RouteGenerationTest extends TestCase
     public function test_override_namespace()
     {
 
-        $this->routeTree->root(function(RouteNode $node) {
+        $this->routeTree->root(function (RouteNode $node) {
             $node->namespace('\I\Do\Not\Exist');
             $node->child('overridden-namespace', function (RouteNode $node) {
                 $node->namespace('\RouteTreeTests\Feature\Controllers');
-                $node->get( 'TestController@get');
+                $node->get('TestController@get');
             });
         });
 
@@ -1340,7 +1184,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de/overridden-namespace',
+                    'navTitle' => 'Overridden-namespace',
+                    'h1Title' => 'Overridden-namespace',
                     'title' => 'Overridden-namespace'
                 ],
             ],
@@ -1354,7 +1202,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en/overridden-namespace',
+                    'navTitle' => 'Overridden-namespace',
+                    'h1Title' => 'Overridden-namespace',
                     'title' => 'Overridden-namespace'
                 ],
             ]
@@ -1367,19 +1219,19 @@ class RouteGenerationTest extends TestCase
     public function test_auto_translated_path_and_title()
     {
 
-        $this->routeTree->node('products', function(RouteNode $node) {
+        $this->routeTree->node('products', function (RouteNode $node) {
             $node->namespace('\RouteTreeTests\Feature\Controllers');
-            $node->get( 'TestController@get');
+            $node->get('TestController@get');
             $node->child('product1', function (RouteNode $node) {
-                $node->get( 'TestController@get');
+                $node->get('TestController@get');
             });
             $node->child('product2', function (RouteNode $node) {
-                $node->get( 'TestController@get');
+                $node->get('TestController@get');
             });
         });
 
-        $this->routeTree->node('contact', function(RouteNode $node) {
-            $node->get( '\RouteTreeTests\Feature\Controllers\TestController@get');
+        $this->routeTree->node('contact', function (RouteNode $node) {
+            $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
         });
 
         $this->routeTree->generateAllRoutes();
@@ -1395,7 +1247,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de/produkte',
+                    'navTitle' => 'Unsere Produkte',
+                    'h1Title' => 'Unsere Produkte',
                     'title' => 'Unsere Produkte'
                 ],
             ],
@@ -1409,7 +1265,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en/products',
+                    'navTitle' => 'Our products',
+                    'h1Title' => 'Our products',
                     'title' => 'Our products'
                 ],
             ],
@@ -1423,7 +1283,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de/produkte/produkt_1',
+                    'navTitle' => 'Produkt 1',
+                    'h1Title' => 'Produkt 1',
                     'title' => 'Produkt 1'
                 ],
             ],
@@ -1437,7 +1301,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en/products/product_1',
+                    'navTitle' => 'Product 1',
+                    'h1Title' => 'Product 1',
                     'title' => 'Product 1'
                 ],
             ],
@@ -1451,7 +1319,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de/produkte/produkt_2',
+                    'navTitle' => 'Produkt 2',
+                    'h1Title' => 'Produkt 2',
                     'title' => 'Produkt 2'
                 ],
             ],
@@ -1465,7 +1337,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en/products/product_2',
+                    'navTitle' => 'Product 2',
+                    'h1Title' => 'Product 2',
                     'title' => 'Product 2'
                 ],
             ],
@@ -1479,7 +1355,11 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
                     'path' => 'de/kontakt',
+                    'navTitle' => 'Kontaktieren Sie uns',
+                    'h1Title' => 'Kontaktieren Sie uns',
                     'title' => 'Kontaktieren Sie uns'
                 ],
             ],
@@ -1493,148 +1373,15 @@ class RouteGenerationTest extends TestCase
                     'controller' => 'test',
                     'function' => 'get',
                     'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
                     'path' => 'en/contact',
+                    'navTitle' => 'Contact us',
+                    'h1Title' => 'Contact us',
                     'title' => 'Contact us'
                 ],
             ]
 
-        ]);
-    }
-
-    public function test_custom_title()
-    {
-        $this->routeTree->node('page', function(RouteNode $node) {
-            $node->namespace('\RouteTreeTests\Feature\Controllers');
-            $node->get( 'TestController@get');
-            $node->payload->title = 'Custom Title';
-        });
-
-        $this->routeTree->generateAllRoutes();
-
-        $this->assertRouteTree([
-            "de.page.get" => [
-                "method" => "GET",
-                "uri" => "de/page",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'page',
-                    'controller' => 'test',
-                    'function' => 'get',
-                    'method' => 'GET',
-                    'path' => 'de/page',
-                    'title' => 'Custom Title'
-                ],
-            ],
-            "en.page.get" => [
-                "method" => "GET",
-                "uri" => "en/page",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'page',
-                    'controller' => 'test',
-                    'function' => 'get',
-                    'method' => 'GET',
-                    'path' => 'en/page',
-                    'title' => 'Custom Title'
-                ],
-            ]
-        ]);
-    }
-
-    public function test_custom_title_per_language()
-    {
-
-        $this->routeTree->node('page', function(RouteNode $node) {
-            $node->namespace('\RouteTreeTests\Feature\Controllers');
-            $node->get( 'TestController@get');
-            $node->payload->title = [
-                'de' => 'Benutzerdefinierter Titel',
-                'en' => 'Custom Title'
-            ];
-        });
-
-        $this->routeTree->generateAllRoutes();
-
-        $this->assertRouteTree([
-            "de.page.get" => [
-                "method" => "GET",
-                "uri" => "de/page",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'page',
-                    'controller' => 'test',
-                    'function' => 'get',
-                    'method' => 'GET',
-                    'path' => 'de/page',
-                    'title' => 'Benutzerdefinierter Titel'
-                ],
-            ],
-            "en.page.get" => [
-                "method" => "GET",
-                "uri" => "en/page",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'page',
-                    'controller' => 'test',
-                    'function' => 'get',
-                    'method' => 'GET',
-                    'path' => 'en/page',
-                    'title' => 'Custom Title'
-                ],
-            ]
-        ]);
-    }
-
-    public function test_custom_title_via_closure()
-    {
-
-        $this->routeTree->node('page', function(RouteNode $node) {
-            $node->namespace('\RouteTreeTests\Feature\Controllers');
-            $node->get( 'TestController@get');
-            $node->payload->title = function ($parameters, $language) {
-                if ($language == 'de') {
-                    return 'Benutzerdefinierter Titel';
-                } else {
-                    return 'Custom Title';
-                }
-            };
-        });
-
-        $this->routeTree->generateAllRoutes();
-
-        $this->assertRouteTree([
-            "de.page.get" => [
-                "method" => "GET",
-                "uri" => "de/page",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'page',
-                    'controller' => 'test',
-                    'function' => 'get',
-                    'method' => 'GET',
-                    'path' => 'de/page',
-                    'title' => 'Benutzerdefinierter Titel'
-                ],
-            ],
-            "en.page.get" => [
-                "method" => "GET",
-                "uri" => "en/page",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
-                "middleware" => [],
-                "content" => [
-                    'id' => 'page',
-                    'controller' => 'test',
-                    'function' => 'get',
-                    'method' => 'GET',
-                    'path' => 'en/page',
-                    'title' => 'Custom Title'
-                ],
-            ]
         ]);
     }
 
@@ -1643,15 +1390,15 @@ class RouteGenerationTest extends TestCase
         $this->routeTree->node('my-node', function (RouteNode $node) {
             $node->segment('{foobar}');
             $node->where('foobar', '[0-9]+');
-            $node->get(function() {
+            $node->get(function () {
                 return 'success';
             });
-            $node->post(function() {
+            $node->post(function () {
                 return 'success';
             });
-            $node->patch(function() {
+            $node->patch(function () {
                 return 'success';
-            })->where('foobar','[5-9]+');
+            })->where('foobar', '[5-9]+');
         });
 
         $this->routeTree->generateAllRoutes();
@@ -1670,19 +1417,19 @@ class RouteGenerationTest extends TestCase
     {
         $this->routeTree->node('my-node', function (RouteNode $node) {
             $node->middleware('test1', ['is-inherited', 'is-skipped-by-post-action']);
-            $node->middleware('test2', ['is-inherited-but-skipped-by-child'],true);
-            $node->middleware('test3', ['is-not-inherited'],false);
-            $node->get(function() {
+            $node->middleware('test2', ['is-inherited-but-skipped-by-child'], true);
+            $node->middleware('test3', ['is-not-inherited'], false);
+            $node->get(function () {
                 return 'success';
             });
-            $node->post(function() {
+            $node->post(function () {
                 return 'success';
             })->skipMiddleware('test1');
 
             $node->child('my-child-node', function (RouteNode $node) {
                 $node->middleware('test4', ['is-only-on-child']);
                 $node->skipMiddleware('test2');
-                $node->get(function() {
+                $node->get(function () {
                     return 'success';
                 });
             });
@@ -1757,157 +1504,6 @@ class RouteGenerationTest extends TestCase
             ]
         ]);
 
-    }
-
-    public function test_node_with_all_features()
-    {
-
-        $this->routeTree->node('full-featured-node', function (RouteNode $node) {
-
-            // Set path segment.
-            $node->segment([
-                'de' => 'RouteNode mit allen features.',
-                'en' => 'RouteNode with all features.'
-            ]);
-
-            // Do not inherit segment to children.
-            $node->inheritSegment(false);
-
-            // Set middleware.
-            $node->middleware('test1', ['param1']);
-
-            // Set namespace.
-            $node->namespace('\RouteTreeTests\Feature\Controllers');
-
-            // Set actions.
-            $node->get('TestController@get')
-                // Set a middleware only for the get-action
-                ->middleware('test2', ['param1', 'param2']);
-            $node->post('TestController@post')
-                //Skip the node-middleware 'test1'.
-                ->skipMiddleware('test1');
-            $node->put('TestController@put');
-            $node->patch('TestController@patch');
-            $node->delete('TestController@delete');
-            $node->options('TestController@options');
-
-            // Set various meta data.
-            $node->title([
-                'de' => 'Seitentitel',
-                'en' => 'Page title'
-            ]);
-            $node->navTitle('Navigation title (falls back to title)');
-            $node->h1Title(function () {
-                return 'H1 title (falls back to title)';
-            });
-            $node->description([
-                'de' => 'Diese RouteNode demonstriert alle Features.',
-                'en' => 'This RouteNode demonstriert alle Features.'
-            ]);
-
-            // Set additional payload data.
-            $node->payload->isMainNavItem = true;
-            $node->payload->abstract = [
-                'de' => 'RouteNode mit allen features.',
-                'en' => 'RouteNode with all features.'
-            ];
-
-            // Add a (route parameter) child.
-            $node->child('param-child', function (RouteNode $node) {
-
-                // Set segment and route parameter regex.
-                $node->segment('{param}');
-                $node->where('param', '[0-9]+');
-
-                // Do not generate node for german language.
-                $node->exceptLocales(['de']);
-
-                // Exclude this node from sitemap.
-                $node->sitemap(false);
-            });
-
-            // Add a (permanently redirected) child.
-            $node->child('redirect-child', function (RouteNode $node) {
-
-                // Set segment.
-                $node->segment('redirect-me');
-
-                // Only generate node for german language.
-                $node->onlyLocales(['de']);
-
-                // Set action
-                $node->permanentRedirect('full-featured-node'); // gets excluded from sitemap
-            });
-
-            // Add a child, that displays a view.
-            $node->child('redirect-child', function (RouteNode $node) {
-
-                // Set segment.
-                $node->segment('displays-view');
-
-                // Do not prefix this route with a locale,
-                // making it single-language-only
-                $node->noLocalePrefix();
-
-                // Set action
-                $node->view('test', ['foo' => 'bar']);
-            });
-
-            // Add a resource child.
-            $node->child('resource-child', function (RouteNode $node) {
-
-                // Create resource (only for 'index', 'show').
-                $node->resource('resource', 'ResourceController')->only(['index', 'show']);
-
-                // Set special title for 'show' action
-                $node->resource->show->title(function (array $parameters, string $locale) {
-                    $itemTitle = MyResourceModel::find($parameters['resource'])->title;
-                    if ($locale === 'de') {
-                        return "Meine Ressource: $itemTitle";
-                    }
-                    return "My resource: $itemTitle";
-
-                });
-
-                // Do not prefix this route with a locale,
-                // making it single-language-only.
-                $node->noLocalePrefix();
-
-                // Set action
-                $node->view('test', ['foo' => 'bar']);
-            });
-
-        });
-
-        $this->routeTree->generateAllRoutes();
-
-        $this->assertRouteTree([
-            "de.get" => [
-                "method" => "GET",
-                "uri" => "de",
-                "action" => "Closure",
-                "middleware" => [],
-                "content" => [
-                    'id' => '',
-                    'method' => 'GET',
-                    'path' => 'de',
-                    'title' => 'Startseite'
-                ],
-            ],
-            "en.get" => [
-                "method" => "GET",
-                "uri" => "en",
-                "action" => "Closure",
-                "middleware" => [],
-                "content" => [
-                    'id' => '',
-                    'method' => 'GET',
-                    'path' => 'en',
-                    'title' => 'Startpage'
-                ],
-            ]
-
-        ]);
     }
 
 }
