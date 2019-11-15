@@ -59,8 +59,5 @@ class RouteTreeServiceProvider extends ServiceProvider
     private function addMiddleware()
     {
         $this->app['Illuminate\Contracts\Http\Kernel']->pushMiddleware(RouteTreeMiddleware::class);
-        if ($this->app['router']->hasMiddlewareGroup('web')) {
-            $this->app['router']->pushMiddlewareToGroup('web', SetLocalFromSession::class);
-        }
     }
 }

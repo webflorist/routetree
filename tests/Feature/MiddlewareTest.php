@@ -156,5 +156,37 @@ class MiddlewareTest extends TestCase
 
     }
 
+    public function test_auto_redirect_using_accept_language_header()
+    {
+        $this->routeTree->root(function (RouteNode $node) {
+            $node->middleware('web');
+            $node->get($this->getDefaultAction());
+        });
+
+        $this->assertJsonResponse(
+            '',
+            [
+            "id" => "",
+            "path" => "en",
+            "language" => "en",
+            ],
+            true,
+            ['HTTP_ACCEPT_LANGUAGE' => 'es,en']
+        );
+
+        // Once session is set, accept-language-header should have no effect anymore.
+        $this->assertJsonResponse(
+            '',
+            [
+                "id" => "",
+                "path" => "en",
+                "language" => "en",
+            ],
+            true,
+            ['HTTP_ACCEPT_LANGUAGE' => 'de']
+        );
+
+    }
+
 
 }

@@ -157,9 +157,9 @@ class TestCase extends BaseTestCase
 
     }
 
-    protected function assertJsonResponse(string $uri, array $expected, bool$followRedirects=false)
+    protected function assertJsonResponse(string $uri, array $expected, bool$followRedirects=false, array $headers = [])
     {
-        $response = $this->get($uri);
+        $response = $this->get($uri, $headers);
         if ($followRedirects) {
             $response = $this->followRedirects($response);
         }

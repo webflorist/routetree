@@ -716,7 +716,6 @@ class RouteGenerationTest extends TestCase
         ]);
     }
 
-
     public function test_node_with_one_child_set_to_no_locale_prefix()
     {
 
@@ -1504,6 +1503,70 @@ class RouteGenerationTest extends TestCase
             ]
         ]);
 
+    }
+
+    public function test_node_with_only_locales()
+    {
+        $this->routeTree->node('only-de', function (RouteNode $node) {
+            $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+            $node->onlyLocales(['de']);
+        });
+
+        $this->routeTree->generateAllRoutes();
+
+        $this->assertRouteTree([
+            "de.only-de.get" => [
+                "method" => "GET",
+                "uri" => "de/only-de",
+                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    "id" => 'only-de',
+                    'method' => 'GET',
+                    'path' => 'de/only-de',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'locale' => 'de',
+                    'payload' => [],
+                    'title' => 'Only-de',
+                    'navTitle' => 'Only-de',
+                    'h1Title' => 'Only-de'
+                ],
+            ]
+
+        ]);
+    }
+
+    public function test_node_with_except_locales()
+    {
+        $this->routeTree->node('except-en', function (RouteNode $node) {
+            $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+            $node->exceptLocales(['en']);
+        });
+
+        $this->routeTree->generateAllRoutes();
+
+        $this->assertRouteTree([
+            "de.except-en.get" => [
+                "method" => "GET",
+                "uri" => "de/except-en",
+                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    "id" => 'except-en',
+                    'method' => 'GET',
+                    'path' => 'de/except-en',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'locale' => 'de',
+                    'payload' => [],
+                    'title' => 'Except-en',
+                    'navTitle' => 'Except-en',
+                    'h1Title' => 'Except-en'
+                ],
+            ]
+
+        ]);
     }
 
 }
