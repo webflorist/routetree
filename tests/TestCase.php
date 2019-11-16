@@ -134,7 +134,7 @@ class TestCase extends BaseTestCase
     protected function generateTestRoutes($visitUri='') {
 
         route_tree()->root(function (RouteNode $node) {
-            $node->namespace('RouteTreeTests\Feature\Controllers');
+            $node->namespace('\RouteTreeTests\Feature\Controllers');
             $node->get('TestController@get');
 
             $node->child('page1', function(RouteNode $node) {
@@ -146,6 +146,8 @@ class TestCase extends BaseTestCase
 
             });
         });
+
+        route_tree()->generateAllRoutes();
 
         // Visit the uri.
         try {

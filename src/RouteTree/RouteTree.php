@@ -126,9 +126,6 @@ class RouteTree
      */
     public function getCurrentAction()
     {
-        if ($this->pageNotFound()) {
-            return $this->getRootNode()->getAction('index');
-        }
         return $this->currentAction;
     }
 
@@ -239,6 +236,7 @@ class RouteTree
         if (!$this->routesGenerated) {
             $this->rootNode->generateRoutesOfNodeAndChildNodes();
         }
+        $this->sortRegisteredRoutes();
         $this->routesGenerated = true;
     }
 
@@ -263,7 +261,7 @@ class RouteTree
 
         $this->registeredRoutes->put(
             $key,
-            (new RegisteredRoute())
+            (new RegisteredRoute($route))
                 ->routeNode($routeAction->getRouteNode())
                 ->routeAction($routeAction)
                 ->locale($locale)
@@ -294,7 +292,7 @@ class RouteTree
      */
     public function getRegisteredRoutesByMethod(string $method, ?string $locale = null)
     {
-        return $this->registeredRoutes->filter(function (RegisteredRoute $registeredRoute) use($method, $locale) {
+        return $this->registeredRoutes->filter(function (RegisteredRoute $registeredRoute) use ($method, $locale) {
             if ($registeredRoute->method !== strtolower($method)) {
                 return false;
             }
@@ -354,7 +352,7 @@ class RouteTree
         foreach ($matchMethods as $matchMethod) {
             $matchKey = $matchMethod . $routeName;
             if ($this->registeredRoutes->has($matchKey)) {
-                return $this->registeredRoutes->get($matchKey)['route_action'];
+                return $this->registeredRoutes->get($matchKey)->routeAction;
             }
         }
 
@@ -367,19 +365,21 @@ class RouteTree
      * Tries to retrieve the correct RouteAction corresponding to a certain Laravel-Route.
      *
      * @param Route $route
-     * @return bool|RouteAction|null
+     * @return RouteAction|null
      */
-    public function getActionByRoute(Route $route)
+    public function getActionByRoute(Route $route): ?RouteAction
     {
 
-        $filteredRoutes = $this->registeredRoutes->where('route', $route);
+        $foundRegisteredRouteKey = $this->registeredRoutes->search(function (RegisteredRoute $registeredRoute) use ($route) {
+            return $registeredRoute->route === $route;
+        });
 
-        if ($filteredRoutes->count() > 0) {
-            return $filteredRoutes->first()['route_action'];
+        if ($foundRegisteredRouteKey !== false) {
+            return $this->registeredRoutes->get($foundRegisteredRouteKey)->routeAction;
         }
 
-        // If no action was found, we return false.
-        return false;
+        // If no action was found, we return null.
+        return null;
 
     }
 
@@ -442,6 +442,13 @@ class RouteTree
         }
 
         return [config()->get('app.locale')];
+    }
+
+    private function sortRegisteredRoutes()
+    {
+        $this->registeredRoutes = $this->registeredRoutes->sort(function (RegisteredRoute $routeA, RegisteredRoute $routeB) {
+            return $routeA->path > $routeB->path;
+        });
     }
 
 }

@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
+use Webflorist\RouteTree\Domain\RegisteredRoute;
 use Webflorist\RouteTree\Domain\RouteAction;
 use Webflorist\RouteTree\RouteTree;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -157,9 +158,9 @@ class RouteTreeMiddleware
         // Otherwise, we try finding an appropriate path of any language
         // using the paths registered with the RouteTree service.
         $foundPath = null;
-        $this->routeTree->getRegisteredRoutesByMethod('get')->each(function ($routeData) use (&$foundPath, $request) {
-            if (strpos($routeData['path'], $routeData['language'] . '/' . $request->path()) === 0) {
-                $foundPath = $routeData['path'];
+        $this->routeTree->getRegisteredRoutesByMethod('get')->each(function (RegisteredRoute $registeredRoute) use (&$foundPath, $request) {
+            if (strpos($registeredRoute->path, $registeredRoute->locale . '/' . $request->path()) === 0) {
+                $foundPath = $registeredRoute->path;
                 return false;
             }
         });

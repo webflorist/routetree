@@ -3,6 +3,7 @@
 namespace Webflorist\RouteTree\Domain;
 
 
+use Illuminate\Routing\Route;
 use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
 use Webflorist\RouteTree\RouteTree;
 
@@ -46,6 +47,17 @@ class RegisteredRoute
      * @var string
      */
     public $routeName;
+
+    /**
+     * @var Route
+     */
+    public $route;
+
+    public function __construct(Route $route)
+    {
+        $this->route = $route;
+    }
+
 
     public function routeNode(RouteNode $routeNode)
     {

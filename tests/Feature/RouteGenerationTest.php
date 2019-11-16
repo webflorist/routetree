@@ -68,7 +68,6 @@ class RouteGenerationTest extends TestCase
 
     public function test_root_node_with_controller_action_and_all_methods()
     {
-        $this->generateTestRoutes();
         $this->routeTree->root(function (RouteNode $rootNode) {
             $rootNode->get('\RouteTreeTests\Feature\Controllers\TestController@get');
             $rootNode->post('\RouteTreeTests\Feature\Controllers\TestController@post');
@@ -483,6 +482,178 @@ class RouteGenerationTest extends TestCase
             ]
         ]);
     }
+
+    public function test_cross_branch_redirect()
+    {
+        route_tree()->root(function (RouteNode $node) {
+            $node->namespace('\RouteTreeTests\Feature\Controllers');
+
+            $node->child('page1', function(RouteNode $node) {
+                $node->get('TestController@get');
+
+                $node->child('page1-1', function(RouteNode $node) {
+                    $node->get('TestController@get');
+                });
+
+            });
+
+            $node->child('page2', function(RouteNode $node) {
+                $node->get('TestController@get');
+
+                $node->child('page2-1', function(RouteNode $node) {
+                    $node->redirect('page1.page1-1');
+                });
+
+            });
+        });
+
+        $this->routeTree->generateAllRoutes();
+
+        $this->assertRouteTree([
+            "de.page1.get" => [
+                "method" => "GET",
+                "uri" => "de/page1",
+                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'page1',
+                    'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'path' => 'de/page1',
+                    'navTitle' => 'Page1',
+                    'h1Title' => 'Page1',
+                    'title' => 'Page1'
+                ],
+            ],
+            "en.page1.get" => [
+                "method" => "GET",
+                "uri" => "en/page1",
+                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'page1',
+                    'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'path' => 'en/page1',
+                    'navTitle' => 'Page1',
+                    'h1Title' => 'Page1',
+                    'title' => 'Page1'
+                ],
+            ],
+            "de.page1.page1-1.get" => [
+                "method" => "GET",
+                "uri" => "de/page1/page1-1",
+                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'page1.page1-1',
+                    'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'path' => 'de/page1/page1-1',
+                    'navTitle' => 'Page1-1',
+                    'h1Title' => 'Page1-1',
+                    'title' => 'Page1-1'
+                ],
+            ],
+            "en.page1.page1-1.get" => [
+                "method" => "GET",
+                "uri" => "en/page1/page1-1",
+                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'page1.page1-1',
+                    'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'path' => 'en/page1/page1-1',
+                    'navTitle' => 'Page1-1',
+                    'h1Title' => 'Page1-1',
+                    'title' => 'Page1-1'
+                ],
+            ],
+
+            "de.page2.get" => [
+                "method" => "GET",
+                "uri" => "de/page2",
+                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'page2',
+                    'method' => 'GET',
+                    'locale' => 'de',
+                    'payload' => [],
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'path' => 'de/page2',
+                    'navTitle' => 'Page2',
+                    'h1Title' => 'Page2',
+                    'title' => 'Page2'
+                ],
+            ],
+            "en.page2.get" => [
+                "method" => "GET",
+                "uri" => "en/page2",
+                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    'id' => 'page2',
+                    'method' => 'GET',
+                    'locale' => 'en',
+                    'payload' => [],
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'path' => 'en/page2',
+                    'navTitle' => 'Page2',
+                    'h1Title' => 'Page2',
+                    'title' => 'Page2'
+                ],
+            ],
+            "de.page2.page2-1.get" => [
+                "method" => "GET|POST|PUT|PATCH|DELETE|OPTIONS",
+                "uri" => "de/page2/page2-1",
+                "action" => '\Illuminate\Routing\RedirectController',
+                "middleware" => [],
+                "redirectTarget" => 'de/page1/page1-1',
+                "statusCode" => 302
+            ],
+            "en.page2.page2-1.get" => [
+                "method" => "GET|POST|PUT|PATCH|DELETE|OPTIONS",
+                "uri" => "en/page2/page2-1",
+                "action" => '\Illuminate\Routing\RedirectController',
+                "middleware" => [],
+                "redirectTarget" => 'en/page1/page1-1',
+                "statusCode" => 302
+            ],
+        ]);
+
+        $this->assertJsonResponse("de/page2/page2-1",
+            [
+                'id' => 'page1.page1-1',
+                'method' => 'GET',
+                'locale' => 'de',
+                'payload' => [],
+                'controller' => 'test',
+                'function' => 'get',
+                'path' => 'de/page1/page1-1',
+                'navTitle' => 'Page1-1',
+                'h1Title' => 'Page1-1',
+                'title' => 'Page1-1'
+            ],
+            true
+            );
+    }
+
 
     public function test_node_with_children()
     {

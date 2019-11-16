@@ -50,10 +50,10 @@ class GenerateSitemapTest extends TestCase
         xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
     <url>
-        <loc>http://localhost/en</loc>
+        <loc>http://localhost/de</loc>
     </url>
     <url>
-        <loc>http://localhost/de</loc>
+        <loc>http://localhost/en</loc>
     </url>
 
 
@@ -81,13 +81,13 @@ class GenerateSitemapTest extends TestCase
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
         xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>http://localhost/en</loc>
+        <loc>http://localhost/de</loc>
         <lastmod>2019-11-16T17:46:30+01:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>1.0</priority>
     </url>
     <url>
-        <loc>http://localhost/de</loc>
+        <loc>http://localhost/en</loc>
         <lastmod>2019-11-16T17:46:30+01:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>1.0</priority>

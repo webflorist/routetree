@@ -56,7 +56,7 @@ class RouteNode
      *
      * @var array
      */
-    protected $paths = [];
+    protected $paths;
 
     /**
      * Should the path-segment of this node be inherited to it's children (default=true)?
@@ -1039,15 +1039,16 @@ class RouteNode
      * Gets a specific action from this node.
      *
      * @param $action
-     * @return bool|RouteAction
+     * @return RouteAction
+     * @throws ActionNotFoundException
      */
-    public function getAction($action)
+    public function getAction($action) : RouteAction
     {
         if ($this->hasAction($action)) {
             return $this->actions[$action];
-        } else {
-            return false;
         }
+
+        throw new ActionNotFoundException('Node with Id "' . $this->getId() . '" does not have the action "' . $action . '""');
     }
 
     /**
@@ -1152,6 +1153,7 @@ class RouteNode
      */
     protected function generateFullPaths()
     {
+        $this->paths = [];
         foreach ($this->getLocales() as $locale) {
             $this->paths[$locale] = $this->compilePath($locale);
         }
@@ -1169,13 +1171,13 @@ class RouteNode
         // Generate the full-paths for this node.
         $this->generateFullPaths();
 
-        $this->generateRoutes();
-
         if ($this->hasChildNodes()) {
             foreach ($this->getChildNodes() as $childNode) {
                 $childNode->generateRoutesOfNodeAndChildNodes();
             }
         }
+
+        $this->generateRoutes();
 
     }
 
@@ -1228,7 +1230,7 @@ class RouteNode
             $segments = [];
         }
 
-        // Add segments of parent noces.
+        // Add segments of parent nodes.
         foreach ($this->getParentNodes() as $parentNode) {
             if ($parentNode->inheritSegment) {
                 $parentNodeSegment = $parentNode->getSegment($locale);
