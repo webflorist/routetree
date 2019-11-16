@@ -58,4 +58,22 @@ return [
 
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Sitemap Settings
+    |--------------------------------------------------------------------------
+    |
+    | Here you may configure the settings for generation
+    | of a sitemap XML file via the artisan command 'routetree:generate-sitemap'.
+    |
+    */
+    'sitemap' => [
+
+        /*
+         * Name of the output file (relative to laravel root).
+         */
+        'output_file' => 'public/sitemap.xml',
+
+    ],
+
 ];

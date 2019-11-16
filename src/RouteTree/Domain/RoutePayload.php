@@ -20,9 +20,9 @@ use Webflorist\RouteTree\RouteTree;
  *
  * Setters for default properties:
  * ===============================
- * @method   RoutePayload               title($title, string $forAction=null)
- * @method   RoutePayload               navTitle($navTitle, string $forAction=null)
- * @method   RoutePayload               h1Title($h1Title, string $forAction=null)
+ * @method   RoutePayload               title($title, string $forAction = null)
+ * @method   RoutePayload               navTitle($navTitle, string $forAction = null)
+ * @method   RoutePayload               h1Title($h1Title, string $forAction = null)
  *
  */
 class RoutePayload
@@ -131,26 +131,33 @@ class RoutePayload
      * @param string|null $forAction
      * @return $this
      */
-    public function set($payloadKey, $payloadValue, ?string $forAction=null)
+    public function set($payloadKey, $payloadValue, ?string $forAction = null)
     {
         if ($forAction !== null) {
             if (!isset($this->actionPayloads[$forAction])) {
                 $this->actionPayloads[$forAction] = [];
             }
-            $this->actionPayloads[$forAction][$payloadKey] =  $payloadValue;
-        }
-        else {
+            $this->actionPayloads[$forAction][$payloadKey] = $payloadValue;
+        } else {
             $this->$payloadKey = $payloadValue;
         }
         return $this;
     }
 
-    public function get($payloadKey, string $action=null)
+    public function get($payloadKey, string $forAction = null)
     {
-        if ($action !== null && isset($this->actionPayloads[$action][$payloadKey])) {
-            return $this->actionPayloads[$action][$payloadKey];
+        if ($forAction !== null && isset($this->actionPayloads[$forAction][$payloadKey])) {
+            return $this->actionPayloads[$forAction][$payloadKey];
         }
         return $this->$payloadKey;
+    }
+
+    public function has(string $payloadKey, string $forAction = null)
+    {
+        if ($forAction !== null && isset($this->actionPayloads[$forAction][$payloadKey])) {
+            return true;
+        }
+        return isset($this->$payloadKey);
     }
 
     /**
@@ -252,7 +259,7 @@ class RoutePayload
      * @return string
      * @throws UrlParametersMissingException
      */
-    public function getTitle(?array $parameters = null, ?string $locale = null, $action=null) : string
+    public function getTitle(?array $parameters = null, ?string $locale = null, $action = null): string
     {
         $this->establishAction($action);
         $title = $this->trans('title', $parameters, $locale, $action);
@@ -284,7 +291,7 @@ class RoutePayload
      * @return string
      * @throws UrlParametersMissingException
      */
-    public function getNavTitle(?array $parameters = null, ?string $locale = null, $action=null) : string
+    public function getNavTitle(?array $parameters = null, ?string $locale = null, $action = null): string
     {
         $this->establishAction($action);
 
@@ -307,7 +314,7 @@ class RoutePayload
      * @return string
      * @throws UrlParametersMissingException
      */
-    public function getH1Title(?array $parameters = null, ?string $locale = null, $action=null) : string
+    public function getH1Title(?array $parameters = null, ?string $locale = null, $action = null): string
     {
         $this->establishAction($action);
 
@@ -332,7 +339,7 @@ class RoutePayload
      * @return array|mixed|string
      * @throws UrlParametersMissingException
      */
-    public function processTitle($title, ?array $parameters = null, ?string $locale = null, $action=null) : string
+    public function processTitle($title, ?array $parameters = null, ?string $locale = null, $action = null): string
     {
         RouteTree::establishLocale($locale);
 
@@ -383,6 +390,5 @@ class RoutePayload
             $action = null;
         }
     }
-
 
 }

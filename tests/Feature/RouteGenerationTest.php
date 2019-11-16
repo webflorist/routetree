@@ -68,6 +68,7 @@ class RouteGenerationTest extends TestCase
 
     public function test_root_node_with_controller_action_and_all_methods()
     {
+        $this->generateTestRoutes();
         $this->routeTree->root(function (RouteNode $rootNode) {
             $rootNode->get('\RouteTreeTests\Feature\Controllers\TestController@get');
             $rootNode->post('\RouteTreeTests\Feature\Controllers\TestController@post');

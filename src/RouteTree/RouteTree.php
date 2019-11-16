@@ -5,6 +5,7 @@ namespace Webflorist\RouteTree;
 use Closure;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Collection;
+use Webflorist\RouteTree\Domain\RegisteredRoute;
 use Webflorist\RouteTree\Domain\RouteAction;
 use Webflorist\RouteTree\Domain\RouteNode;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
@@ -23,7 +24,7 @@ class RouteTree
     /**
      * Laravel-Collection of all Routes registered with the route-tree.
      *
-     * @var Collection
+     * @var Collection of RegisteredRoutes
      */
     protected $registeredRoutes;
 
@@ -247,10 +248,10 @@ class RouteTree
      *
      * @param Route $route
      * @param RouteAction $routeAction
-     * @param $language
+     * @param $locale
      * @throws RouteNameAlreadyRegisteredException
      */
-    public function registerRoute(Route $route, RouteAction $routeAction, $language)
+    public function registerRoute(Route $route, RouteAction $routeAction, $locale)
     {
         $method = str_replace('|HEAD', '', implode('|', $route->methods()));
 
@@ -262,14 +263,13 @@ class RouteTree
 
         $this->registeredRoutes->put(
             $key,
-            [
-                'route' => $route,
-                'route_action' => $routeAction,
-                'language' => $language,
-                'method' => strtolower($method),
-                'path' => $route->uri(),
-                'route_name' => $route->getName()
-            ]
+            (new RegisteredRoute())
+                ->routeNode($routeAction->getRouteNode())
+                ->routeAction($routeAction)
+                ->locale($locale)
+                ->method(strtolower($method))
+                ->path($route->uri())
+                ->routeName($route->getName())
         );
 
     }
@@ -289,18 +289,20 @@ class RouteTree
      * (and optionally limited to a certain language).
      *
      * @param string $method
-     * @param null|string $language
+     * @param null|string $locale
      * @return Collection
      */
-    public function getRegisteredRoutesByMethod($method, $language = null)
+    public function getRegisteredRoutesByMethod(string $method, ?string $locale = null)
     {
-        $filteredRoutes = $this->registeredRoutes->where('method', strtolower($method));
-
-        if (!is_null($language)) {
-            $filteredRoutes = $filteredRoutes->where('language', $language);
-        }
-
-        return $filteredRoutes->sortBy('path');
+        return $this->registeredRoutes->filter(function (RegisteredRoute $registeredRoute) use($method, $locale) {
+            if ($registeredRoute->method !== strtolower($method)) {
+                return false;
+            }
+            if (!is_null($locale) && ($registeredRoute->locale !== $locale)) {
+                return false;
+            }
+            return true;
+        });
     }
 
     /**

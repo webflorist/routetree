@@ -3,11 +3,11 @@
 namespace Webflorist\RouteTree\Domain;
 
 use Illuminate\Routing\Route;
+use Webflorist\RouteTree\Domain\Traits\CanHaveParameterRegex;
+use Webflorist\RouteTree\Domain\Traits\CanHaveSegments;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
 use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
 use Webflorist\RouteTree\RouteTree;
-use Webflorist\RouteTree\Domain\Traits\CanHaveParameterRegex;
-use Webflorist\RouteTree\Domain\Traits\CanHaveSegments;
 use Webflorist\RouteTree\Services\RouteUrlBuilder;
 
 class RouteAction
@@ -99,7 +99,7 @@ class RouteAction
      * @param RouteNode $routeNode
      * @param string|null $name
      */
-    public function __construct(string $method, $action, RouteNode $routeNode, ?string $name=null)
+    public function __construct(string $method, $action, RouteNode $routeNode, ?string $name = null)
     {
         $this->method = $method;
         $this->routeNode = $routeNode;
@@ -115,7 +115,8 @@ class RouteAction
      *
      * @param string $name
      */
-    public function name(string $name) {
+    public function name(string $name)
+    {
         $this->name = $name;
     }
 
@@ -213,7 +214,8 @@ class RouteAction
      * @param array $parameters Parameters the middleware should be called with.
      * @return RouteAction
      */
-    public function middleware(string $name, array$parameters=[]) {
+    public function middleware(string $name, array $parameters = [])
+    {
         $this->middleware[$name] = $parameters;
         return $this;
     }
@@ -224,8 +226,9 @@ class RouteAction
      * @param string $name Name of the middleware.
      * @return RouteAction
      */
-    public function skipMiddleware(string $name) {
-        if (array_search($name,$this->skipMiddleware) === false) {
+    public function skipMiddleware(string $name)
+    {
+        if (array_search($name, $this->skipMiddleware) === false) {
             $this->skipMiddleware[] = $name;
         }
         return $this;
@@ -251,16 +254,13 @@ class RouteAction
     public function setAction($name)
     {
         // TODO: add support for various types of $action;
-        if (is_string($name) && strpos($name,'@') > 0) {
+        if (is_string($name) && strpos($name, '@') > 0) {
             $this->setUses($name);
-        }
-        else if (is_array($name) && (count($name) === 2) && isset($name['view']) && isset($name['data'])) {
+        } else if (is_array($name) && (count($name) === 2) && isset($name['view']) && isset($name['data'])) {
             $this->setView($name['view'], $name['data']);
-        }
-        else if (is_array($name) && (count($name) === 2) && isset($name['redirect']) && isset($name['status'])) {
+        } else if (is_array($name) && (count($name) === 2) && isset($name['redirect']) && isset($name['status'])) {
             $this->setRedirect($name['redirect'], $name['status']);
-        }
-        else if ($name instanceof \Closure) {
+        } else if ($name instanceof \Closure) {
             $this->setClosure($name);
         }
         return $this;
@@ -383,7 +383,7 @@ class RouteAction
      * @param array $data
      * @return void
      */
-    private function setView(string $view, array $data=[])
+    private function setView(string $view, array $data = [])
     {
         $this->view = $view;
         $this->viewData = $data;
@@ -397,7 +397,7 @@ class RouteAction
      * @param int $status
      * @return void
      */
-    private function setRedirect(string $redirect, int $status=302)
+    private function setRedirect(string $redirect, int $status = 302)
     {
         $this->redirect = $redirect;
         $this->redirectStatus = $status;
@@ -564,7 +564,6 @@ class RouteAction
     }
 
 
-
     /**
      * Generates the compiled array of parameter-regexes (wheres)
      * to be handed over to the laravel-route-generator.
@@ -593,7 +592,7 @@ class RouteAction
             $routeName .= '.' . $this->routeNode->getId();
         }
 
-        $routeName .= '.'.$this->getName();
+        $routeName .= '.' . $this->getName();
 
         return $routeName;
     }
@@ -655,10 +654,10 @@ class RouteAction
      * @return Route
      * @throws Exceptions\NodeNotFoundException
      */
-    private function createRoute(string $locale) : Route
+    private function createRoute(string $locale): Route
     {
         $uri = $this->generateUri($locale);
-        
+
         // In case of a View Route...
         if (!is_null($this->view)) {
             return \Illuminate\Support\Facades\Route::view(
@@ -681,11 +680,10 @@ class RouteAction
         $action = [];
         if (!is_null($this->uses)) {
             $action['uses'] = $this->uses;
-            if (substr($this->uses,0,1) !== '\\') {
+            if (substr($this->uses, 0, 1) !== '\\') {
                 $action['uses'] = $this->routeNode->getNamespace() . '\\' . $this->uses;
             }
-        }
-        else if (is_callable($this->closure)) {
+        } else if (is_callable($this->closure)) {
             array_push($action, $this->closure);
         }
         return \Illuminate\Support\Facades\Route::{$this->method}($uri, $action);
@@ -719,6 +717,13 @@ class RouteAction
     public function getLocales()
     {
         return $this->routeNode->getLocales();
+    }
+
+    public function isExcludedFromSitemap()
+    {
+        return
+            $this->routeNode->payload->get('sitemap', $this->getName()) &&
+            $this->routeNode->isExcludedFromSitemap();
     }
 
 }

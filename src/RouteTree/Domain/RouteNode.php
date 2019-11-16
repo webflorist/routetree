@@ -8,7 +8,6 @@ use Webflorist\RouteTree\Domain\Traits\CanHaveSegments;
 use Webflorist\RouteTree\Exceptions\ActionNotFoundException;
 use Webflorist\RouteTree\Exceptions\NodeAlreadyHasChildWithSameNameException;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
-use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
 use Webflorist\RouteTree\RouteTree;
 use Webflorist\RouteTree\Services\RouteUrlBuilder;
 
@@ -148,6 +147,13 @@ class RouteNode
     private $locales;
 
     /**
+     * XML-Sitemap related data.
+     *
+     * @var SitemapUrl
+     */
+    public $sitemap;
+
+    /**
      * RouteNode constructor.
      * @param string $name
      * @param RouteNode $parentNode
@@ -176,6 +182,7 @@ class RouteNode
         $this->segment($segment);
 
         $this->payload = new RoutePayload($this);
+        $this->sitemap = new SitemapUrl($this);
 
         return $this;
 
@@ -1162,13 +1169,13 @@ class RouteNode
         // Generate the full-paths for this node.
         $this->generateFullPaths();
 
+        $this->generateRoutes();
+
         if ($this->hasChildNodes()) {
             foreach ($this->getChildNodes() as $childNode) {
                 $childNode->generateRoutesOfNodeAndChildNodes();
             }
         }
-
-        $this->generateRoutes();
 
     }
 
