@@ -42,7 +42,8 @@ class GenerateSitemapCommand extends Command
                 ->render()
         );
 
-        $this->info("Package Blueprint command successful.");
+        $this->info("Sitemap XML successfully generated at:");
+        $this->line($this->getOutputFile());
     }
 
     /**
@@ -58,22 +59,28 @@ class GenerateSitemapCommand extends Command
         return route_tree()->getRegisteredRoutesByMethod('get')->filter(function (RegisteredRoute $registeredRoute) {
 
             if ($registeredRoute->routeNode->sitemap->isExcluded()) {
+                $this->warn($registeredRoute->path." EXCLUDED manually.");
                 return false;
             }
 
             if ($registeredRoute->routeAction->hasParameters()) {
+                $this->warn($registeredRoute->path." EXCLUDED due to parameters.");
                 return false;
             }
 
             if ($registeredRoute->routeAction->isRedirect()) {
+                $this->warn($registeredRoute->path." EXCLUDED due to redirect.");
                 return false;
             }
 
             foreach ($this->getExcludedMiddleware() as $excludedMiddleware) {
                 if ($registeredRoute->routeAction->hasMiddleware($excludedMiddleware)) {
+                    $this->warn($registeredRoute->path." EXCLUDED due to use of middleware '$excludedMiddleware'.");
                     return false;
                 }
             }
+
+            $this->info($registeredRoute->path." INCLUDED.");
 
             return true;
         });
