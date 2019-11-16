@@ -34,7 +34,7 @@ class GenerateSitemapTest extends TestCase
     }
 
 
-    public function test_simple()
+    public function test_simple_sitemap()
     {
         $this->routeTree->root(function (RouteNode $node) {
             $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
@@ -61,7 +61,7 @@ class GenerateSitemapTest extends TestCase
         //$this->assertXmlFileEqualsXmlFile();
     }
 
-    public function test_complex()
+    public function test_complex_sitemap()
     {
         $this->routeTree->root(function (RouteNode $node) {
             $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
@@ -70,13 +70,41 @@ class GenerateSitemapTest extends TestCase
                 ->changefreq('monthly')
                 ->priority(1.0)
             ;
+            $node->child('excluded', function(RouteNode $node) {
+                $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                $node->sitemap
+                    ->exclude();
+                ;
+                $node->child('excluded-child', function(RouteNode $node) {
+                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                });
+                $node->child('non-excluded-child', function(RouteNode $node) {
+                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                    $node->sitemap
+                        ->exclude(false);
+                    ;
+                });
+            });
+            $node->child('redirect', function(RouteNode $node) {
+                $node->redirect('excluded');
+            });
+            $node->child('permanent-redirect', function(RouteNode $node) {
+                $node->permanentRedirect('excluded');
+            });
+            $node->child('parameter', function(RouteNode $node) {
+                $node->segment('{parameter}');
+                $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+            });
+            $node->child('resource', function(RouteNode $node) {
+                $node->resource('resource', '\RouteTreeTests\Feature\Controllers\TestController');
+            });
         });
 
         $this->routeTree->generateAllRoutes();
 
         $this->artisan('routetree:generate-sitemap')->assertExitCode('0');
         $this->assertFileExists($this->getSitemapOutputFile());
-        $this->assertXmlStringEqualsXmlFile($this->getSitemapOutputFile(),'<?xml version="1.0" encoding="UTF-8"?>
+        $this->assertXmlStringEqualsXmlString('<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
         xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -87,12 +115,30 @@ class GenerateSitemapTest extends TestCase
         <priority>1.0</priority>
     </url>
     <url>
+        <loc>http://localhost/de/excluded/non-excluded-child</loc>
+    </url>
+    <url>
+        <loc>http://localhost/de/resource</loc>
+    </url>
+    <url>
+        <loc>http://localhost/de/resource/erstellen</loc>
+    </url>
+    <url>
         <loc>http://localhost/en</loc>
         <lastmod>2019-11-16T17:46:30+01:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>1.0</priority>
     </url>
-</urlset>');
+    <url>
+        <loc>http://localhost/en/excluded/non-excluded-child</loc>
+    </url>
+    <url>
+        <loc>http://localhost/en/resource</loc>
+    </url>
+    <url>
+        <loc>http://localhost/en/resource/create</loc>
+    </url>
+</urlset>',file_get_contents($this->getSitemapOutputFile()));
     }
 
 

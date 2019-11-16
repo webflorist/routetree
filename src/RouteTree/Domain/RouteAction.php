@@ -726,4 +726,14 @@ class RouteAction
             $this->routeNode->isExcludedFromSitemap();
     }
 
+    public function isRedirect()
+    {
+        return !is_null($this->redirect);
+    }
+
+    public function hasParameters()
+    {
+        return count($this->getPathParameters()) > 0;
+    }
+
 }

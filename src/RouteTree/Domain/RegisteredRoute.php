@@ -34,9 +34,9 @@ class RegisteredRoute
     public $locale;
 
     /**
-     * @var string
+     * @var array
      */
-    public $method;
+    public $methods;
 
     /**
      * @var string
@@ -77,9 +77,9 @@ class RegisteredRoute
         return $this;
     }
 
-    public function method(string $method)
+    public function methods(array $methods)
     {
-        $this->method = $method;
+        $this->methods = $methods;
         return $this;
     }
 
@@ -93,6 +93,11 @@ class RegisteredRoute
     {
         $this->routeName = $routeName;
         return $this;
+    }
+
+    public function hasMethod(string $method)
+    {
+        return array_search(strtoupper($method), $this->methods) !== false;
     }
 
 

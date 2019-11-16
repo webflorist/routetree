@@ -123,8 +123,8 @@ class SitemapUrl
 
     public function isExcluded()
     {
-        if ($this->isExcluded === true) {
-            return true;
+        if (is_bool($this->isExcluded)) {
+            return $this->isExcluded;
         }
 
         if ($this->routeNode->hasParentNode()) {
@@ -132,6 +132,11 @@ class SitemapUrl
         }
 
         return false;
+    }
+
+    public function exclude(bool $exclude=true)
+    {
+        $this->isExcluded = $exclude;
     }
 
 }

@@ -56,7 +56,20 @@ class GenerateSitemapCommand extends Command
     private function getUrlset()
     {
         return route_tree()->getRegisteredRoutesByMethod('get')->filter(function (RegisteredRoute $registeredRoute) {
-            return !$registeredRoute->routeNode->sitemap->isExcluded();
+
+            if ($registeredRoute->routeNode->sitemap->isExcluded()) {
+                return false;
+            }
+
+            if ($registeredRoute->routeAction->hasParameters()) {
+                return false;
+            }
+
+            if ($registeredRoute->routeAction->isRedirect()) {
+                return false;
+            }
+
+            return true;
         });
     }
 

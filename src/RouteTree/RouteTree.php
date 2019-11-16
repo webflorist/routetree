@@ -265,7 +265,7 @@ class RouteTree
                 ->routeNode($routeAction->getRouteNode())
                 ->routeAction($routeAction)
                 ->locale($locale)
-                ->method(strtolower($method))
+                ->methods($route->methods)
                 ->path($route->uri())
                 ->routeName($route->getName())
         );
@@ -293,7 +293,7 @@ class RouteTree
     public function getRegisteredRoutesByMethod(string $method, ?string $locale = null)
     {
         return $this->registeredRoutes->filter(function (RegisteredRoute $registeredRoute) use ($method, $locale) {
-            if ($registeredRoute->method !== strtolower($method)) {
+            if (!$registeredRoute->hasMethod($method)) {
                 return false;
             }
             if (!is_null($locale) && ($registeredRoute->locale !== $locale)) {
