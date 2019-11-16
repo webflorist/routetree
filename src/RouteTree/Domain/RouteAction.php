@@ -736,4 +736,9 @@ class RouteAction
         return count($this->getPathParameters()) > 0;
     }
 
+    public function hasMiddleware(string $middleware)
+    {
+        return array_search($middleware, $this->compileMiddleware()) !== false;
+    }
+
 }

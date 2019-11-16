@@ -98,6 +98,13 @@ class GenerateSitemapTest extends TestCase
             $node->child('resource', function(RouteNode $node) {
                 $node->resource('resource', '\RouteTreeTests\Feature\Controllers\TestController');
             });
+            $node->child('auth', function(RouteNode $node) {
+                $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                $node->middleware('auth');
+                $node->child('auth-child', function(RouteNode $node) {
+                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                });
+            });
         });
 
         $this->routeTree->generateAllRoutes();

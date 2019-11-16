@@ -69,8 +69,21 @@ class GenerateSitemapCommand extends Command
                 return false;
             }
 
+            foreach ($this->getExcludedMiddleware() as $excludedMiddleware) {
+                if ($registeredRoute->routeAction->hasMiddleware($excludedMiddleware)) {
+                    return false;
+                }
+            }
+
             return true;
         });
+    }
+
+    private function getExcludedMiddleware()
+    {
+        return [
+            'auth'
+        ];
     }
 
 }
