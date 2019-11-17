@@ -56,6 +56,7 @@ class RouteResource
         $this->controller = $controller;
         $this->routeNode = $routeNode;
         $this->transKey = 'Webflorist-RouteTree::routetree.resource';
+        $this->routeNode->parameter($name, false);
 
         $this->setupActions();
 
@@ -169,6 +170,16 @@ class RouteResource
             default:
                 return $this->routeNode->payload->getNavTitle(null, $locale, false);
         }
+    }
+
+    public function model(string $class)
+    {
+        $this->routeNode->parameter->model($class);
+    }
+
+    public function values(array $values)
+    {
+        $this->routeNode->parameter->values($values);
     }
 
 }

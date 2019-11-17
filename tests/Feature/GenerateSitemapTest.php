@@ -4,9 +4,9 @@ namespace RouteTreeTests\Feature;
 
 use Carbon\Carbon;
 use Illuminate\Filesystem\Filesystem;
+use RouteTreeTests\Feature\Models\TestModelContract;
 use RouteTreeTests\TestCase;
 use Webflorist\RouteTree\Domain\RouteNode;
-use Webflorist\RouteTree\Domain\SitemapUrl;
 
 class GenerateSitemapTest extends TestCase
 {
@@ -18,7 +18,7 @@ class GenerateSitemapTest extends TestCase
         );
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         /*
         (new Filesystem())->delete(
@@ -44,7 +44,7 @@ class GenerateSitemapTest extends TestCase
 
         $this->artisan('routetree:generate-sitemap')->assertExitCode('0');
         $this->assertFileExists($this->getSitemapOutputFile());
-        $this->assertXmlStringEqualsXmlFile($this->getSitemapOutputFile(),'<?xml version="1.0" encoding="UTF-8"?>
+        $this->assertXmlStringEqualsXmlFile($this->getSitemapOutputFile(), '<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
         xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -68,40 +68,69 @@ class GenerateSitemapTest extends TestCase
             $node->sitemap
                 ->lastmod(Carbon::parse('2019-11-16T17:46:30.45+01:00'))
                 ->changefreq('monthly')
-                ->priority(1.0)
-            ;
-            $node->child('excluded', function(RouteNode $node) {
+                ->priority(1.0);
+            $node->child('excluded', function (RouteNode $node) {
                 $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
                 $node->sitemap
-                    ->exclude();
-                ;
-                $node->child('excluded-child', function(RouteNode $node) {
+                    ->exclude();;
+                $node->child('excluded-child', function (RouteNode $node) {
                     $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
                 });
-                $node->child('non-excluded-child', function(RouteNode $node) {
+                $node->child('non-excluded-child', function (RouteNode $node) {
                     $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
                     $node->sitemap
-                        ->exclude(false);
-                    ;
+                        ->exclude(false);;
                 });
             });
-            $node->child('redirect', function(RouteNode $node) {
+            $node->child('redirect', function (RouteNode $node) {
                 $node->redirect('excluded');
             });
-            $node->child('permanent-redirect', function(RouteNode $node) {
+            $node->child('permanent-redirect', function (RouteNode $node) {
                 $node->permanentRedirect('excluded');
             });
-            $node->child('parameter', function(RouteNode $node) {
-                $node->segment('{parameter}');
-                $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+            $node->child('parameter', function (RouteNode $node) {
+                $node->child('parameter', function (RouteNode $node) {
+                    $node->segment('{parameter}');
+                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                });
             });
-            $node->child('resource', function(RouteNode $node) {
+            $node->child('parameter-with-values', function (RouteNode $node) {
+                $node->child('parameter-with-values', function (RouteNode $node) {
+                    $node->parameter('parameter-with-values')->values([
+                        'parameter-array-value1', 'parameter-array-value2'
+                    ]);
+                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                });
+            });
+            $node->child('parameter-with-translated-values', function (RouteNode $node) {
+                $node->child('parameter-with-translated-values', function (RouteNode $node) {
+                    $node->parameter('parameter-with-translated-values')->values([
+                        'de' => [
+                            'parameter-array-wert1', 'parameter-array-wert2'
+                        ],
+                        'en' => [
+                            'parameter-array-value1', 'parameter-array-value2'
+                        ]
+                    ]);
+                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                });
+            });
+            $node->child('parameter-with-model', function (RouteNode $node) {
+                $node->child('parameter-with-model', function (RouteNode $node) {
+                    $node->parameter('parameter-with-model')->model(TestModelContract::class);
+                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                });
+            });
+            $node->child('resource', function (RouteNode $node) {
                 $node->resource('resource', '\RouteTreeTests\Feature\Controllers\TestController');
             });
-            $node->child('auth', function(RouteNode $node) {
+            $node->child('resource-with-model', function (RouteNode $node) {
+                $node->resource('resource-with-model', '\RouteTreeTests\Feature\Controllers\TestController')->model(TestModelContract::class);
+            });
+            $node->child('auth', function (RouteNode $node) {
                 $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
                 $node->middleware('auth');
-                $node->child('auth-child', function(RouteNode $node) {
+                $node->child('auth-child', function (RouteNode $node) {
                     $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
                 });
             });
@@ -125,7 +154,43 @@ class GenerateSitemapTest extends TestCase
         <loc>http://localhost/de/excluded/non-excluded-child</loc>
     </url>
     <url>
+        <loc>http://localhost/de/parameter-with-model/wert-1</loc>
+    </url>
+    <url>
+        <loc>http://localhost/de/parameter-with-model/wert-2</loc>
+    </url>
+    <url>
+        <loc>http://localhost/de/parameter-with-translated-values/parameter-array-wert1</loc>
+    </url>
+    <url>
+        <loc>http://localhost/de/parameter-with-translated-values/parameter-array-wert2</loc>
+    </url>
+    <url>
+        <loc>http://localhost/de/parameter-with-values/parameter-array-value1</loc>
+    </url>
+    <url>
+        <loc>http://localhost/de/parameter-with-values/parameter-array-value2</loc>
+    </url>
+    <url>
         <loc>http://localhost/de/resource</loc>
+    </url>
+    <url>
+        <loc>http://localhost/de/resource-with-model</loc>
+    </url>
+    <url>
+        <loc>http://localhost/de/resource-with-model/erstellen</loc>
+    </url>
+    <url>
+        <loc>http://localhost/de/resource-with-model/wert-1</loc>
+    </url>
+    <url>
+        <loc>http://localhost/de/resource-with-model/wert-2</loc>
+    </url>
+    <url>
+        <loc>http://localhost/de/resource-with-model/wert-1/bearbeiten</loc>
+    </url>
+    <url>
+        <loc>http://localhost/de/resource-with-model/wert-2/bearbeiten</loc>
     </url>
     <url>
         <loc>http://localhost/de/resource/erstellen</loc>
@@ -140,12 +205,48 @@ class GenerateSitemapTest extends TestCase
         <loc>http://localhost/en/excluded/non-excluded-child</loc>
     </url>
     <url>
+        <loc>http://localhost/en/parameter-with-model/value-1</loc>
+    </url>
+    <url>
+        <loc>http://localhost/en/parameter-with-model/value-2</loc>
+    </url>
+    <url>
+        <loc>http://localhost/en/parameter-with-translated-values/parameter-array-value1</loc>
+    </url>
+    <url>
+        <loc>http://localhost/en/parameter-with-translated-values/parameter-array-value2</loc>
+    </url>
+    <url>
+        <loc>http://localhost/en/parameter-with-values/parameter-array-value1</loc>
+    </url>
+    <url>
+        <loc>http://localhost/en/parameter-with-values/parameter-array-value2</loc>
+    </url>
+    <url>
         <loc>http://localhost/en/resource</loc>
+    </url>
+    <url>
+        <loc>http://localhost/en/resource-with-model</loc>
+    </url>
+    <url>
+        <loc>http://localhost/en/resource-with-model/create</loc>
+    </url>
+    <url>
+        <loc>http://localhost/en/resource-with-model/value-1</loc>
+    </url>
+    <url>
+        <loc>http://localhost/en/resource-with-model/value-2</loc>
+    </url>
+    <url>
+        <loc>http://localhost/en/resource-with-model/value-1/edit</loc>
+    </url>
+    <url>
+        <loc>http://localhost/en/resource-with-model/value-2/edit</loc>
     </url>
     <url>
         <loc>http://localhost/en/resource/create</loc>
     </url>
-</urlset>',file_get_contents($this->getSitemapOutputFile()));
+</urlset>', file_get_contents($this->getSitemapOutputFile()));
     }
 
 

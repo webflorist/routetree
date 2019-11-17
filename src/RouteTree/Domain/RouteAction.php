@@ -741,4 +741,18 @@ class RouteAction
         return array_search($middleware, $this->compileMiddleware()) !== false;
     }
 
+    public function hasParameterValues(string $locale)
+    {
+        $rootLineParameters =  $this->routeNode->getRootLineParameters();
+        foreach ($this->getPathParameters($locale) as $pathParameter) {
+            if (!isset($rootLineParameters[$pathParameter])) {
+                return false;
+            }
+            if (!$rootLineParameters[$pathParameter]->hasValues($locale)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

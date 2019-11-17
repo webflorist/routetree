@@ -91,11 +91,12 @@ class RouteNode
     protected $contentLangFile = null;
 
     /**
-     * If this route-node is a route-parameter, it's name is stored here.
+     * If this route-node has a route-parameter,
+     * the corresponding RouteParameter object is stored here.
      *
-     * @var null
+     * @var null|RouteParameter
      */
-    protected $parameter = null;
+    public $parameter = null;
 
     public $isResourceChild = false;
 
@@ -368,18 +369,23 @@ class RouteNode
      * Gets an array of all hierarchical parent-nodes of this node
      * (with the root-node as the first element).
      *
+     * @param bool $includeCurrent
      * @return RouteNode[]
      */
-    public function getParentNodes()
+    public function getRootLineNodes(bool $includeCurrent=false)
     {
 
-        $parentNodes = [];
+        $rootLineNodes = [];
 
-        $this->accumulateParentNodes($parentNodes);
+        $this->accumulateParentNodes($rootLineNodes);
 
-        $parentNodes = array_reverse($parentNodes);
+        $rootLineNodes = array_reverse($rootLineNodes);
 
-        return $parentNodes;
+        if ($includeCurrent) {
+            array_push($rootLineNodes, $this);
+        }
+
+        return $rootLineNodes;
     }
 
     /**
@@ -402,19 +408,33 @@ class RouteNode
      */
     public function hasParameter()
     {
-
         return !is_null($this->parameter);
     }
 
     /**
-     * Get the parameter of this node.
+     * Returns an array of all RouteParameters used by this node or one of it's parents.
      *
-     * @return null|string
+     * @return RouteParameter[]
      */
-    public function getParameter()
+    public function getRootLineParameters()
     {
 
-        return $this->parameter;
+        // Initialize the return-array.
+        $parameters = [];
+
+        // Get all parent nodes including the current node.
+        $rootLineNodes = $this->getRootLineNodes(true);
+
+        // For each node of the rootline, we check, if it is a parameter-node
+        // and add it to $parameters.
+        foreach ($rootLineNodes as $node) {
+            if ($node->hasParameter()) {
+                $parameters[$node->parameter->getName()] = $node->parameter;
+            }
+        }
+
+        return $parameters;
+
     }
 
     /**
@@ -432,7 +452,7 @@ class RouteNode
         $parameters = [];
 
         // Get all parent nodes and add the current node.
-        $rootLineNodes = $this->getParentNodes();
+        $rootLineNodes = $this->getRootLineNodes();
         array_push($rootLineNodes, $this);
 
         // For each node of the rootline, we check, if it is a parameter-node
@@ -528,13 +548,16 @@ class RouteNode
     }
 
     /**
-     * @param null $parameter
-     * @return RouteNode
+     * @param string $parameter
+     * @return RouteParameter
      */
-    public function setParameter($parameter)
+    public function parameter(string $parameter, bool $setSegment=true) : RouteParameter
     {
-        $this->parameter = $parameter;
-        return $this;
+        $this->parameter = new RouteParameter($parameter, $this);
+        if ($setSegment) {
+            $this->segment("{".$parameter."}");
+        }
+        return $this->parameter;
     }
 
     /**
@@ -543,9 +566,7 @@ class RouteNode
      */
     protected function setLangFiles()
     {
-
         $this->setContentLangFile();
-
     }
 
     /**
@@ -1231,7 +1252,7 @@ class RouteNode
         }
 
         // Add segments of parent nodes.
-        foreach ($this->getParentNodes() as $parentNode) {
+        foreach ($this->getRootLineNodes() as $parentNode) {
             if ($parentNode->inheritSegment) {
                 $parentNodeSegment = $parentNode->getSegment($locale);
                 if (strlen($parentNodeSegment) > 0) {
