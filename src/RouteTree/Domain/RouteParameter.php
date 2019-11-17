@@ -3,8 +3,9 @@
 namespace Webflorist\RouteTree\Domain;
 
 
+use Illuminate\Database\Eloquent\Model;
 use Webflorist\RouteTree\Exceptions\NoRouteParameterModelException;
-use Webflorist\RouteTree\Interfaces\RouteParameterModelContract;
+use Webflorist\RouteTree\Interfaces\RouteKeyModelContract;
 use Webflorist\RouteTree\RouteTree;
 
 /**
@@ -60,7 +61,7 @@ class RouteParameter
 
     public function model(string $model)
     {
-        if (!isset(class_implements($model)[RouteParameterModelContract::class])) {
+        if (!isset(class_implements($model)[RouteKeyModelContract::class])) {
             throw new NoRouteParameterModelException("Model '$model' does not implement 'RouteParameterModelContract'");
         }
         $this->model = $model;
@@ -85,7 +86,7 @@ class RouteParameter
         }
 
         if (!is_null($this->model)) {
-            return $this->model::getRouteParameterValues($locale, $parameters);
+            return $this->model::getRouteKeyValues($locale, $parameters);
         }
 
         return [];
@@ -110,8 +111,15 @@ class RouteParameter
     {
         if ($this->isActive()) {
             $currentParameterValue = \Route::current()->parameter($this->name);
-            if (!is_null($locale) && ($locale !== app()->getLocale())) {
-                $currentParameterValue = $this->translateValue($currentParameterValue, $locale, app()->getLocale());
+            $translateValue = !is_null($locale) && ($locale !== app()->getLocale());
+
+            // In case parameter is a bound model.
+            if ($currentParameterValue instanceof Model) {
+                $currentParameterValue = $currentParameterValue->getRouteKey();
+            }
+
+            if ($translateValue) {
+                return $this->translateValue($currentParameterValue, $locale, app()->getLocale());
             }
             return $currentParameterValue;
         }
@@ -128,7 +136,7 @@ class RouteParameter
         }
 
         if (!is_null($this->model)) {
-            return $this->model::translateRouteParameterValue($value, $toLocale, $fromLocale);
+            return $this->model::translateRouteKeyValue($value, $toLocale, $fromLocale);
         }
 
         return $value;
