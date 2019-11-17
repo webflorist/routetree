@@ -5,6 +5,7 @@ namespace Webflorist\RouteTree\Services;
 use Webflorist\RouteTree\Domain\RouteAction;
 use Webflorist\RouteTree\Domain\RouteNode;
 use Webflorist\RouteTree\Exceptions\ActionNotFoundException;
+use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
 use Webflorist\RouteTree\RouteTree;
 
 class RouteUrlBuilder
@@ -123,7 +124,7 @@ class RouteUrlBuilder
 
         return route(
             $routeAction->getRouteName($locale),
-            $routeAction->autoFillPathParameters($this->parameters, $locale, true),
+            $this->autoFillPathParameters($routeAction, $locale),
             $absolute
         );
     }
@@ -136,6 +137,80 @@ class RouteUrlBuilder
 
         throw new ActionNotFoundException('Node with Id "' . $this->routeNode->getId() . '" does not have the action "' . $this->action . '""');
     }
+
+    /**
+     * Tries to accumulate all path-parameters needed for an URL to $routeAction.
+     * The parameters can be stated as an associative array with $parameters.
+     * If not all required parameters are stated, the missing ones are tried to be auto-fetched,
+     * which is only possible, if the parent-nodes they belong to are currently active.
+     *
+     * @param RouteAction $routeAction
+     * @param string|null $locale: The language to be used for auto-fetching the parameter-values.
+     * @return array
+     * @throws UrlParametersMissingException
+     */
+    private function autoFillPathParameters(RouteAction $routeAction, ?string $locale)
+    {
+
+        // Init the return-array.
+        $return = [];
+
+        // Get all parameters needed for the path to this action.
+        $requiredParameters = $routeAction->getPathParameters($locale);
+
+        if (count($requiredParameters) > 0) {
+
+            // We try filling $return with $this->parameters first, since the caller specifically requested those.
+            $this->fillParameterArray($this->parameters, $requiredParameters, $return);
+
+            // If not all required parameters were stated in the handed over $parameters-array,
+            // we try to auto-fetch them from the parents of this node, if they are currently active.
+            if (count($requiredParameters) > 0) {
+
+                // Get active values of current root line parameters
+                $currentPathParameters = [];
+                foreach ($this->routeNode->getRootLineParameters() as $routeParameter) {
+                    if ($routeParameter->isActive()) {
+                        $currentPathParameters[$routeParameter->getName()] = $routeParameter->getActiveValue($locale);
+                    }
+                }
+
+                // We try filling $return with the still $requiredParameters from $currentPathParameters.
+                $this->fillParameterArray($currentPathParameters, $requiredParameters, $return);
+
+                // If there are still undetermined parameters missing, we throw an error
+                if (count($requiredParameters) > 0) {
+                    throw new UrlParametersMissingException('URL could not be generated due to the following undetermined parameter(s): ' . implode(',', $requiredParameters));
+                }
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Tries to fill $targetParameters
+     * with the keys stated in $requiredParameters
+     * taken from $sourceParameters.
+     *
+     * If successful, found parameters
+     * are removed from $requiredParameters
+     *
+     * @param $sourceParameters
+     * @param $requiredParameters
+     * @param $targetParameters
+     * @return array
+     */
+    protected function fillParameterArray($sourceParameters, &$requiredParameters, &$targetParameters)
+    {
+        foreach ($requiredParameters as $key => $parameter) {
+            if (is_array($sourceParameters) && isset($sourceParameters[$parameter])) {
+                $targetParameters[$parameter] = $sourceParameters[$parameter];
+                unset($requiredParameters[$key]);
+            }
+        }
+    }
+
 
 
 }

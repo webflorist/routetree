@@ -418,53 +418,6 @@ class RouteAction
     }
 
     /**
-     * Tries to accumulate all path-parameters needed for an URL to this RouteAction.
-     * The parameters can be stated as an associative array with $parameters.
-     * If not all required parameters are stated, the missing ones are tried to be auto-fetched,
-     * which is only possible, if the parent-nodes they belong to are currently active.
-     *
-     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to use.
-     * @param string $language The language to be used for auto-fetching the parameter-values.
-     * @param bool $translateValues : If true, the auto-fetched parameter-values are tried to be auto-translated.
-     * @return array
-     * @throws UrlParametersMissingException
-     */
-    public function autoFillPathParameters($parameters, $language, $translateValues = false)
-    {
-
-        // Init the return-array.
-        $return = [];
-
-        // Get all parameters needed for the path to this action.
-        $requiredParameters = $this->getPathParameters($language);
-
-        if (count($requiredParameters) > 0) {
-
-            // We try filling $return with the $requiredParameters from $parameters.
-            $this->fillParameterArray($parameters, $requiredParameters, $return);
-
-            // If not all required parameters were stated in the handed over $parameters-array,
-            // we try to auto-fetch them from the parents of this node, if they are currently active.
-            if (count($requiredParameters) > 0) {
-
-                // Get all current path-parameters for the requested language, but only for active nodes.
-                $currentPathParameters = $this->routeNode->getParametersOfNodeAndParents(true, $language, $translateValues);
-
-                // We try filling $return with the still $requiredParameters from $currentPathParameters.
-                $this->fillParameterArray($currentPathParameters, $requiredParameters, $return);
-
-                // If there are still undetermined parameters missing, we throw an error
-                if (count($requiredParameters) > 0) {
-                    throw new UrlParametersMissingException('URL could not be generated due to the following undetermined parameter(s): ' . implode(',', $requiredParameters));
-                }
-            }
-        }
-
-        return $return;
-
-    }
-
-    /**
      * Returns an array of all path-parameters needed for this RouteAction
      * These are basically all path-segments enclosed in curly braces.
      *
@@ -595,26 +548,6 @@ class RouteAction
         $routeName .= '.' . $this->getName();
 
         return $routeName;
-    }
-
-    /**
-     * Tries to fill $targetParameters
-     * with the keys stated in $requiredParameters
-     * taken from $sourceParameters.
-     *
-     * @param $sourceParameters
-     * @param $requiredParameters
-     * @param $targetParameters
-     * @return array
-     */
-    protected function fillParameterArray(&$sourceParameters, &$requiredParameters, &$targetParameters)
-    {
-        foreach ($requiredParameters as $key => $parameter) {
-            if (is_array($sourceParameters) && isset($sourceParameters[$parameter])) {
-                $targetParameters[$parameter] = $sourceParameters[$parameter];
-                unset($requiredParameters[$key]);
-            }
-        }
     }
 
     /**

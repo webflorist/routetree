@@ -61,7 +61,7 @@ class RouteParameter
     public function model(string $model)
     {
         if (!isset(class_implements($model)[RouteParameterModelContract::class])) {
-            throw new NoRouteParameterModelException("Model '$model' does not implement 'RouteParameterModel'");
+            throw new NoRouteParameterModelException("Model '$model' does not implement 'RouteParameterModelContract'");
         }
         $this->model = $model;
     }
@@ -102,5 +102,36 @@ class RouteParameter
         return $this->name;
     }
 
+    public function isActive() {
+        return \Route::current()->hasParameter($this->name);
+    }
+
+    public function getActiveValue(?string $locale=null)
+    {
+        if ($this->isActive()) {
+            $currentParameterValue = \Route::current()->parameter($this->name);
+            if (!is_null($locale) && ($locale !== app()->getLocale())) {
+                $currentParameterValue = $this->translateValue($currentParameterValue, $locale, app()->getLocale());
+            }
+            return $currentParameterValue;
+        }
+        return null;
+    }
+
+    private function translateValue($value, string $toLocale, string $fromLocale)
+    {
+        if (!is_null($this->values) && is_array(array_values($this->values)[0])) {
+            $valueKey = array_search($value, $this->values[$fromLocale]);
+            if (isset($this->values[$toLocale][$valueKey])) {
+                return $this->values[$toLocale][$valueKey];
+            }
+        }
+
+        if (!is_null($this->model)) {
+            return $this->model::translateRouteParameterValue($value, $toLocale, $fromLocale);
+        }
+
+        return $value;
+    }
 
 }

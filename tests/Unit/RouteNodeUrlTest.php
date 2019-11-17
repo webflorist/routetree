@@ -2,6 +2,9 @@
 
 namespace RouteTreeTests\Feature;
 
+use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
+use RouteTreeTests\Feature\Models\TestModel;
 use RouteTreeTests\TestCase;
 use Webflorist\RouteTree\Domain\RouteNode;
 
@@ -103,6 +106,63 @@ class RouteNodeUrlTest extends TestCase
                 ->parameters([
                     'resource' => 'my-slug'
                 ])->__toString()
+        );
+
+    }
+
+    public function test_node_url_using_auto_parameters()
+    {
+        $this->routeTree->node('page', function (RouteNode $node) {
+            $node->child('parameter1', function (RouteNode $node) {
+                $node->parameter('parameter1');
+                $node->child('parameter2', function (RouteNode $node) {
+                    $node->parameter('parameter2');
+                    $node->child('display-url', function (RouteNode $node) {
+                        $node->get(function(){
+                            return json_encode([(string)route_node_url()]);
+                        });
+                    });
+                });
+            });
+        });
+        $this->routeTree->generateAllRoutes();
+
+        $this->assertJsonResponse(
+            '/de/page/my-first-parameter/my-second-parameter/display-url',
+            ['http://localhost/de/page/my-first-parameter/my-second-parameter/display-url']
+        );
+
+    }
+
+    public function test_node_url_using_auto_parameters_and_translation_via_model()
+    {
+        $this->routeTree->node('page', function (RouteNode $node) {
+            $node->child('parameter1', function (RouteNode $node) {
+                $node->parameter('parameter_with_translated_values')->values([
+                    'de' => [
+                        'parameter1-wert1',
+                        'parameter1-wert2'
+                    ],
+                    'en' => [
+                        'parameter1-value1',
+                        'parameter1-value2'
+                    ]
+                ]);
+                $node->child('parameter2', function (RouteNode $node) {
+                    $node->parameter('parameter_with_model')->model(TestModel::class);
+                    $node->child('display-url', function (RouteNode $node) {
+                        $node->get(function(){
+                            return json_encode([(string)route_node_url()->locale('en')]);
+                        });
+                    });
+                });
+            });
+        });
+        $this->routeTree->generateAllRoutes();
+
+        $this->assertJsonResponse(
+            '/de/page/parameter1-wert2/test-model-wert1/display-url',
+            ['http://localhost/en/page/parameter1-value2/test-model-value1/display-url']
         );
 
     }

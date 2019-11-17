@@ -464,7 +464,7 @@ class RouteNode
                 $value = null;
 
                 // If the parameter is currently active, we try getting the value of it.
-                if ($node->hasActiveParameter()) {
+                if ($node->parameter->isActive()) {
 
                     $value = $node->getActiveValue();
 
@@ -965,19 +965,6 @@ class RouteNode
     }
 
     /**
-     * Checks, if this node is a parameter node and it's parameter is currently active.
-     *
-     * @return bool
-     */
-    public function hasActiveParameter()
-    {
-        if (!is_null($this->parameter)) {
-            return \Route::current()->hasParameter($this->parameter);
-        }
-        return false;
-    }
-
-    /**
      * Get the currently active raw (untranslated/unsluggified) parameter-value.
      *
      * @return string
@@ -985,56 +972,13 @@ class RouteNode
     public function getActiveValue()
     {
 
-        if ($this->hasActiveParameter()) {
+        if ($this->parameter->isActive()) {
 
             // We get the currently active value for the parameter of this node.
-            $activeValue = \Route::current()->parameter($this->parameter);
-
-            // This might actually be a translated or sluggified version of the real value,
-            // so we have to get an array of all values and their translations/slugs and find out the real one.
-            $possibleValues = $this->getData('values');
-
-            if (is_array($possibleValues)) {
-                $realValue = array_search($activeValue, $possibleValues);
-
-                if ($realValue !== false) {
-                    $activeValue = $realValue;
-                }
-            }
+            $activeValue = \Route::current()->parameter($this->parameter->getName());
 
             return $activeValue;
 
-        }
-
-        return false;
-    }
-
-    /**
-     * Get a (translated version or the slug of a) specific parameter-value.
-     *
-     * @param $value If no value is stated, the currently active one is determined (if possible).
-     * @param string $language The language the value should be fetched for (default=current locale).
-     * @return false|string
-     */
-    public function getValueSlug($value = null, $language = null)
-    {
-        // If no value was handed over, we try using the current one.
-        if (is_null($value)) {
-            $value = $this->getActiveValue();
-        }
-
-        if (strlen($value) > 0) {
-
-            // Fetch the whole list of available values and their translations in the requested language.
-            $values = $this->getValues($language);
-
-            // Return the slug for the requested value, if present
-            if (isset($values[$value])) {
-                return $values[$value];
-            }
-
-            // Otherwise we return the currently active value
-            return $value;
         }
 
         return false;

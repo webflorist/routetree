@@ -4,7 +4,7 @@ namespace RouteTreeTests\Feature;
 
 use Carbon\Carbon;
 use Illuminate\Filesystem\Filesystem;
-use RouteTreeTests\Feature\Models\TestModelContract;
+use RouteTreeTests\Feature\Models\TestModel;
 use RouteTreeTests\TestCase;
 use Webflorist\RouteTree\Domain\RouteNode;
 
@@ -117,7 +117,7 @@ class GenerateSitemapTest extends TestCase
             });
             $node->child('parameter-with-model', function (RouteNode $node) {
                 $node->child('parameter-with-model', function (RouteNode $node) {
-                    $node->parameter('parameter-with-model')->model(TestModelContract::class);
+                    $node->parameter('parameter-with-model')->model(TestModel::class);
                     $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
                 });
             });
@@ -125,7 +125,7 @@ class GenerateSitemapTest extends TestCase
                 $node->resource('resource', '\RouteTreeTests\Feature\Controllers\TestController');
             });
             $node->child('resource-with-model', function (RouteNode $node) {
-                $node->resource('resource-with-model', '\RouteTreeTests\Feature\Controllers\TestController')->model(TestModelContract::class);
+                $node->resource('resource-with-model', '\RouteTreeTests\Feature\Controllers\TestController')->model(TestModel::class);
             });
             $node->child('auth', function (RouteNode $node) {
                 $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
