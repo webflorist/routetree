@@ -98,7 +98,7 @@ class GenerateSitemapCommand extends Command
 
     /**
      * @param RegisteredRoute $registeredRoute
-     * @param string|null $parameters
+     * @param array|null $parameters
      */
     function addRegisteredRouteToUrlset(RegisteredRoute $registeredRoute, ?array $parameters=null): void
     {
@@ -107,7 +107,7 @@ class GenerateSitemapCommand extends Command
             return;
         }
 
-        $urlData = ['loc' => $loc ?? route($registeredRoute->routeName, $parameters)];
+        $urlData = ['loc' => config('routetree.sitemap.base_url').route($registeredRoute->routeName, $parameters, false)];
         if($registeredRoute->routeNode->sitemap->hasLastmod()) {
             $urlData['lastmod'] = $registeredRoute->routeNode->sitemap->getLastmod();
         }

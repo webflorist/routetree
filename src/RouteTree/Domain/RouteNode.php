@@ -438,72 +438,6 @@ class RouteNode
     }
 
     /**
-     * Returns an array of all parameters and their values (if currently active) used by this node or one of it's parents.
-     *
-     * @param bool $activeOnly Only parameters, that are acutally present in the current route will be returned.
-     * @param null $language
-     * @param bool $translateValues Values is are translated into the requested language.
-     * @return array
-     */
-    public function getParametersOfNodeAndParents($activeOnly = false, $language = null, $translateValues = false)
-    {
-
-        // Initialize the return-array.
-        $parameters = [];
-
-        // Get all parent nodes and add the current node.
-        $rootLineNodes = $this->getRootLineNodes();
-        array_push($rootLineNodes, $this);
-
-        // For each node of the rootline, we check, if it is a parameter-node
-        // and try getting it's value in the requested language.
-        foreach ($rootLineNodes as $node) {
-            if ($node->hasParameter()) {
-
-                // Per default we set null as the parameter-value
-                $value = null;
-
-                // If the parameter is currently active, we try getting the value of it.
-                if ($node->parameter->isActive()) {
-
-                    $value = $node->getActiveValue();
-
-                    // If the value should be translated, we try to do that.
-                    if ($translateValues) {
-
-                        $value = $node->getValueSlug($value, $language);
-                    }
-
-                }
-
-                // If $activeOnly is set to true, we only add this parameter to the output-array, if it has a value.
-                if (!($activeOnly && is_null($value))) {
-                    $parameters[$node->getParameter()] = $value;
-                }
-            }
-        }
-
-        return $parameters;
-
-    }
-
-    /**
-     * Tries to get the currently active action of this node.
-     * Returns false, if no action of the current node is currently active.
-     *
-     * @return RouteAction|bool
-     */
-    public function getActiveAction()
-    {
-
-        if (route_tree()->getCurrentAction()->getRouteNode() === $this) {
-            return route_tree()->getCurrentAction();
-        }
-
-        return false;
-    }
-
-    /**
      * Tries to get the action of this node, that is currently lowest
      * in the hierarchy of root-line-actions (mostly relevant for resource actions).
      *
@@ -514,7 +448,7 @@ class RouteNode
      * Returns false, if no action of the current node is currently in the rootline.
      *
      * @return RouteAction|bool
-     * @throws Exceptions\UrlParametersMissingException
+     * @throws NodeNotFoundException
      */
     public function getLowestRootLineAction()
     {

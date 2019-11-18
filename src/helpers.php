@@ -1,8 +1,6 @@
 <?php
 
-use Webflorist\RouteTree\Exceptions\ActionNotFoundException;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
-use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
 use Webflorist\RouteTree\RouteTree;
 use Webflorist\RouteTree\Services\RouteUrlBuilder;
 
@@ -10,7 +8,7 @@ if (! function_exists('route_tree')) {
     /**
      * Gets the RouteTree singleton from Laravel's service-container
      *
-     * @return \Webflorist\RouteTree\RouteTree
+     * @return RouteTree
      */
     function route_tree()
     {
@@ -29,6 +27,7 @@ if ( ! function_exists('route_node_url()')) {
      * @param string $locale The language this url should be generated for (default=current locale).
      * @param bool $absolute Create absolute paths instead of relative paths (default=true/configurable).
      * @return RouteUrlBuilder
+     * @throws NodeNotFoundException
      */
     function route_node_url($nodeId=null, $action=null, $parameters = null, $locale=null, $absolute=null) : RouteUrlBuilder
     {
@@ -59,6 +58,7 @@ if (! function_exists('trans_by_route')) {
      * @param array $parameters
      * @param string $locale
      * @return string
+     * @throws NodeNotFoundException
      */
     function trans_by_route($id = null, $useParentNode = false, $nodeId = '', $parameters = [], $locale = null)
     {

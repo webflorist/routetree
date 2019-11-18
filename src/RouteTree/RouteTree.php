@@ -36,13 +36,6 @@ class RouteTree
     protected $currentAction = null;
 
     /**
-     * Instance of the node-generator used to generate nodes out of an array.
-     *
-     * @var NodeGenerator|null
-     */
-    protected $nodeGenerator = null;
-
-    /**
      * Gets set to true, if all routes have been successfully generated.
      *
      * @var bool
@@ -57,9 +50,6 @@ class RouteTree
 
         // Create an empty root-node.
         $this->rootNode = new RouteNode("");
-
-        // Create instance of the node-generator.
-        $this->nodeGenerator = new NodeGenerator($this);
 
         // Create instance of the registeredRoutes-collection.
         $this->registeredRoutes = new Collection();

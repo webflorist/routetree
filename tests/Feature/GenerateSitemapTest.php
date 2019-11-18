@@ -72,14 +72,14 @@ class GenerateSitemapTest extends TestCase
             $node->child('excluded', function (RouteNode $node) {
                 $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
                 $node->sitemap
-                    ->exclude();;
+                    ->exclude();
                 $node->child('excluded-child', function (RouteNode $node) {
                     $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
                 });
                 $node->child('non-excluded-child', function (RouteNode $node) {
                     $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
                     $node->sitemap
-                        ->exclude(false);;
+                        ->exclude(false);
                 });
             });
             $node->child('redirect', function (RouteNode $node) {

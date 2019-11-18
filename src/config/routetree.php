@@ -47,7 +47,7 @@ return [
     'localization' => [
 
         /*
-         * The base-folder for translations (optionally including any namespace)
+         * The base-folder for translations (optionally including any namespace).
          */
         'base_folder'  => 'pages',
 
@@ -73,6 +73,12 @@ return [
          * Name of the output file (relative to laravel root).
          */
         'output_file' => 'public/sitemap.xml',
+
+        /*
+         * Base URL of generated urls.
+         * e.g. "http://localhost".
+         */
+        'base_url' => config('app.url')
 
     ],
 
