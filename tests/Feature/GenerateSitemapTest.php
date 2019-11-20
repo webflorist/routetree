@@ -4,7 +4,9 @@ namespace RouteTreeTests\Feature;
 
 use Carbon\Carbon;
 use Illuminate\Filesystem\Filesystem;
-use RouteTreeTests\Feature\Models\TestModel;
+use RouteTreeTests\Feature\Models\BlogArticle;
+use RouteTreeTests\Feature\Models\BlogCategory;
+use RouteTreeTests\Feature\Models\TestModelTranslatable;
 use RouteTreeTests\TestCase;
 use Webflorist\RouteTree\Domain\RouteNode;
 
@@ -115,17 +117,32 @@ class GenerateSitemapTest extends TestCase
                     $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
                 });
             });
-            $node->child('parameter-with-model', function (RouteNode $node) {
-                $node->child('parameter-with-model', function (RouteNode $node) {
-                    $node->parameter('parameter-with-model')->model(TestModel::class);
+            $node->child('blog-using-parameters', function (RouteNode $node) {
+                $node->child('category', function (RouteNode $node) {
+                    $node->parameter('category')->model(BlogCategory::class);
                     $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                    $node->child('article', function (RouteNode $node) {
+                        $node->parameter('article')->model(BlogArticle::class);
+                        $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                    });
                 });
             });
             $node->child('resource', function (RouteNode $node) {
                 $node->resource('resource', '\RouteTreeTests\Feature\Controllers\TestController');
             });
-            $node->child('resource-with-model', function (RouteNode $node) {
-                $node->resource('resource-with-model', '\RouteTreeTests\Feature\Controllers\TestController')->model(TestModel::class);
+            $node->child('blog-using-resources', function (RouteNode $node) {
+                $node->resource('category', '\RouteTreeTests\Feature\Controllers\TestController')
+                    ->only(['index','show'])
+                    ->model(BlogCategory::class)
+                    ->child('articles', function(RouteNode $node) {
+                        $node->resource('article', '\RouteTreeTests\Feature\Controllers\TestController')
+                            ->only(['index','show'])
+                            ->model(BlogArticle::class)
+                            ->child('print', function (RouteNode $node) {
+                                $node->get('\RouteTreeTests\Feature\Controllers\TestController@print');
+                            });
+                    });
+                ;
             });
             $node->child('auth', function (RouteNode $node) {
                 $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
@@ -154,10 +171,22 @@ class GenerateSitemapTest extends TestCase
         <loc>http://localhost/de/excluded/non-excluded-child</loc>
     </url>
     <url>
-        <loc>http://localhost/de/parameter-with-model/wert-1</loc>
+        <loc>http://localhost/de/nested-parameters-with-model/wert-1</loc>
     </url>
     <url>
-        <loc>http://localhost/de/parameter-with-model/wert-2</loc>
+        <loc>http://localhost/de/nested-parameters-with-model/wert-2</loc>
+    </url>
+    <url>
+        <loc>http://localhost/de/nested-parameters-with-model/wert-1/wert-1</loc>
+    </url>
+    <url>
+        <loc>http://localhost/de/nested-parameters-with-model/wert-1/wert-2</loc>
+    </url>
+    <url>
+        <loc>http://localhost/de/nested-parameters-with-model/wert-2/wert-1</loc>
+    </url>
+    <url>
+        <loc>http://localhost/de/nested-parameters-with-model/wert-2/wert-2</loc>
     </url>
     <url>
         <loc>http://localhost/de/parameter-with-translated-values/parameter-array-wert1</loc>
@@ -175,19 +204,19 @@ class GenerateSitemapTest extends TestCase
         <loc>http://localhost/de/resource</loc>
     </url>
     <url>
-        <loc>http://localhost/de/resource-with-model</loc>
+        <loc>http://localhost/de/photos</loc>
     </url>
     <url>
-        <loc>http://localhost/de/resource-with-model/erstellen</loc>
+        <loc>http://localhost/de/photos/erstellen</loc>
     </url>
     <url>
-        <loc>http://localhost/de/resource-with-model/wert-1</loc>
+        <loc>http://localhost/de/photos/wert-1</loc>
     </url>
     <url>
-        <loc>http://localhost/de/resource-with-model/wert-2</loc>
+        <loc>http://localhost/de/photos/wert-2</loc>
     </url>
     <url>
-        <loc>http://localhost/de/resource-with-model/wert-1/bearbeiten</loc>
+        <loc>http://localhost/de/photos/wert-1/bearbeiten</loc>
     </url>
     <url>
         <loc>http://localhost/de/resource-with-model/wert-2/bearbeiten</loc>
@@ -205,10 +234,22 @@ class GenerateSitemapTest extends TestCase
         <loc>http://localhost/en/excluded/non-excluded-child</loc>
     </url>
     <url>
-        <loc>http://localhost/en/parameter-with-model/value-1</loc>
+        <loc>http://localhost/en/nested-parameters-with-model/value-1</loc>
     </url>
     <url>
-        <loc>http://localhost/en/parameter-with-model/value-2</loc>
+        <loc>http://localhost/en/nested-parameters-with-model/value-2</loc>
+    </url>
+    <url>
+        <loc>http://localhost/en/nested-parameters-with-model/value-1/value-1</loc>
+    </url>
+    <url>
+        <loc>http://localhost/en/nested-parameters-with-model/value-1/value-2</loc>
+    </url>
+    <url>
+        <loc>http://localhost/en/nested-parameters-with-model/value-2/value-1</loc>
+    </url>
+    <url>
+        <loc>http://localhost/en/nested-parameters-with-model/value-2/value-2</loc>
     </url>
     <url>
         <loc>http://localhost/en/parameter-with-translated-values/parameter-array-value1</loc>

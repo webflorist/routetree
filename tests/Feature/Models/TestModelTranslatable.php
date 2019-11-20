@@ -3,17 +3,17 @@
 namespace RouteTreeTests\Feature\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Webflorist\RouteTree\Interfaces\RouteKeyModelContract;
+use Webflorist\RouteTree\Interfaces\TranslatableRouteKey;
 
-class TestModel extends Model implements RouteKeyModelContract
+class TestModelTranslatable extends Model implements TranslatableRouteKey
 {
 
-    public static function getRouteKeyValues(string $locale = null, ?array $parameters = null)
+    public static function getAllRouteKeys(string $locale = null, ?array $parameters = null)
     {
         return $locale === 'de' ? ['wert-1','wert-2'] : ['value-1','value-2'];
     }
 
-    public static function translateRouteKeyValue(string $value, string $toLocale, string $fromLocale)
+    public static function translateRouteKey(string $value, string $toLocale, string $fromLocale)
     {
         $values = [
             'de' => [

@@ -4,8 +4,9 @@ namespace Webflorist\RouteTree\Domain;
 
 
 use Illuminate\Database\Eloquent\Model;
+use RouteTreeTests\Feature\Models\BlogArticle;
 use Webflorist\RouteTree\Exceptions\NoRouteParameterModelException;
-use Webflorist\RouteTree\Interfaces\RouteKeyModelContract;
+use Webflorist\RouteTree\Interfaces\TranslatableRouteKey;
 use Webflorist\RouteTree\RouteTree;
 
 /**
@@ -61,7 +62,7 @@ class RouteParameter
 
     public function model(string $model)
     {
-        if (!isset(class_implements($model)[RouteKeyModelContract::class])) {
+        if (!isset(class_implements($model)[TranslatableRouteKey::class])) {
             throw new NoRouteParameterModelException("Model '$model' does not implement 'RouteParameterModelContract'");
         }
         $this->model = $model;
@@ -86,7 +87,7 @@ class RouteParameter
         }
 
         if (!is_null($this->model)) {
-            return $this->model::getRouteKeyValues($locale, $parameters);
+            return $this->model::getAllRouteKeys($locale, $parameters);
         }
 
         return [];
@@ -136,7 +137,7 @@ class RouteParameter
         }
 
         if (!is_null($this->model)) {
-            return $this->model::translateRouteKeyValue($value, $toLocale, $fromLocale);
+            return $this->model::translateRouteKey($value, $toLocale, $fromLocale);
         }
 
         return $value;

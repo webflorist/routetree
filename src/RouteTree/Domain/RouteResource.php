@@ -2,7 +2,10 @@
 
 namespace Webflorist\RouteTree\Domain;
 
+use Closure;
 use Illuminate\Support\Facades\Lang;
+use Webflorist\RouteTree\Exceptions\NodeAlreadyHasChildWithSameNameException;
+use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
 
 class RouteResource
 {
@@ -175,11 +178,31 @@ class RouteResource
     public function model(string $class)
     {
         $this->routeNode->parameter->model($class);
+        return $this;
     }
 
     public function values(array $values)
     {
         $this->routeNode->parameter->values($values);
+        return $this;
+    }
+
+
+
+    /**
+     * Create a new resource-child-node.
+     *
+     * @param string $name
+     * @param Closure $callback
+     * @return RouteNode
+     * @throws NodeNotFoundException
+     * @throws NodeAlreadyHasChildWithSameNameException
+     */
+    public function child(string $name, Closure $callback)
+    {
+        $child = $this->routeNode->child($name, $callback);
+        $child->isResourceChild = true;
+        return $child;
     }
 
 }

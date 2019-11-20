@@ -196,7 +196,6 @@ class RoutePayload
         if (is_array($payload) && isset($payload[$locale])) {
             return $payload[$locale];
         }
-
         // If no parameters were handed over, we use current route-parameters as default.
         RouteTree::establishRouteParameters($parameters);
 

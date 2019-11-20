@@ -82,4 +82,26 @@ return [
 
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | API Settings
+    |--------------------------------------------------------------------------
+    |
+    | Here you may configure settings for the integrated REST-API.
+    |
+    */
+    'api' => [
+
+        /*
+         * Should API routes be registered?
+         */
+        'enabled' => false,
+
+        /*
+         * Base path of the API routes.
+         */
+        'base_path' => 'api/routetree/'
+
+    ],
+
 ];

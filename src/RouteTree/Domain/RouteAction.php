@@ -3,6 +3,7 @@
 namespace Webflorist\RouteTree\Domain;
 
 use Illuminate\Routing\Route;
+use Illuminate\Support\Arr;
 use Webflorist\RouteTree\Domain\Traits\CanHaveParameterRegex;
 use Webflorist\RouteTree\Domain\Traits\CanHaveSegments;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
@@ -686,6 +687,11 @@ class RouteAction
             }
         }
         return true;
+    }
+
+    public function getRootLineParameters()
+    {
+        return Arr::only($this->routeNode->getRootLineParameters(), $this->getPathParameters());
     }
 
 }

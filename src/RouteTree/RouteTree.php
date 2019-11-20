@@ -265,11 +265,25 @@ class RouteTree
     /**
      * Get collection of Routes registered with the RouteTree.
      *
+     * @param bool $resolveRouteKeys
      * @return Collection
      */
-    public function getRegisteredRoutes()
+    public function getRegisteredRoutes(bool $resolveRouteKeys=false)
     {
-        return $this->registeredRoutes;
+        if ($resolveRouteKeys === false) {
+            return $this->registeredRoutes;
+        }
+
+        $return = new Collection();
+        $this->registeredRoutes->values()->each(function (RegisteredRoute $registeredRoute) use(&$return) {
+            if ($registeredRoute->routeAction->hasParameters()) {
+                $return = $return->merge($registeredRoute->getForAllRouteKeys());
+            }
+            else {
+                $return->add($registeredRoute);
+            }
+        });
+        return $return;
     }
 
     /**
@@ -401,10 +415,11 @@ class RouteTree
                 unset($currentRouteParameters['view']);
                 unset($currentRouteParameters['data']);
             }
-            return $parameters = $currentRouteParameters;
+            $parameters = $currentRouteParameters;
         }
-
-        return $parameters = [];
+        if (!is_array($parameters)) {
+            $parameters = [];
+        }
     }
 
     /**

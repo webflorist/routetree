@@ -2,10 +2,12 @@
 
 namespace Webflorist\RouteTree;
 
+use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
-use Webflorist\RouteTree\Middleware\RouteTreeMiddleware;
-use Webflorist\RouteTree\Middleware\SetLocalFromSession;
-use Webflorist\RouteTree\Commands\GenerateSitemapCommand;
+use Webflorist\RouteTree\Http\Controllers\Api\RoutesController;
+use Webflorist\RouteTree\Http\Middleware\RouteTreeMiddleware;
+use Webflorist\RouteTree\Http\Middleware\SetLocalFromSession;
+use Webflorist\RouteTree\Console\Commands\GenerateSitemapCommand;
 
 class RouteTreeServiceProvider extends ServiceProvider
 {
@@ -33,6 +35,7 @@ class RouteTreeServiceProvider extends ServiceProvider
         $this->loadTranslations();
 	    $this->addGlobalMiddleware(RouteTreeMiddleware::class);
         $this->loadViews();
+        $this->addRoutes($this->app['router']);
     }
 
     protected function mergeConfig()
@@ -76,5 +79,14 @@ class RouteTreeServiceProvider extends ServiceProvider
     private function addGlobalMiddleware(string $middleware)
     {
         $this->app['Illuminate\Contracts\Http\Kernel']->pushMiddleware($middleware);
+    }
+
+    private function addRoutes( Router $router)
+    {
+        if (config('routetree.api.enabled')) {
+            $router->group(['prefix' => config('routetree.api.base_path'), 'middleware' => 'api'], function (Router $router) {
+                $router->resource('paths', RoutesController::class)->only('index');
+            });
+        }
     }
 }

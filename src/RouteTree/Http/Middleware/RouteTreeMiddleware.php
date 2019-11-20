@@ -1,6 +1,6 @@
 <?php
 
-namespace Webflorist\RouteTree\Middleware;
+namespace Webflorist\RouteTree\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;

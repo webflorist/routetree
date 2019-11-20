@@ -1,13 +1,10 @@
 <?php
 
-namespace Webflorist\RouteTree\Commands;
+namespace Webflorist\RouteTree\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Routing\Route;
-use Illuminate\Support\Collection;
 use Throwable;
 use Webflorist\RouteTree\Domain\RegisteredRoute;
-use Webflorist\RouteTree\Domain\RouteAction;
 
 class GenerateSitemapCommand extends Command
 {
@@ -40,7 +37,7 @@ class GenerateSitemapCommand extends Command
 
         file_put_contents(
             $this->getOutputFile(),
-            view('webflorist-routetree::sitemap',[
+            view('webflorist-routetree::sitemap', [
                 'urlset' => $this->urlset
             ])
                 ->render()
@@ -60,20 +57,26 @@ class GenerateSitemapCommand extends Command
 
     private function generateUrlset()
     {
-        route_tree()->getRegisteredRoutesByMethod('get')->each(function (RegisteredRoute $registeredRoute, $index) {
+        route_tree()->getRegisteredRoutes(true)->each(function (RegisteredRoute $registeredRoute, $index) {
+            if (!$registeredRoute->hasMethod('GET')) {
+                $this->warn($registeredRoute->path . " EXCLUDED due to not being GET route.");
+                return;
+            }
 
             if ($registeredRoute->routeNode->sitemap->isExcluded()) {
-                $this->warn($registeredRoute->path." EXCLUDED manually.");
+                $this->warn($registeredRoute->path . " EXCLUDED manually.");
                 return;
             }
 
+            /*
             if ($registeredRoute->routeAction->hasParameters() && !$registeredRoute->routeAction->hasParameterValues($registeredRoute->locale)) {
-                $this->warn($registeredRoute->path." EXCLUDED due to parameters without stated values or model-binding.");
+                $this->warn($registeredRoute->path . " EXCLUDED due to parameters without stated values or model-binding.");
                 return;
             }
+            */
 
             if ($registeredRoute->routeAction->isRedirect()) {
-                $this->warn($registeredRoute->path." EXCLUDED due to redirect.");
+                $this->warn($registeredRoute->path . " EXCLUDED due to redirect.");
                 return;
             }
 
@@ -100,44 +103,24 @@ class GenerateSitemapCommand extends Command
      * @param RegisteredRoute $registeredRoute
      * @param array|null $parameters
      */
-    function addRegisteredRouteToUrlset(RegisteredRoute $registeredRoute, ?array $parameters=null): void
+    function addRegisteredRouteToUrlset(RegisteredRoute $registeredRoute): void
     {
-        if ($registeredRoute->routeAction->hasParameters() && is_null($parameters)) {
-            $this->processParameterValues($registeredRoute);
-            return;
+        $baseUrl = config('routetree.sitemap.base_url');
+        if (substr($baseUrl, -1) !== '/') {
+            $baseUrl .= '/';
         }
-
-        $urlData = ['loc' => config('routetree.sitemap.base_url').route($registeredRoute->routeName, $parameters, false)];
-        if($registeredRoute->routeNode->sitemap->hasLastmod()) {
+        $urlData = ['loc' => $baseUrl . $registeredRoute->path];
+        if ($registeredRoute->routeNode->sitemap->hasLastmod()) {
             $urlData['lastmod'] = $registeredRoute->routeNode->sitemap->getLastmod();
         }
-        if($registeredRoute->routeNode->sitemap->hasChangefreq()) {
+        if ($registeredRoute->routeNode->sitemap->hasChangefreq()) {
             $urlData['changefreq'] = $registeredRoute->routeNode->sitemap->getChangefreq();
         }
-        if($registeredRoute->routeNode->sitemap->hasPriority()) {
+        if ($registeredRoute->routeNode->sitemap->hasPriority()) {
             $urlData['priority'] = $registeredRoute->routeNode->sitemap->getPriority();
         }
         $this->urlset[] = $urlData;
-        $this->info($urlData['loc']." INCLUDED.");
-    }
-
-    private function processParameterValues(RegisteredRoute $registeredRoute)
-    {
-        $parameterSets = [];
-        foreach ($registeredRoute->routeNode->getRootLineParameters() as $routeParameter) {
-            foreach ($routeParameter->getValues($registeredRoute->locale) as $value) {
-                $parameterSets[] = [
-                    $routeParameter->getName() => $value
-                ];
-            }
-        }
-
-        foreach ($parameterSets as $parameterSet) {
-            $this->addRegisteredRouteToUrlset(
-                $registeredRoute,
-                $parameterSet
-            );
-        }
+        $this->info($urlData['loc'] . " INCLUDED.");
     }
 
 }

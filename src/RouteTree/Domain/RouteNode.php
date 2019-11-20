@@ -660,6 +660,7 @@ class RouteNode
      * @return RouteNode
      * @throws NodeNotFoundException
      * @throws Exceptions\NodeAlreadyHasChildWithSameNameException
+     * @throws NodeAlreadyHasChildWithSameNameException
      */
     public function child(string $name, Closure $callback)
     {
@@ -987,34 +988,6 @@ class RouteNode
     }
 
     /**
-     * Retrieves the paths inherited from this node's parents.
-     *
-     * @param bool $appendParameter If true, checks, if the parent has a parameter
-     * @return array|bool
-     */
-    protected function getInheritedPaths($appendParameter = false)
-    {
-
-        if ($this->hasParentNode()) {
-            if ($this->parentNode->inheritSegment) {
-                $pathsToInherit = $this->parentNode->paths;
-                if ($appendParameter && $this->parentNode->hasParameter()) {
-                    foreach ($pathsToInherit as $language => $path) {
-
-                        $pathsToInherit[$language] .= '/{' . $this->parentNode->getParameter() . '}';
-                    }
-                }
-                return $pathsToInherit;
-            } else {
-                return $this->parentNode->getInheritedPaths($appendParameter);
-            }
-        }
-
-        return false;
-    }
-
-
-    /**
      * Automatically sets all path-segments, that have not yet specifically set.
      * It checks for each-language, if an auto-translation is set,
      * otherwise it uses the node-name as the path-segment.     *
@@ -1137,6 +1110,13 @@ class RouteNode
                     $segments[] = $parentNodeSegment;
                 }
             }
+        }
+
+        // If this is a resource child,
+        // we append the show-action's
+        // segment of the parent.
+        if ($this->isResourceChild) {
+            $segments[] = '{' . $this->parentNode->resource->getName() . '}';
         }
 
         // And finally the segment of $this RouteNode.

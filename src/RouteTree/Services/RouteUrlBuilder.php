@@ -167,7 +167,7 @@ class RouteUrlBuilder
             // we try to auto-fetch them from the parents of this node, if they are currently active.
             if (count($requiredParameters) > 0) {
 
-                // Get active values of current root line parameters
+                // Get active values of current root line parameters.
                 $currentPathParameters = [];
                 foreach ($this->routeNode->getRootLineParameters() as $routeParameter) {
                     if ($routeParameter->isActive()) {
