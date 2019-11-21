@@ -27,6 +27,13 @@ class Route extends JsonResource
      */
     public function toArray($request)
     {
+        if (!is_null($this->resource->routeKeys) && false) {
+            dd($this->resource->path, $this->resource->routeNode->payload->getTitle(
+                $this->resource->routeKeys,
+                $this->resource->locale,
+                $this->resource->routeAction->getName()
+            ));
+        }
         return [
             'type' => 'routes',
             'id' => $this->generateRouteId(),
@@ -37,17 +44,17 @@ class Route extends JsonResource
                 'locale' => $this->resource->locale,
                 'methods' => $this->resource->methods,
                 'title' => $this->resource->routeNode->payload->getTitle(
-                    $this->resource->parameters,
+                    $this->resource->routeKeys,
                     $this->resource->locale,
                     $this->resource->routeAction->getName()
                 ),
                 'navTitle' => $this->resource->routeNode->payload->getNavTitle(
-                    $this->resource->parameters,
+                    $this->resource->routeKeys,
                     $this->resource->locale,
                     $this->resource->routeAction->getName()
                 ),
                 'h1Title' => $this->resource->routeNode->payload->getH1Title(
-                    $this->resource->parameters,
+                    $this->resource->routeKeys,
                     $this->resource->locale,
                     $this->resource->routeAction->getName()
                 )
@@ -62,8 +69,8 @@ class Route extends JsonResource
     protected function generateRouteId(): string
     {
         $routeId = $this->resource->route->getName();
-        if (count($this->resource->parameters)>0) {
-            $routeId .= ':'.implode(',',$this->resource->parameters);
+        if (!is_null($this->resource->routeKeys) && count($this->resource->routeKeys)>0) {
+            $routeId .= ':'.implode(',',$this->resource->routeKeys);
         }
         return $routeId;
     }

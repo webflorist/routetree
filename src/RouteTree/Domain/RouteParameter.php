@@ -4,7 +4,6 @@ namespace Webflorist\RouteTree\Domain;
 
 
 use Illuminate\Database\Eloquent\Model;
-use RouteTreeTests\Feature\Models\BlogArticle;
 use Webflorist\RouteTree\Exceptions\NoRouteParameterModelException;
 use Webflorist\RouteTree\Interfaces\TranslatableRouteKey;
 use Webflorist\RouteTree\RouteTree;
@@ -46,7 +45,7 @@ class RouteParameter
      *
      * @var array
      */
-    private $values;
+    private $routeKeys;
 
     /**
      * RouteParameter constructor.
@@ -68,22 +67,22 @@ class RouteParameter
         $this->model = $model;
     }
 
-    public function values(array $values)
+    public function routeKeys(array $routeKeys)
     {
-        $this->values = $values;
+        $this->routeKeys = $routeKeys;
     }
 
-    public function getValues(?string $locale=null, ?array $parameters=null)
+    public function getRouteKeys(?string $locale = null, ?array $parameters = null)
     {
         RouteTree::establishLocale($locale);
         RouteTree::establishRouteParameters($parameters);
 
-        if (!is_null($this->values)) {
-            // if $this->values is multidimensional, we assume it's localised
-            if (is_array(array_values($this->values)[0])) {
-                return $this->values[$locale];
+        if (!is_null($this->routeKeys)) {
+            // if $this->routeKeys is multidimensional, we assume it's localised
+            if (is_array(array_values($this->routeKeys)[0])) {
+                return $this->routeKeys[$locale];
             }
-            return $this->values;
+            return $this->routeKeys;
         }
 
         if (!is_null($this->model)) {
@@ -94,9 +93,9 @@ class RouteParameter
 
     }
 
-    public function hasValues(string $locale, array $parameters=null)
+    public function hasRouteKeys(string $locale, array $parameters = null)
     {
-        return count($this->getValues($locale, $parameters)) > 0;
+        return count($this->getRouteKeys($locale, $parameters)) > 0;
     }
 
     public function getName()
@@ -104,11 +103,12 @@ class RouteParameter
         return $this->name;
     }
 
-    public function isActive() {
+    public function isActive()
+    {
         return \Route::current()->hasParameter($this->name);
     }
 
-    public function getActiveValue(?string $locale=null)
+    public function getActiveRouteKey(?string $locale = null)
     {
         if ($this->isActive()) {
             $currentParameterValue = \Route::current()->parameter($this->name);
@@ -120,27 +120,37 @@ class RouteParameter
             }
 
             if ($translateValue) {
-                return $this->translateValue($currentParameterValue, $locale, app()->getLocale());
+                return $this->translateRouteKey($currentParameterValue, $locale, app()->getLocale());
             }
             return $currentParameterValue;
         }
         return null;
     }
 
-    private function translateValue($value, string $toLocale, string $fromLocale)
+    private function translateRouteKey($routeKey, string $toLocale, string $fromLocale)
     {
-        if (!is_null($this->values) && is_array(array_values($this->values)[0])) {
-            $valueKey = array_search($value, $this->values[$fromLocale]);
-            if (isset($this->values[$toLocale][$valueKey])) {
-                return $this->values[$toLocale][$valueKey];
+        if (!is_null($this->routeKeys) && is_array(array_values($this->routeKeys)[0])) {
+            $valueKey = array_search($routeKey, $this->routeKeys[$fromLocale]);
+            if (isset($this->routeKeys[$toLocale][$valueKey])) {
+                return $this->routeKeys[$toLocale][$valueKey];
             }
         }
 
         if (!is_null($this->model)) {
-            return $this->model::translateRouteKey($value, $toLocale, $fromLocale);
+            return $this->model::translateRouteKey($routeKey, $toLocale, $fromLocale);
         }
 
-        return $value;
+        return $routeKey;
+    }
+
+    public function hasModel()
+    {
+        return $this->model !== null;
+    }
+
+    public function getModel()
+    {
+        return $this->model;
     }
 
 }

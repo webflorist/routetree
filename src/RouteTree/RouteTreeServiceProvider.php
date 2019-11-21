@@ -35,7 +35,7 @@ class RouteTreeServiceProvider extends ServiceProvider
         $this->loadTranslations();
 	    $this->addGlobalMiddleware(RouteTreeMiddleware::class);
         $this->loadViews();
-        $this->addRoutes($this->app['router']);
+        $this->addRoutes();
     }
 
     protected function mergeConfig()
@@ -81,8 +81,10 @@ class RouteTreeServiceProvider extends ServiceProvider
         $this->app['Illuminate\Contracts\Http\Kernel']->pushMiddleware($middleware);
     }
 
-    private function addRoutes( Router $router)
+    private function addRoutes()
     {
+        /** @var Router $router */
+        $router = $this->app['router'];
         if (config('routetree.api.enabled')) {
             $router->group(['prefix' => config('routetree.api.base_path'), 'middleware' => 'api'], function (Router $router) {
                 $router->resource('paths', RoutesController::class)->only('index');

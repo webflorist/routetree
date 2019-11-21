@@ -2,6 +2,7 @@
 
 namespace RouteTreeTests;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
@@ -10,6 +11,8 @@ use RouteTreeTests\Feature\Middleware\Test1Middleware;
 use RouteTreeTests\Feature\Middleware\Test2Middleware;
 use RouteTreeTests\Feature\Middleware\Test3Middleware;
 use RouteTreeTests\Feature\Middleware\Test4Middleware;
+use RouteTreeTests\Feature\Models\BlogArticle;
+use RouteTreeTests\Feature\Models\BlogCategory;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Webflorist\RouteTree\Domain\RouteNode;
 use Webflorist\RouteTree\RouteTree;
@@ -131,7 +134,100 @@ class TestCase extends BaseTestCase
     }
 
 
-    protected function generateTestRoutes($visitUri='') {
+    protected function generateComplexTestRoutes(): void
+    {
+        $this->routeTree->root(function (RouteNode $node) {
+            $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+            $node->sitemap
+                ->lastmod(Carbon::parse('2019-11-16T17:46:30.45+01:00'))
+                ->changefreq('monthly')
+                ->priority(1.0);
+            $node->child('excluded', function (RouteNode $node) {
+                $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                $node->sitemap
+                    ->exclude();
+                $node->child('excluded-child', function (RouteNode $node) {
+                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                });
+                $node->child('non-excluded-child', function (RouteNode $node) {
+                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                    $node->sitemap
+                        ->exclude(false);
+                });
+            });
+            $node->child('redirect', function (RouteNode $node) {
+                $node->redirect('excluded');
+            });
+            $node->child('permanent-redirect', function (RouteNode $node) {
+                $node->permanentRedirect('excluded');
+            });
+            $node->child('parameter', function (RouteNode $node) {
+                $node->child('parameter', function (RouteNode $node) {
+                    $node->segment('{parameter}');
+                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                });
+            });
+            $node->child('parameter-with-values', function (RouteNode $node) {
+                $node->child('parameter-with-values', function (RouteNode $node) {
+                    $node->parameter('parameter-with-values')->routeKeys([
+                        'parameter-array-value1', 'parameter-array-value2'
+                    ]);
+                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                });
+            });
+            $node->child('parameter-with-translated-values', function (RouteNode $node) {
+                $node->child('parameter-with-translated-values', function (RouteNode $node) {
+                    $node->parameter('parameter-with-translated-values')->routeKeys([
+                        'de' => [
+                            'parameter-array-wert1', 'parameter-array-wert2'
+                        ],
+                        'en' => [
+                            'parameter-array-value1', 'parameter-array-value2'
+                        ]
+                    ]);
+                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                });
+            });
+            $node->child('blog-using-parameters', function (RouteNode $node) {
+                $node->child('category', function (RouteNode $node) {
+                    $node->parameter('category')->model(BlogCategory::class);
+                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get')->name('show');
+                    $node->child('article', function (RouteNode $node) {
+                        $node->parameter('article')->model(BlogArticle::class);
+                        $node->get('\RouteTreeTests\Feature\Controllers\TestController@get')->name('show');
+                    });
+                });
+            });
+            $node->child('resource', function (RouteNode $node) {
+                $node->resource('resource', '\RouteTreeTests\Feature\Controllers\TestController');
+            });
+            $node->child('blog-using-resources', function (RouteNode $node) {
+                $node->resource('category', '\RouteTreeTests\Feature\Controllers\TestController')
+                    ->only(['index', 'show'])
+                    ->model(BlogCategory::class)
+                    ->child('articles', function (RouteNode $node) {
+                        $node->resource('article', '\RouteTreeTests\Feature\Controllers\TestController')
+                            ->only(['index', 'show'])
+                            ->model(BlogArticle::class)
+                            ->child('print', function (RouteNode $node) {
+                                $node->get('\RouteTreeTests\Feature\Controllers\TestController@print');
+                            });
+                    });;
+            });
+            $node->child('auth', function (RouteNode $node) {
+                $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                $node->middleware('auth');
+                $node->child('auth-child', function (RouteNode $node) {
+                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                });
+            });
+        });
+
+        $this->routeTree->generateAllRoutes();
+    }
+
+
+    protected function generateSimpleTestRoutes($visitUri='') {
 
         route_tree()->root(function (RouteNode $node) {
             $node->namespace('\RouteTreeTests\Feature\Controllers');

@@ -14,7 +14,7 @@ return [
         'parameter' => [
             'value1' => 'Wert 1',
             'value2' => 'Wert 2'
-        ]
+        ],
     ],
 
     'values' => [

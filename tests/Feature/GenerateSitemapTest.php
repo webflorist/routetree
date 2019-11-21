@@ -65,230 +65,188 @@ class GenerateSitemapTest extends TestCase
 
     public function test_complex_sitemap()
     {
-        $this->routeTree->root(function (RouteNode $node) {
-            $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
-            $node->sitemap
-                ->lastmod(Carbon::parse('2019-11-16T17:46:30.45+01:00'))
-                ->changefreq('monthly')
-                ->priority(1.0);
-            $node->child('excluded', function (RouteNode $node) {
-                $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
-                $node->sitemap
-                    ->exclude();
-                $node->child('excluded-child', function (RouteNode $node) {
-                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
-                });
-                $node->child('non-excluded-child', function (RouteNode $node) {
-                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
-                    $node->sitemap
-                        ->exclude(false);
-                });
-            });
-            $node->child('redirect', function (RouteNode $node) {
-                $node->redirect('excluded');
-            });
-            $node->child('permanent-redirect', function (RouteNode $node) {
-                $node->permanentRedirect('excluded');
-            });
-            $node->child('parameter', function (RouteNode $node) {
-                $node->child('parameter', function (RouteNode $node) {
-                    $node->segment('{parameter}');
-                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
-                });
-            });
-            $node->child('parameter-with-values', function (RouteNode $node) {
-                $node->child('parameter-with-values', function (RouteNode $node) {
-                    $node->parameter('parameter-with-values')->values([
-                        'parameter-array-value1', 'parameter-array-value2'
-                    ]);
-                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
-                });
-            });
-            $node->child('parameter-with-translated-values', function (RouteNode $node) {
-                $node->child('parameter-with-translated-values', function (RouteNode $node) {
-                    $node->parameter('parameter-with-translated-values')->values([
-                        'de' => [
-                            'parameter-array-wert1', 'parameter-array-wert2'
-                        ],
-                        'en' => [
-                            'parameter-array-value1', 'parameter-array-value2'
-                        ]
-                    ]);
-                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
-                });
-            });
-            $node->child('blog-using-parameters', function (RouteNode $node) {
-                $node->child('category', function (RouteNode $node) {
-                    $node->parameter('category')->model(BlogCategory::class);
-                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
-                    $node->child('article', function (RouteNode $node) {
-                        $node->parameter('article')->model(BlogArticle::class);
-                        $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
-                    });
-                });
-            });
-            $node->child('resource', function (RouteNode $node) {
-                $node->resource('resource', '\RouteTreeTests\Feature\Controllers\TestController');
-            });
-            $node->child('blog-using-resources', function (RouteNode $node) {
-                $node->resource('category', '\RouteTreeTests\Feature\Controllers\TestController')
-                    ->only(['index','show'])
-                    ->model(BlogCategory::class)
-                    ->child('articles', function(RouteNode $node) {
-                        $node->resource('article', '\RouteTreeTests\Feature\Controllers\TestController')
-                            ->only(['index','show'])
-                            ->model(BlogArticle::class)
-                            ->child('print', function (RouteNode $node) {
-                                $node->get('\RouteTreeTests\Feature\Controllers\TestController@print');
-                            });
-                    });
-                ;
-            });
-            $node->child('auth', function (RouteNode $node) {
-                $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
-                $node->middleware('auth');
-                $node->child('auth-child', function (RouteNode $node) {
-                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
-                });
-            });
-        });
+        $this->generateComplexTestRoutes();
 
-        $this->routeTree->generateAllRoutes();
-
-        $this->artisan('routetree:generate-sitemap')->assertExitCode('0');
+        $this->artisan('routetree:generate-sitemap')
+            //->expectsOutput('test')
+            ->assertExitCode('0')
+        ;
         $this->assertFileExists($this->getSitemapOutputFile());
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
         xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <url>
-        <loc>http://localhost/de</loc>
-        <lastmod>2019-11-16T17:46:30+01:00</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>1.0</priority>
-    </url>
-    <url>
-        <loc>http://localhost/de/excluded/non-excluded-child</loc>
-    </url>
-    <url>
-        <loc>http://localhost/de/nested-parameters-with-model/wert-1</loc>
-    </url>
-    <url>
-        <loc>http://localhost/de/nested-parameters-with-model/wert-2</loc>
-    </url>
-    <url>
-        <loc>http://localhost/de/nested-parameters-with-model/wert-1/wert-1</loc>
-    </url>
-    <url>
-        <loc>http://localhost/de/nested-parameters-with-model/wert-1/wert-2</loc>
-    </url>
-    <url>
-        <loc>http://localhost/de/nested-parameters-with-model/wert-2/wert-1</loc>
-    </url>
-    <url>
-        <loc>http://localhost/de/nested-parameters-with-model/wert-2/wert-2</loc>
-    </url>
-    <url>
-        <loc>http://localhost/de/parameter-with-translated-values/parameter-array-wert1</loc>
-    </url>
-    <url>
-        <loc>http://localhost/de/parameter-with-translated-values/parameter-array-wert2</loc>
-    </url>
-    <url>
-        <loc>http://localhost/de/parameter-with-values/parameter-array-value1</loc>
-    </url>
-    <url>
-        <loc>http://localhost/de/parameter-with-values/parameter-array-value2</loc>
-    </url>
-    <url>
-        <loc>http://localhost/de/resource</loc>
-    </url>
-    <url>
-        <loc>http://localhost/de/photos</loc>
-    </url>
-    <url>
-        <loc>http://localhost/de/photos/erstellen</loc>
-    </url>
-    <url>
-        <loc>http://localhost/de/photos/wert-1</loc>
-    </url>
-    <url>
-        <loc>http://localhost/de/photos/wert-2</loc>
-    </url>
-    <url>
-        <loc>http://localhost/de/photos/wert-1/bearbeiten</loc>
-    </url>
-    <url>
-        <loc>http://localhost/de/resource-with-model/wert-2/bearbeiten</loc>
-    </url>
-    <url>
-        <loc>http://localhost/de/resource/erstellen</loc>
-    </url>
-    <url>
-        <loc>http://localhost/en</loc>
-        <lastmod>2019-11-16T17:46:30+01:00</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>1.0</priority>
-    </url>
-    <url>
-        <loc>http://localhost/en/excluded/non-excluded-child</loc>
-    </url>
-    <url>
-        <loc>http://localhost/en/nested-parameters-with-model/value-1</loc>
-    </url>
-    <url>
-        <loc>http://localhost/en/nested-parameters-with-model/value-2</loc>
-    </url>
-    <url>
-        <loc>http://localhost/en/nested-parameters-with-model/value-1/value-1</loc>
-    </url>
-    <url>
-        <loc>http://localhost/en/nested-parameters-with-model/value-1/value-2</loc>
-    </url>
-    <url>
-        <loc>http://localhost/en/nested-parameters-with-model/value-2/value-1</loc>
-    </url>
-    <url>
-        <loc>http://localhost/en/nested-parameters-with-model/value-2/value-2</loc>
-    </url>
-    <url>
-        <loc>http://localhost/en/parameter-with-translated-values/parameter-array-value1</loc>
-    </url>
-    <url>
-        <loc>http://localhost/en/parameter-with-translated-values/parameter-array-value2</loc>
-    </url>
-    <url>
-        <loc>http://localhost/en/parameter-with-values/parameter-array-value1</loc>
-    </url>
-    <url>
-        <loc>http://localhost/en/parameter-with-values/parameter-array-value2</loc>
-    </url>
-    <url>
-        <loc>http://localhost/en/resource</loc>
-    </url>
-    <url>
-        <loc>http://localhost/en/resource-with-model</loc>
-    </url>
-    <url>
-        <loc>http://localhost/en/resource-with-model/create</loc>
-    </url>
-    <url>
-        <loc>http://localhost/en/resource-with-model/value-1</loc>
-    </url>
-    <url>
-        <loc>http://localhost/en/resource-with-model/value-2</loc>
-    </url>
-    <url>
-        <loc>http://localhost/en/resource-with-model/value-1/edit</loc>
-    </url>
-    <url>
-        <loc>http://localhost/en/resource-with-model/value-2/edit</loc>
-    </url>
-    <url>
-        <loc>http://localhost/en/resource/create</loc>
-    </url>
-</urlset>', file_get_contents($this->getSitemapOutputFile()));
+        <url>
+            <loc>http://localhost/de</loc>
+            <lastmod>2019-11-16T17:46:30+01:00</lastmod>
+            <changefreq>monthly</changefreq>
+            <priority>1.0</priority>
+        </url>
+        <url>
+            <loc>http://localhost/de/blog-using-parameters/blumen</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/blog-using-parameters/baeume</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/blog-using-parameters/blumen/die-rose</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/blog-using-parameters/blumen/die-tulpe</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/blog-using-parameters/blumen/die-lilie</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/blog-using-parameters/baeume/die-laerche</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/blog-using-parameters/baeume/die-laerche</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/blog-using-parameters/baeume/die-kastanie</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/blog-using-resources</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/blog-using-resources/blumen</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/blog-using-resources/baeume</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/blog-using-resources/blumen/articles</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/blog-using-resources/baeume/articles</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/blog-using-resources/blumen/articles/die-rose</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/blog-using-resources/blumen/articles/die-tulpe</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/blog-using-resources/blumen/articles/die-lilie</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/blog-using-resources/baeume/articles/die-laerche</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/blog-using-resources/baeume/articles/die-laerche</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/blog-using-resources/baeume/articles/die-kastanie</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/excluded/non-excluded-child</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/parameter-with-translated-values/parameter-array-wert1</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/parameter-with-translated-values/parameter-array-wert2</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/parameter-with-values/parameter-array-value1</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/parameter-with-values/parameter-array-value2</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/resource</loc>
+        </url>
+        <url>
+            <loc>http://localhost/de/resource/erstellen</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en</loc>
+            <lastmod>2019-11-16T17:46:30+01:00</lastmod>
+            <changefreq>monthly</changefreq>
+            <priority>1.0</priority>
+        </url>
+        <url>
+            <loc>http://localhost/en/blog-using-parameters/flowers</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/blog-using-parameters/trees</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/blog-using-parameters/flowers/the-rose</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/blog-using-parameters/flowers/the-tulip</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/blog-using-parameters/flowers/the-lily</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/blog-using-parameters/trees/the-larch</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/blog-using-parameters/trees/the-larch</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/blog-using-parameters/trees/the-chestnut</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/blog-using-resources</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/blog-using-resources/flowers</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/blog-using-resources/trees</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/blog-using-resources/flowers/articles</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/blog-using-resources/trees/articles</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/blog-using-resources/flowers/articles/the-rose</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/blog-using-resources/flowers/articles/the-tulip</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/blog-using-resources/flowers/articles/the-lily</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/blog-using-resources/trees/articles/the-larch</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/blog-using-resources/trees/articles/the-larch</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/blog-using-resources/trees/articles/the-chestnut</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/excluded/non-excluded-child</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/parameter-with-translated-values/parameter-array-value1</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/parameter-with-translated-values/parameter-array-value2</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/parameter-with-values/parameter-array-value1</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/parameter-with-values/parameter-array-value2</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/resource</loc>
+        </url>
+        <url>
+            <loc>http://localhost/en/resource/create</loc>
+        </url>
+    </urlset>', file_get_contents($this->getSitemapOutputFile()));
     }
+
 
 
 }

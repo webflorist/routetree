@@ -68,12 +68,10 @@ class GenerateSitemapCommand extends Command
                 return;
             }
 
-            /*
-            if ($registeredRoute->routeAction->hasParameters() && !$registeredRoute->routeAction->hasParameterValues($registeredRoute->locale)) {
+            if (is_null($registeredRoute->routeKeys) && $registeredRoute->routeAction->hasParameters() && !$registeredRoute->routeAction->hasParameterValues($registeredRoute->locale)) {
                 $this->warn($registeredRoute->path . " EXCLUDED due to parameters without stated values or model-binding.");
                 return;
             }
-            */
 
             if ($registeredRoute->routeAction->isRedirect()) {
                 $this->warn($registeredRoute->path . " EXCLUDED due to redirect.");

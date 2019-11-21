@@ -6,6 +6,7 @@ use Illuminate\Routing\Route;
 use Illuminate\Support\Arr;
 use Webflorist\RouteTree\Domain\Traits\CanHaveParameterRegex;
 use Webflorist\RouteTree\Domain\Traits\CanHaveSegments;
+use Webflorist\RouteTree\Exceptions\ActionNotFoundException;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
 use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
 use Webflorist\RouteTree\RouteTree;
@@ -135,80 +136,6 @@ class RouteAction
     }
 
     /**
-     * Returns list of all possible actions, their method, route-name-suffix, parent-action and title-closure.
-     *
-     * @return array
-     */
-    public function getActionConfigs()
-    {
-        return [
-            'index' => [
-                'method' => 'get',
-                'suffix' => 'index',
-                'defaultTitle' => function () {
-                    return $this->routeNode->getTitle();
-                },
-                'defaultNavTitle' => function () {
-                    return $this->routeNode->getNavTitle();
-                }
-            ],
-            'create' => [
-                'method' => 'get',
-                'suffix' => 'create',
-                'parentAction' => 'index',
-                'defaultTitle' => function () {
-                    return trans('Webflorist-RouteTree::routetree.createTitle', ['resource' => $this->routeNode->getTitle()]);
-                },
-                'defaultNavTitle' => function () {
-                    return trans('Webflorist-RouteTree::routetree.createNavTitle');
-                }
-            ],
-            'store' => [
-                'method' => 'post',
-                'suffix' => 'store'
-            ],
-            'show' => [
-                'method' => 'get',
-                'suffix' => 'show',
-                'parentAction' => 'index',
-                'defaultTitle' => function () {
-                    return $this->routeNode->getTitle() . ': ' . $this->routeNode->getActiveValue();
-                },
-                'defaultNavTitle' => function () {
-                    return $this->routeNode->getActiveValue();
-                }
-            ],
-            'edit' => [
-                'method' => 'get',
-                'suffix' => 'edit',
-                'parentAction' => 'show',
-                'defaultTitle' => function () {
-                    return trans('Webflorist-RouteTree::routetree.editTitle', ['item' => $this->routeNode->getActiveValue()]);
-                },
-                'defaultNavTitle' => function () {
-                    return trans('Webflorist-RouteTree::routetree.editNavTitle');
-                }
-            ],
-            'update' => [
-                'method' => 'put',
-                'suffix' => 'update',
-                'parentAction' => 'index'
-            ],
-            'destroy' => [
-                'method' => 'delete',
-                'suffix' => 'destroy',
-                'parentAction' => 'index'
-            ],
-            'get' => [
-                'method' => 'get'
-            ],
-            'post' => [
-                'method' => 'post'
-            ],
-        ];
-    }
-
-    /**
      * Adds a single middleware to this action.
      *
      * @param string $name Name of the middleware.
@@ -268,22 +195,6 @@ class RouteAction
     }
 
     /**
-     * Set the action-string of this action (e.g. index|update|destroy|get|put etc.).
-     *
-     * @param string $action
-     * @return RouteAction
-     */
-    public function setAction_OLD($action)
-    {
-        $actionConfigs = $this->getActionConfigs();
-        if (!isset($actionConfigs[$action])) {
-            // TODO: throw exception
-        }
-        $this->name = $action;
-        return $this;
-    }
-
-    /**
      * Gets an array of all hierarchical actions of this node and all parent nodes
      * (with the root-node-action as the first element).
      *
@@ -339,18 +250,23 @@ class RouteAction
      * the action 'index' with it's path 'user'.
      *
      * @param $parentActions
+     * @throws ActionNotFoundException
      */
     protected function accumulateParentActions(&$parentActions)
     {
-
-        $actionConfigs = $this->getActionConfigs();
-        if (isset($actionConfigs[$this->name]['parentAction'])) {
-            $parentActionName = $actionConfigs[$this->name]['parentAction'];
+        $parentActionMappings = [
+            'create' => 'index',
+            'show' => 'index',
+            'edit' => 'show',
+            'update' => 'index',
+            'destroy' => 'index'
+        ];
+        if (isset($parentActionMappings[$this->name])) {
+            $parentActionName = $parentActionMappings[$this->name];
             $parentAction = $this->routeNode->getAction($parentActionName);
             array_push($parentActions, $parentAction);
             $parentAction->accumulateParentActions($parentActions);
         }
-
     }
 
     /**
@@ -682,7 +598,7 @@ class RouteAction
             if (!isset($rootLineParameters[$pathParameter])) {
                 return false;
             }
-            if (!$rootLineParameters[$pathParameter]->hasValues($locale)) {
+            if (!$rootLineParameters[$pathParameter]->hasRouteKeys($locale)) {
                 return false;
             }
         }

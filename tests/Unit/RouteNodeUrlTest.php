@@ -13,7 +13,7 @@ class RouteNodeUrlTest extends TestCase
 
     public function test_node_url_simple()
     {
-        $this->generateTestRoutes('/de/page1');
+        $this->generateSimpleTestRoutes('/de/page1');
 
         $this->assertEquals(
             'http://localhost/de/page1',
@@ -24,7 +24,7 @@ class RouteNodeUrlTest extends TestCase
 
     public function test_node_url_relative()
     {
-        $this->generateTestRoutes('/de/page1');
+        $this->generateSimpleTestRoutes('/de/page1');
 
         $this->assertEquals(
             '/de/page1',
@@ -36,7 +36,7 @@ class RouteNodeUrlTest extends TestCase
     public function test_node_url_relative_via_config()
     {
         config()->set('routetree.absolute_urls', false);
-        $this->generateTestRoutes('/de/page1');
+        $this->generateSimpleTestRoutes('/de/page1');
 
         $this->assertEquals(
             '/de/page1',
@@ -138,7 +138,7 @@ class RouteNodeUrlTest extends TestCase
     {
         $this->routeTree->node('page', function (RouteNode $node) {
             $node->child('parameter1', function (RouteNode $node) {
-                $node->parameter('parameter_with_translated_values')->values([
+                $node->parameter('parameter_with_translated_values')->routeKeys([
                     'de' => [
                         'parameter1-wert1',
                         'parameter1-wert2'

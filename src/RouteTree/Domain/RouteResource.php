@@ -104,11 +104,11 @@ class RouteResource
 
     private function getCreateActionSegments()
     {
-        $segments = [];
+        $segments = LanguageMapping::create();
         foreach ($this->routeNode->getLocales() as $locale) {
             $translationKey = 'Webflorist-RouteTree::routetree.createPathSegment';
             $translationLocale = Lang::hasForLocale($translationKey, $locale) ? $locale : 'en';
-            $segments[$locale] = __($translationKey, [], $translationLocale);
+            $segments->set($locale, __($translationKey, [], $translationLocale));
         }
         return $segments;
     }
@@ -116,11 +116,11 @@ class RouteResource
     private function getEditActionSegments()
     {
         $paramSegment = '{' . $this->name . '}';
-        $segments = [];
+        $segments = LanguageMapping::create();
         foreach ($this->routeNode->getLocales() as $locale) {
             $translationKey = 'Webflorist-RouteTree::routetree.editPathSegment';
             $translationLocale = Lang::hasForLocale($translationKey, $locale) ? $locale : 'en';
-            $segments[$locale] = $paramSegment . '/' . __($translationKey, [], $translationLocale);
+            $segments->set($locale, $paramSegment . '/' . __($translationKey, [], $translationLocale));
         }
         return $segments;
     }
@@ -181,13 +181,11 @@ class RouteResource
         return $this;
     }
 
-    public function values(array $values)
+    public function routeKeys(array $routeKeys)
     {
-        $this->routeNode->parameter->values($values);
+        $this->routeNode->parameter->routeKeys($routeKeys);
         return $this;
     }
-
-
 
     /**
      * Create a new resource-child-node.

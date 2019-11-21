@@ -2,6 +2,8 @@
 
 namespace Webflorist\RouteTree\Domain\Traits;
 
+use Webflorist\RouteTree\Domain\LanguageMapping;
+
 trait CanHaveSegments
 {
 
@@ -17,7 +19,7 @@ trait CanHaveSegments
      * Can either be an array of [locale => string] pairs,
      * or a string (to be used for all locales).
      *
-     * @param array|string $segment
+     * @param LanguageMapping|string $segment
      * @return CanHaveSegments
      */
     public function segment($segment)
@@ -27,8 +29,8 @@ trait CanHaveSegments
         foreach ($this->getLocales() as $locale) {
 
             // If $segments is an array and contains an entry for this locale, we use that.
-            if (is_array($segment) && isset($segment[$locale])) {
-                $this->setSegmentForLanguage($segment[$locale], $locale);
+            if ($segment instanceof LanguageMapping && $segment->has($locale)) {
+                $this->setSegmentForLanguage($segment->get($locale), $locale);
             } // If $segments is a string, we use that.
             else if (is_string($segment)) {
                 $this->setSegmentForLanguage($segment, $locale);

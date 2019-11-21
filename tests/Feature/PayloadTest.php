@@ -3,6 +3,7 @@
 namespace RouteTreeTests\Feature;
 
 use RouteTreeTests\TestCase;
+use Webflorist\RouteTree\Domain\LanguageMapping;
 use Webflorist\RouteTree\Domain\RouteNode;
 
 class PayloadTest extends TestCase
@@ -22,65 +23,53 @@ class PayloadTest extends TestCase
             $node->payload->myPayloadBoolean = true;
         });
 
-        $this->routeTree->generateAllRoutes();
+        $this->assertEquals(
+            'My payload string.',
+            $this->routeTree->getNode('payload')->payload->myPayloadString
+        );
 
-        $this->assertRouteTree([
-            "de.payload.get" => [
-                "method" => "GET",
-                "uri" => "de/payload",
-                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
-                "middleware" => [],
-                "content" => [
-                    "id" => 'payload',
-                    'method' => 'GET',
-                    'path' => 'de/payload',
-                    'controller' => 'test',
-                    'function' => 'get',
-                    'locale' => 'de',
-                    'payload' => [
-                        'myPayloadString' => 'My payload string.',
-                        'myPayloadArray' => [
-                            'my' => 'payload',
-                            'ar' => 'ray'
-                        ],
-                        'myPayloadInteger' => 42,
-                        'myPayloadBoolean' => true
-                    ],
-                    'title' => 'Payload',
-                    'navTitle' => 'Payload',
-                    'h1Title' => 'Payload'
-                ],
-            ]
+        $this->assertEquals(
+            [
+                'my' => 'payload',
+                'ar' => 'ray'
+            ],
+            $this->routeTree->getNode('payload')->payload->myPayloadArray
+        );
 
-        ]);
+        $this->assertEquals(
+            42,
+            $this->routeTree->getNode('payload')->payload->myPayloadInteger
+        );
+
+        $this->assertEquals(
+            true,
+            $this->routeTree->getNode('payload')->payload->myPayloadBoolean
+        );
+
     }
 
     public function test_node_with_translated_payload()
     {
         $this->routeTree->node('payload', function (RouteNode $node) {
             $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
-            $node->payload->myPayloadString = [
-                'en' => 'My payload string.',
-                'de' => 'Mein Payload String.'
-            ];
-            $node->payload->myPayloadArray = [
-                'en' => [
+            $node->payload->myPayloadString = LanguageMapping::create()
+                ->set('en', 'My payload string.')
+                ->set('de', 'Mein Payload String.');
+            $node->payload->myPayloadArray = LanguageMapping::create()
+                ->set('en', [
                     'my' => 'payload',
                     'ar' => 'ray'
-                ],
-                'de' => [
+                ])
+                ->set('de', [
                     'mein' => 'payload',
                     'ar' => 'ray'
-                ]
-            ];
-            $node->payload->myPayloadInteger = [
-                'en' => 42,
-                'de' => 43,
-            ];
-            $node->payload->myPayloadBoolean = [
-                'en' => true,
-                'de' => false
-            ];
+                ]);
+            $node->payload->myPayloadInteger = LanguageMapping::create()
+                ->set('en', 42)
+                ->set('de', 43);
+            $node->payload->myPayloadBoolean = LanguageMapping::create()
+                ->set('en', true)
+                ->set('de', false);
         });
 
         $this->routeTree->generateAllRoutes();
@@ -89,44 +78,44 @@ class PayloadTest extends TestCase
 
         $this->assertEquals(
             'My payload string.',
-            $this->routeTree->getNode('payload')->payload->trans('myPayloadString')
+            $this->routeTree->getNode('payload')->payload->get('myPayloadString')
         );
         $this->assertEquals(
             [
                 'my' => 'payload',
                 'ar' => 'ray'
             ],
-            $this->routeTree->getNode('payload')->payload->trans('myPayloadArray')
+            $this->routeTree->getNode('payload')->payload->get('myPayloadArray')
         );
         $this->assertEquals(
             42,
-            $this->routeTree->getNode('payload')->payload->trans('myPayloadInteger')
+            $this->routeTree->getNode('payload')->payload->get('myPayloadInteger')
         );
         $this->assertEquals(
             true,
-            $this->routeTree->getNode('payload')->payload->trans('myPayloadBoolean')
+            $this->routeTree->getNode('payload')->payload->get('myPayloadBoolean')
         );
 
         $this->app->setLocale('de');
 
         $this->assertEquals(
             'Mein Payload String.',
-            $this->routeTree->getNode('payload')->payload->trans('myPayloadString')
+            $this->routeTree->getNode('payload')->payload->get('myPayloadString')
         );
         $this->assertEquals(
             [
                 'mein' => 'payload',
                 'ar' => 'ray'
             ],
-            $this->routeTree->getNode('payload')->payload->trans('myPayloadArray')
+            $this->routeTree->getNode('payload')->payload->get('myPayloadArray')
         );
         $this->assertEquals(
             43,
-            $this->routeTree->getNode('payload')->payload->trans('myPayloadInteger')
+            $this->routeTree->getNode('payload')->payload->get('myPayloadInteger')
         );
         $this->assertEquals(
             false,
-            $this->routeTree->getNode('payload')->payload->trans('myPayloadBoolean')
+            $this->routeTree->getNode('payload')->payload->get('myPayloadBoolean')
         );
 
 
@@ -147,14 +136,14 @@ class PayloadTest extends TestCase
 
         $this->assertEquals(
             'My payload closure.',
-            $this->routeTree->getNode('payload')->payload->trans('myPayloadClosure')
+            $this->routeTree->getNode('payload')->payload->get('myPayloadClosure')
         );
 
         $this->app->setLocale('de');
 
         $this->assertEquals(
             'Meine Payload Closure.',
-            $this->routeTree->getNode('payload')->payload->trans('myPayloadClosure')
+            $this->routeTree->getNode('payload')->payload->get('myPayloadClosure')
         );
     }
 
@@ -181,9 +170,6 @@ class PayloadTest extends TestCase
                     'method' => 'GET',
                     'locale' => 'de',
                     'path' => 'de/page',
-                    'payload' => [
-                        'title' => 'Custom Title',
-                    ],
                     'title' => 'Custom Title',
                     'navTitle' => 'Custom Title',
                     'h1Title' => 'Custom Title'
@@ -201,9 +187,6 @@ class PayloadTest extends TestCase
                     'method' => 'GET',
                     'locale' => 'en',
                     'path' => 'en/page',
-                    'payload' => [
-                        'title' => 'Custom Title',
-                    ],
                     'title' => 'Custom Title',
                     'navTitle' => 'Custom Title',
                     'h1Title' => 'Custom Title'
@@ -218,10 +201,9 @@ class PayloadTest extends TestCase
         $this->routeTree->node('page', function (RouteNode $node) {
             $node->namespace('\RouteTreeTests\Feature\Controllers');
             $node->get('TestController@get');
-            $node->payload->title = [
-                'de' => 'Benutzerdefinierter Titel',
-                'en' => 'Custom Title'
-            ];
+            $node->payload->title = LanguageMapping::create()
+                ->set('de', 'Benutzerdefinierter Titel')
+                ->set('en', 'Custom Title');
         });
 
         $this->routeTree->generateAllRoutes();
@@ -239,12 +221,6 @@ class PayloadTest extends TestCase
                     'method' => 'GET',
                     'locale' => 'de',
                     'path' => 'de/page',
-                    'payload' => [
-                        'title' => [
-                            'de' => 'Benutzerdefinierter Titel',
-                            'en' => 'Custom Title'
-                        ],
-                    ],
                     'title' => 'Benutzerdefinierter Titel',
                     'navTitle' => 'Benutzerdefinierter Titel',
                     'h1Title' => 'Benutzerdefinierter Titel'
@@ -262,12 +238,6 @@ class PayloadTest extends TestCase
                     'method' => 'GET',
                     'locale' => 'en',
                     'path' => 'en/page',
-                    'payload' => [
-                        'title' => [
-                            'de' => 'Benutzerdefinierter Titel',
-                            'en' => 'Custom Title'
-                        ],
-                    ],
                     'title' => 'Custom Title',
                     'navTitle' => 'Custom Title',
                     'h1Title' => 'Custom Title'
@@ -305,9 +275,6 @@ class PayloadTest extends TestCase
                     'method' => 'GET',
                     'locale' => 'de',
                     'path' => 'de/page',
-                    'payload' => [
-                        'title' => [],
-                    ],
                     'title' => 'Benutzerdefinierter Titel',
                     'navTitle' => 'Benutzerdefinierter Titel',
                     'h1Title' => 'Benutzerdefinierter Titel'
@@ -325,9 +292,6 @@ class PayloadTest extends TestCase
                     'method' => 'GET',
                     'locale' => 'en',
                     'path' => 'en/page',
-                    'payload' => [
-                        'title' => [],
-                    ],
                     'title' => 'Custom Title',
                     'navTitle' => 'Custom Title',
                     'h1Title' => 'Custom Title'
@@ -343,30 +307,30 @@ class PayloadTest extends TestCase
             $node->namespace('\RouteTreeTests\Feature\Controllers');
             $node->get('TestController@index', 'index');
             $node->get('TestController@create', 'create')->segment('create');
-            $node->payload->title = [
-                'de' => 'Kommentare',
-                'en' => 'Comments'
-            ];
-            $node->payload->h1Title([
-                'de' => 'Liste von Kommentaren',
-                'en' => 'List of comments'
-            ], 'index');
+
+            $node->payload->title = LanguageMapping::create()
+                ->set('de', 'Kommentare')
+                ->set('en', 'Comments');
+
+            $node->payload->h1Title(
+                LanguageMapping::create()
+                    ->set('de', 'Liste von Kommentaren')
+                    ->set('en', 'List of comments'),
+                'index');
 
             $node->payload
                 ->set(
                     'title',
-                    [
-                        'de' => 'Neuen Kommentar erstellen',
-                        'en' => 'Add new comment'
-                    ],
+                    LanguageMapping::create()
+                        ->set('de', 'Neuen Kommentar erstellen')
+                        ->set('en', 'Add new comment'),
                     'create'
                 )
                 ->set(
                     'navTitle',
-                    [
-                        'de' => 'Kommentar erstellen',
-                        'en' => 'Create comment'
-                    ],
+                    LanguageMapping::create()
+                        ->set('de', 'Kommentar erstellen')
+                        ->set('en', 'Create comment'),
                     'create'
                 );
         });
@@ -386,12 +350,6 @@ class PayloadTest extends TestCase
                     'method' => 'GET',
                     'locale' => 'de',
                     'path' => 'de/comment',
-                    'payload' => [
-                        'title' => [
-                            'de' => 'Kommentare',
-                            'en' => 'Comments'
-                        ]
-                    ],
                     'title' => 'Kommentare',
                     'navTitle' => 'Kommentare',
                     'h1Title' => 'Liste von Kommentaren'
@@ -409,12 +367,6 @@ class PayloadTest extends TestCase
                     'method' => 'GET',
                     'locale' => 'en',
                     'path' => 'en/comment',
-                    'payload' => [
-                        'title' => [
-                            'de' => 'Kommentare',
-                            'en' => 'Comments'
-                        ]
-                    ],
                     'title' => 'Comments',
                     'navTitle' => 'Comments',
                     'h1Title' => 'List of comments'
@@ -432,12 +384,6 @@ class PayloadTest extends TestCase
                     'method' => 'GET',
                     'locale' => 'de',
                     'path' => 'de/comment/create',
-                    'payload' => [
-                        'title' => [
-                            'de' => 'Kommentare',
-                            'en' => 'Comments'
-                        ],
-                    ],
                     'title' => 'Neuen Kommentar erstellen',
                     'navTitle' => 'Kommentar erstellen',
                     'h1Title' => 'Neuen Kommentar erstellen'
@@ -455,12 +401,6 @@ class PayloadTest extends TestCase
                     'method' => 'GET',
                     'locale' => 'en',
                     'path' => 'en/comment/create',
-                    'payload' => [
-                        'title' => [
-                            'de' => 'Kommentare',
-                            'en' => 'Comments'
-                        ],
-                    ],
                     'title' => 'Add new comment',
                     'navTitle' => 'Create comment',
                     'h1Title' => 'Add new comment'

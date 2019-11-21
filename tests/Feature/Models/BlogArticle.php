@@ -8,7 +8,7 @@ use Webflorist\RouteTree\Interfaces\TranslatableRouteKey;
 class BlogArticle extends Model implements TranslatableRouteKey
 {
 
-    public static function getAllRouteKeys(string $locale = null, ?array $parameters = null)
+    public static function getAllRouteKeys(string $locale = null, ?array $parameters = null): ?array
     {
         if (isset($parameters['category'])) {
             return self::getTestRouteKeys($parameters['category'])[$locale];
@@ -16,10 +16,15 @@ class BlogArticle extends Model implements TranslatableRouteKey
         return [];
     }
 
-    public static function translateRouteKey(string $value, string $toLocale, string $fromLocale)
+    public static function translateRouteKey(string $value, string $toLocale, string $fromLocale): string
     {
         $values = self::getTestRouteKeys();
         return $values[$toLocale][array_search($value, $values[$fromLocale])];
+    }
+
+    public static function getRoutePayload(string $payloadKey, array $parameters, string $locale, ?string $action)
+    {
+        return null;
     }
 
     /**

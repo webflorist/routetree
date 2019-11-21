@@ -171,7 +171,7 @@ class RouteUrlBuilder
                 $currentPathParameters = [];
                 foreach ($this->routeNode->getRootLineParameters() as $routeParameter) {
                     if ($routeParameter->isActive()) {
-                        $currentPathParameters[$routeParameter->getName()] = $routeParameter->getActiveValue($locale);
+                        $currentPathParameters[$routeParameter->getName()] = $routeParameter->getActiveRouteKey($locale);
                     }
                 }
 

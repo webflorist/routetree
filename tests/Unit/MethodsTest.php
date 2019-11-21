@@ -9,7 +9,7 @@ class MethodsTest extends TestCase
 
     public function testGetCurrentNode()
     {
-        $this->generateTestRoutes('/de/page1');
+        $this->generateSimpleTestRoutes('/de/page1');
 
         $this->assertEquals(
             'page1',
@@ -20,7 +20,7 @@ class MethodsTest extends TestCase
 
     public function testGetCurrentAction()
     {
-        $this->generateTestRoutes('/de/page1');
+        $this->generateSimpleTestRoutes('/de/page1');
 
         $this->assertEquals(
             'page1.get',
@@ -31,7 +31,7 @@ class MethodsTest extends TestCase
 
     public function testDoesNodeExist()
     {
-        $this->generateTestRoutes('/de/page1');
+        $this->generateSimpleTestRoutes('/de/page1');
 
         $this->assertEquals(
             true,
@@ -42,7 +42,7 @@ class MethodsTest extends TestCase
 
     public function testDoesNodeNotExist()
     {
-        $this->generateTestRoutes('/de/page1');
+        $this->generateSimpleTestRoutes('/de/page1');
 
         $this->assertEquals(
             false,
@@ -53,7 +53,7 @@ class MethodsTest extends TestCase
 
     public function testGetNodeByRouteName()
     {
-        $this->generateTestRoutes('/de/page1');
+        $this->generateSimpleTestRoutes('/de/page1');
 
         $this->assertEquals(
             'page1.page1-1',
@@ -64,7 +64,7 @@ class MethodsTest extends TestCase
 
     public function testGetActionByRoute()
     {
-        $this->generateTestRoutes('/de/page1');
+        $this->generateSimpleTestRoutes('/de/page1');
 
         $this->assertEquals(
             'get',

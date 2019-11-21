@@ -3,6 +3,7 @@
 namespace RouteTreeTests\Feature;
 
 use RouteTreeTests\TestCase;
+use Webflorist\RouteTree\Domain\LanguageMapping;
 use Webflorist\RouteTree\Domain\RouteNode;
 
 class MiddlewareTest extends TestCase
@@ -69,10 +70,9 @@ class MiddlewareTest extends TestCase
     {
         $this->routeTree->node('parent', function (RouteNode $node) {
             $node->get($this->getDefaultAction());
-            $node->segment([
-                'de' => 'eltern',
-                'en' => 'parent'
-            ]);
+            $node->segment(LanguageMapping::create()
+                ->set('de','eltern')
+                ->set('en','parent'));
             $node->child('child', function (RouteNode $node) {
                 $node->get($this->getDefaultAction());
             });
@@ -89,10 +89,9 @@ class MiddlewareTest extends TestCase
     {
         $this->routeTree->node('parent', function (RouteNode $node) {
             $node->get($this->getDefaultAction());
-            $node->segment([
-                'de' => 'eltern',
-                'en' => 'parent'
-            ]);
+            $node->segment(LanguageMapping::create()
+                ->set('de','eltern')
+                ->set('en','parent'));
             $node->child('child', function (RouteNode $node) {
                 $node->get($this->getDefaultAction());
             });
@@ -110,16 +109,14 @@ class MiddlewareTest extends TestCase
     {
         $this->routeTree->node('parent', function (RouteNode $node) {
             $node->get($this->getDefaultAction());
-            $node->segment([
-                'de' => 'eltern',
-                'en' => 'parent'
-            ]);
+            $node->segment(LanguageMapping::create()
+                ->set('de','eltern')
+                ->set('en','parent'));
             $node->child('child', function (RouteNode $node) {
                 $node->get($this->getDefaultAction());
-                $node->segment([
-                    'de' => 'kind',
-                    'en' => 'child'
-                ]);
+                $node->segment(LanguageMapping::create()
+                    ->set('de','kind')
+                    ->set('en','child'));
             });
         });
 
@@ -135,16 +132,14 @@ class MiddlewareTest extends TestCase
     {
         $this->routeTree->node('parent', function (RouteNode $node) {
             $node->get($this->getDefaultAction());
-            $node->segment([
-                'de' => 'eltern',
-                'en' => 'parent'
-            ]);
+            $node->segment(LanguageMapping::create()
+                ->set('de','eltern')
+                ->set('en','parent'));
             $node->child('child', function (RouteNode $node) {
                 $node->get($this->getDefaultAction());
-                $node->segment([
-                    'de' => 'kind',
-                    'en' => 'child'
-                ]);
+                $node->segment(LanguageMapping::create()
+                    ->set('de','kind')
+                    ->set('en','child'));
             });
         });
 
