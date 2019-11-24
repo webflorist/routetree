@@ -5,11 +5,13 @@ namespace RouteTreeTests\Feature;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use RouteTreeTests\Feature\Models\TestModelTranslatable;
+use RouteTreeTests\Feature\Traits\UsesTestRoutes;
 use RouteTreeTests\TestCase;
 use Webflorist\RouteTree\Domain\RouteNode;
 
 class RouteNodeUrlTest extends TestCase
 {
+    use UsesTestRoutes;
 
     public function test_node_url_simple()
     {

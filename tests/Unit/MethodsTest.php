@@ -2,10 +2,12 @@
 
 namespace RouteTreeTests\Feature;
 
+use RouteTreeTests\Feature\Traits\UsesTestRoutes;
 use RouteTreeTests\TestCase;
 
 class MethodsTest extends TestCase
 {
+    use UsesTestRoutes;
 
     public function testGetCurrentNode()
     {

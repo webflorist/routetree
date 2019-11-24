@@ -2,12 +2,16 @@
 
 namespace RouteTreeTests\Feature;
 
+use Illuminate\Http\Request;
+use RouteTreeTests\Feature\Traits\UsesTestRoutes;
 use RouteTreeTests\TestCase;
 use Webflorist\RouteTree\Domain\LanguageMapping;
 use Webflorist\RouteTree\Domain\RouteNode;
+use Webflorist\RouteTree\Http\Resources\RouteCollection;
 
 class RouteGenerationTest extends TestCase
 {
+    use UsesTestRoutes;
 
     public function test_root_node_with_closure()
     {
@@ -1673,5 +1677,13 @@ class RouteGenerationTest extends TestCase
         ]);
     }
 
+    public function test_complex_routes()
+    {
+        $this->generateComplexTestRoutes($this->routeTree);
+
+        $this->assertComplexRegisteredRoutes();
+
+        $this->assertComplexTestRouteTree();
+    }
 
 }
