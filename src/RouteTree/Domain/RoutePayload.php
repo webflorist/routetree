@@ -348,7 +348,7 @@ class RoutePayload
     {
 
         // If node is active, we try to retrieve action-specific node.
-        if (is_null($action) && $this->routeNode->isActive()) {
+        if (is_null($action) && $this->routeNode->isActive() && route_tree()->getCurrentAction() !== null) {
             $action = route_tree()->getCurrentAction()->getName();
         }
 
