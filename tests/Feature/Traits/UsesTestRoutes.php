@@ -2387,25 +2387,6 @@ trait UsesTestRoutes
             65 =>
                 array (
                     'type' => 'routes',
-                    'id' => 'en.resource.store',
-                    'attributes' =>
-                        array (
-                            'node' => 'resource',
-                            'action' => 'store',
-                            'uri' => 'en/resource',
-                            'locale' => 'en',
-                            'methods' =>
-                                array (
-                                    0 => 'POST',
-                                ),
-                            'title' => 'Resources',
-                            'navTitle' => 'Resources',
-                            'h1Title' => 'Resources',
-                        ),
-                ),
-            66 =>
-                array (
-                    'type' => 'routes',
                     'id' => 'en.resource.index',
                     'attributes' =>
                         array (
@@ -2417,6 +2398,25 @@ trait UsesTestRoutes
                                 array (
                                     0 => 'GET',
                                     1 => 'HEAD',
+                                ),
+                            'title' => 'Resources',
+                            'navTitle' => 'Resources',
+                            'h1Title' => 'Resources',
+                        ),
+                ),
+            66 =>
+                array (
+                    'type' => 'routes',
+                    'id' => 'en.resource.store',
+                    'attributes' =>
+                        array (
+                            'node' => 'resource',
+                            'action' => 'store',
+                            'uri' => 'en/resource',
+                            'locale' => 'en',
+                            'methods' =>
+                                array (
+                                    0 => 'POST',
                                 ),
                             'title' => 'Resources',
                             'navTitle' => 'Resources',

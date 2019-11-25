@@ -6,6 +6,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Webflorist\RouteTree\Console\Commands\RouteCacheCommand;
+use Webflorist\RouteTree\Console\Commands\RouteClearCommand;
 use Webflorist\RouteTree\Http\Controllers\Api\RoutesController;
 use Webflorist\RouteTree\Http\Middleware\RouteTreeMiddleware;
 use Webflorist\RouteTree\Http\Middleware\SetLocalFromSession;
@@ -40,7 +41,6 @@ class RouteTreeServiceProvider extends ServiceProvider
 	    $this->addGlobalMiddleware(RouteTreeMiddleware::class);
         $this->loadViews();
         $this->addRoutes();
-        $this->registerEventListeners();
 
     }
 
@@ -68,7 +68,8 @@ class RouteTreeServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 GenerateSitemapCommand::class,
-                RouteCacheCommand::class
+                RouteCacheCommand::class,
+                RouteClearCommand::class
             ]);
         }
     }
@@ -97,13 +98,5 @@ class RouteTreeServiceProvider extends ServiceProvider
                 $router->resource('paths', RoutesController::class)->only('index');
             });
         }
-    }
-
-    protected function registerEventListeners(): void
-    {
-        Event::listen(
-            CommandFinished::class,
-            CommandListener::class
-        );
     }
 }

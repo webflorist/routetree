@@ -27,13 +27,6 @@ class Route extends JsonResource
      */
     public function toArray($request)
     {
-        if (!is_null($this->resource->routeKeys) && false) {
-            dd($this->resource->path, $this->resource->routeNode->payload->getTitle(
-                $this->resource->routeKeys,
-                $this->resource->locale,
-                $this->resource->routeAction->getName()
-            ));
-        }
         return [
             'type' => 'routes',
             'id' => $this->generateRouteId(),

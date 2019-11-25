@@ -47,9 +47,12 @@ class RouteTreeMiddleware
      */
     public function handle($request, Closure $next)
     {
-
-        // Generate all RouteTree routes.
-        $this->routeTree->generateAllRoutes();
+        if (app()->routesAreCached()) {
+            $this->routeTree->loadCachedRouteTree();
+        }
+        else {
+            $this->routeTree->generateAllRoutes();
+        }
 
         // Try getting the current route.
         $currentRoute = $this->getCurrentRoute($request);

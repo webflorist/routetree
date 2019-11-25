@@ -3,6 +3,7 @@
 namespace Webflorist\RouteTree;
 
 use Closure;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Collection;
 use Webflorist\RouteTree\Domain\RegisteredRoute;
@@ -225,9 +226,9 @@ class RouteTree
     {
         if (!$this->routesGenerated) {
             $this->rootNode->generateRoutesOfNodeAndChildNodes();
+            $this->sortRegisteredRoutes();
+            $this->routesGenerated = true;
         }
-        $this->sortRegisteredRoutes();
-        $this->routesGenerated = true;
     }
 
     /**
@@ -452,8 +453,55 @@ class RouteTree
     private function sortRegisteredRoutes()
     {
         $this->registeredRoutes = $this->registeredRoutes->sort(function (RegisteredRoute $routeA, RegisteredRoute $routeB) {
+            if ($routeA->path === $routeB->path) {
+                return $routeA->routeName > $routeB->routeName;
+            }
             return $routeA->path > $routeB->path;
         });
+    }
+
+    /**
+     * Get the path to the routetree cache file.
+     *
+     * @return string
+     */
+    public function getCachedRouteTreePath()
+    {
+        return $_ENV['APP_ROUTETREE_CACHE'] ??  app()->bootstrapPath().'/cache/routetree.php';
+    }
+
+    public function cacheRouteTree()
+    {
+        /** @var Filesystem $filesystem */
+        $filesystem = app(Filesystem::class );
+
+        $filesystem->put(
+            route_tree()->getCachedRouteTreePath(),
+            '<?php $cachedRouteTree = "'.base64_encode(serialize($this->getRootNode())).'";'
+        );
+    }
+
+    public function loadCachedRouteTree()
+    {
+        if (!$this->routesGenerated) {
+            require $this->getCachedRouteTreePath();
+            $this->rootNode = unserialize(base64_decode($cachedRouteTree));
+            $this->registerRoutesFromNode($this->rootNode);
+            $this->sortRegisteredRoutes();
+            $this->routesGenerated = true;
+        }
+    }
+
+    private function registerRoutesFromNode(RouteNode $node)
+    {
+        foreach ($node->getActions() as $routeAction) {
+            $routeAction->registerRoutes();
+        }
+        if ($node->hasChildNodes()) {
+            foreach ($node->getChildNodes() as $childNode) {
+                $this->registerRoutesFromNode($childNode);
+            }
+        }
     }
 
 }

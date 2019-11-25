@@ -12,7 +12,9 @@ class CacheTest extends TestCase
 
     public function test_cache()
     {
+        $this->assertComplexTestRouteTree();
         $this->assertComplexRegisteredRoutes();
     }
+
 
 }

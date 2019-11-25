@@ -20,6 +20,7 @@ trait UsesCachedRoutes
     {
         parent::setUp();
         $this->artisan('routetree:route-cache')->assertExitCode('0');
+        $this->refreshApplication();
     }
 
 }

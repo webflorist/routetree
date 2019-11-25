@@ -3,6 +3,7 @@
 namespace Webflorist\RouteTree\Domain;
 
 use Illuminate\Routing\Route;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Webflorist\RouteTree\Domain\Traits\CanHaveParameterRegex;
 use Webflorist\RouteTree\Domain\Traits\CanHaveSegments;
@@ -608,6 +609,19 @@ class RouteAction
     public function getRootLineParameters()
     {
         return Arr::only($this->routeNode->getRootLineParameters(), $this->getPathParameters());
+    }
+
+    public function registerRoutes()
+    {
+        /** @var Router $router */
+        $router = app('router');
+        foreach ($this->routeNode->getLocales() as $locale) {
+            route_tree()->registerRoute(
+                $router->getRoutes()->getByName($this->getRouteName($locale)),
+                $this,
+                $locale
+            );
+        }
     }
 
 }

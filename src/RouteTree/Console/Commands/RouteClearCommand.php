@@ -7,7 +7,7 @@ use Illuminate\Routing\RouteCollection;
 use Throwable;
 use Webflorist\RouteTree\Domain\RegisteredRoute;
 
-class RouteCacheCommand extends \Illuminate\Foundation\Console\RouteCacheCommand
+class RouteClearCommand extends \Illuminate\Foundation\Console\RouteClearCommand
 {
 
     /**
@@ -15,14 +15,14 @@ class RouteCacheCommand extends \Illuminate\Foundation\Console\RouteCacheCommand
      *
      * @var string
      */
-    protected $signature = 'routetree:route-cache';
+    protected $signature = 'routetree:route-clear';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = "Calls Laravel's route:cache and also caches the routetree";
+    protected $description = "Remove the route and routetree cache files";
 
     /**
      * Execute the console command.
@@ -34,18 +34,9 @@ class RouteCacheCommand extends \Illuminate\Foundation\Console\RouteCacheCommand
     {
         parent::handle();
 
-        route_tree()->cacheRouteTree();
+        $this->files->delete(route_tree()->getCachedRouteTreePath());
 
-        $this->info('RouteTree cached successfully!');
-    }
-
-    protected function getFreshApplication()
-    {
-        if (app()->environment() === 'testing') {
-            return app();
-        }
-
-        return parent::getFreshApplication();
+        $this->info('RouteTree cache cleared!');
     }
 
 
