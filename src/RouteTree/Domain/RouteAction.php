@@ -121,6 +121,7 @@ class RouteAction
     public function name(string $name)
     {
         $this->name = $name;
+        return $this;
     }
 
     /**
