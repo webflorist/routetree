@@ -3,6 +3,7 @@
 return [
 
     'showTitle' => 'Show :resource',
+    'showNavTitle' => ':resource',
     'editTitle' => 'Edit :resource',
     'editNavTitle' => 'Edit',
     'editPathSegment' => 'edit',

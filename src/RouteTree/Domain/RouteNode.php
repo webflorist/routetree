@@ -1150,41 +1150,59 @@ class RouteNode
      *
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
      * @param string $locale The language the title should be fetched for (default=current locale).
-     * @param string|null $forAction Will look for action-specific title (e.g. 'show', 'index', etc.), if stated.
+     * @param bool $useCurrentAction Will use action-specific title, if an action of this RouteNode is currently active.
      * @return string
      * @throws ActionNotFoundException
      */
-    public function getTitle(?array $parameters = null, ?string $locale = null, ?string $forAction=null): string
+    public function getTitle(?array $parameters = null, ?string $locale = null, ?bool $useCurrentAction=true): string
     {
         $title = null;
 
-        // For active nodes, we try getting the action-specific title automatically.
-        if (is_null($forAction) && $this->isActive() && route_tree()->getCurrentAction() !== null) {
-            $forAction = route_tree()->getCurrentAction()->getName();
-        }
-
-        // Get action-specific title, if requested.
-        if (!is_null($forAction) && $this->hasAction($forAction)) {
-            $title =  $this->getAction($forAction)->payload->get('title', $parameters, $locale);
+        // For active nodes, we try getting the action-specific title automatically,
+        // if $useCurrentAction is true.
+        if ($useCurrentAction && $this->isActive() && route_tree()->getCurrentAction() !== null) {
+            return route_tree()->getCurrentAction()->getTitle($parameters, $locale);
         }
 
         // Get title payload.
-        if (is_null($title)) {
-            $title = $this->payload->get('title', $parameters, $locale);
-        }
+        $title = $this->payload->get('title', $parameters, $locale);
 
         if (is_string($title)) {
             return $title;
         }
 
-        // Fallback for resources is to get the action specific default-title from the RouteResource,
-        // if $forAction set.
-        if (!is_null($forAction) && $this->isResource()) {
-            return $this->resource->getActionTitle($forAction, $parameters, $locale);
-        }
-
         // Per default we fall back to the upper-cased node-name.
         return ucfirst($this->getName());
+    }
+
+    /**
+     * Get the navigation title of this node (defaults to $this->getTitle()).
+     *
+     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
+     * @param string $locale The language the title should be fetched for (default=current locale).
+     * @param bool $useCurrentAction Will use action-specific title, if an action of this RouteNode is currently active.
+     * @return string
+     * @throws ActionNotFoundException
+     */
+    public function getNavTitle(?array $parameters = null, ?string $locale = null, ?bool $useCurrentAction=true): string
+    {
+        $title = null;
+
+        // For active nodes, we try getting the action-specific title automatically,
+        // if $useCurrentAction is true.
+        if ($useCurrentAction && $this->isActive() && route_tree()->getCurrentAction() !== null) {
+            return route_tree()->getCurrentAction()->getNavTitle($parameters, $locale);
+        }
+
+        // Get title payload.
+        $title = $this->payload->get('navTitle', $parameters, $locale);
+
+        if (is_string($title)) {
+            return $title;
+        }
+
+        // Per default we fall back to $this->getTitle().
+        return $this->getTitle($parameters,$locale);
     }
 
 }

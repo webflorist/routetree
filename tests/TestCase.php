@@ -192,8 +192,8 @@ class TestCase extends BaseTestCase
                     'method' => \Request::getMethod(),
                     'path' => trim(\Request::getPathInfo(), '/'),
                     'locale' => app()->getLocale(),
-                    'title' => route_tree()->getCurrentNode()->getTitle(),
-                    'navTitle' => route_tree()->getCurrentAction()->payload->get('navTitle') ?? route_tree()->getCurrentNode()->payload->get('navTitle') ?? route_tree()->getCurrentNode()->getTitle(),
+                    'title' => route_tree()->getCurrentAction()->getTitle(),
+                    'navTitle' => route_tree()->getCurrentAction()->getNavTitle(),
                     'h1Title' => route_tree()->getCurrentAction()->payload->get('h1Title') ?? route_tree()->getCurrentNode()->payload->get('h1Title') ?? route_tree()->getCurrentNode()->getTitle()
                 ],
                 $additionalData

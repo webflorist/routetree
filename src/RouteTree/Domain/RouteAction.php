@@ -624,4 +624,55 @@ class RouteAction
         }
     }
 
+    /**
+     * Get the page title of this action (defaults to $this->routeNode->getTitle()).
+     *
+     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
+     * @param string $locale The language the title should be fetched for (default=current locale).
+     * @return string
+     * @throws ActionNotFoundException
+     */
+    public function getTitle(?array $parameters = null, ?string $locale = null): string
+    {
+
+        $title = $this->payload->get('title', $parameters, $locale);
+
+        if (is_string($title)) {
+            return $title;
+        }
+
+        // Fallback for resources is to get the action specific default-title from the RouteResource.
+        if ($this->routeNode->isResource()) {
+            return $this->routeNode->resource->getActionTitle($this->getName(), $parameters, $locale);
+        }
+
+        // Per default we fall back to $this->routeNode->getTitle().
+        return $this->routeNode->getTitle($parameters, $locale, false);
+    }
+
+    /**
+     * Get the navigation title of this action (defaults to $this->getTitle()).
+     *
+     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
+     * @param string $locale The language the title should be fetched for (default=current locale).
+     * @return string
+     * @throws ActionNotFoundException
+     */
+    public function getNavTitle(?array $parameters = null, ?string $locale = null): string
+    {
+        $title = $this->payload->get('navTitle', $parameters, $locale);
+
+        if (is_string($title)) {
+            return $title;
+        }
+
+        // Fallback for resources is to get the action specific default-navTitle from the RouteResource.
+        if ($this->routeNode->isResource()) {
+            return $this->routeNode->resource->getActionNavTitle($this->getName(), $parameters, $locale);
+        }
+
+        // Per default we fall back to $this->getTitle().
+        return $this->getTitle($parameters,$locale);
+    }
+
 }

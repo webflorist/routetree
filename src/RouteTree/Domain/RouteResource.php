@@ -163,15 +163,16 @@ class RouteResource
 
     public function getActionNavTitle(string $actionName, ?array $parameters = null, ?string $locale = null)
     {
+        $resourceSingular = trans_choice($this->transKey, 1, [], $locale);
         switch ($actionName) {
             case 'create':
                 return trans('Webflorist-RouteTree::routetree.createNavTitle', [], $locale);
             case 'show':
-                return $this->routeNode->getActiveValue();
+                return trans('Webflorist-RouteTree::routetree.showNavTitle', ['resource' => $resourceSingular], $locale);
             case 'edit':
                 return trans('Webflorist-RouteTree::routetree.editNavTitle', [], $locale);
             default:
-                return $this->routeNode->payload->getNavTitle(null, $locale, false);
+                return $this->getActionTitle($actionName, $parameters, $locale);
         }
     }
 
