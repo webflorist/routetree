@@ -95,6 +95,11 @@ class RouteAction
     protected $skipMiddleware = [];
 
     /**
+     * @var RoutePayload
+     */
+    public $payload;
+
+    /**
      * RouteAction constructor.
      *
      * @param string $method
@@ -107,6 +112,7 @@ class RouteAction
         $this->method = $method;
         $this->routeNode = $routeNode;
         $this->setAction($action);
+        $this->payload = new RoutePayload($routeNode, $this);
         if (!is_null($name)) {
             $this->name($name);
         }
@@ -523,7 +529,7 @@ class RouteAction
         if (!is_null($this->redirect)) {
             return \Illuminate\Support\Facades\Route::redirect(
                 $uri,
-                route_tree()->getNode($this->redirect)->getPath($locale),
+                '/'.route_tree()->getNode($this->redirect)->getPath($locale),
                 $this->redirectStatus
             );
         }
@@ -569,13 +575,6 @@ class RouteAction
     public function getLocales()
     {
         return $this->routeNode->getLocales();
-    }
-
-    public function isExcludedFromSitemap()
-    {
-        return
-            $this->routeNode->payload->get('sitemap', $this->getName()) &&
-            $this->routeNode->isExcludedFromSitemap();
     }
 
     public function isRedirect()

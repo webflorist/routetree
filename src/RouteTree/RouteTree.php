@@ -61,7 +61,6 @@ class RouteTree
      *
      * @param Closure $callback
      * @return RouteNode
-     * @throws Exceptions\NodeAlreadyHasChildWithSameNameException
      */
     public function root(Closure $callback)
     {

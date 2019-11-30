@@ -8,6 +8,7 @@ use Webflorist\RouteTree\Domain\Traits\CanHaveSegments;
 use Webflorist\RouteTree\Exceptions\ActionNotFoundException;
 use Webflorist\RouteTree\Exceptions\NodeAlreadyHasChildWithSameNameException;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
+use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
 use Webflorist\RouteTree\RouteTree;
 use Webflorist\RouteTree\Services\RouteUrlBuilder;
 
@@ -453,12 +454,12 @@ class RouteNode
     public function getLowestRootLineAction()
     {
 
-        $currentActionUrl = route_tree()->getCurrentAction()->getUrl();
+        $currentActionUrl = (string) route_tree()->getCurrentAction()->getUrl();
 
         $mostActiveRootLineAction = false;
         $mostActiveRootLineActionUrlLength = 0;
         foreach ($this->actions as $action) {
-            $actionUrl = $action->getUrl();
+            $actionUrl = (string) $action->getUrl();
             $actionUrlLength = strlen($actionUrl);
 
             if ((strpos($currentActionUrl, $actionUrl) === 0) && (strlen($actionUrl) > $mostActiveRootLineActionUrlLength)) {
@@ -691,6 +692,16 @@ class RouteNode
     }
 
     /**
+     * Is this RouteNode registered in the stated language?
+     *
+     * @return array
+     */
+    public function hasLocale(string $locale) : bool
+    {
+        return array_search($locale, $this->getLocales()) !== false;
+    }
+
+    /**
      * Add a child-node.
      *
      * @param RouteNode $childNode
@@ -799,9 +810,9 @@ class RouteNode
     {
 
         $action = $this->hasAction('index') ? 'index' :
-            $this->hasAction('get') ? 'get' :
-                count($this->actions) > 0 ? key($this->actions) :
-                    null;
+            ($this->hasAction('get') ? 'get' :
+                (count($this->actions) > 0 ? $this->actions[0]->getName() : null)
+            );
 
         if ($action === null) {
             throw new ActionNotFoundException('Node with Id "' . $this->getId() . '" does not have any action to generate an URL to.');
@@ -930,25 +941,26 @@ class RouteNode
     protected function addAction(string $method, $action, ?string $name = null)
     {
         $routeAction = new RouteAction($method, $action, $this, $name);
-        $name = $routeAction->getName();
-        $this->actions[$name] = $routeAction;
-        return $this->actions[$name];
+        $this->actions[] = $routeAction;
+        return $routeAction;
     }
 
     /**
-     * Gets a specific action from this node.
+     * Gets a specific action from this node by it's name.
      *
      * @param $action
      * @return RouteAction
      * @throws ActionNotFoundException
      */
-    public function getAction($action) : RouteAction
+    public function getAction(string $actionName) : RouteAction
     {
-        if ($this->hasAction($action)) {
-            return $this->actions[$action];
+        foreach ($this->actions as $action) {
+            if ($action->getName() === $actionName) {
+                return $action;
+            }
         }
 
-        throw new ActionNotFoundException('Node with Id "' . $this->getId() . '" does not have the action "' . $action . '""');
+        throw new ActionNotFoundException('Node with Id "' . $this->getId() . '" does not have an action with name "' . $actionName . '""');
     }
 
     /**
@@ -964,25 +976,29 @@ class RouteNode
     /**
      * Removes a specific action from this node.
      *
-     * @param string $action
+     * @param string $actionName
      */
-    public function removeAction(string $action)
+    public function removeAction(string $actionName)
     {
-        if ($this->hasAction($action)) {
-            unset($this->actions[$action]);
+        foreach ($this->actions as $key => $action) {
+            if ($action->getName() === $actionName) {
+                unset($this->actions[$key]);
+            }
         }
     }
 
     /**
-     * Checks if a specific action should be retrieved for this node.
+     * Checks if a specific action is present in this node.
      *
-     * @param $action
+     * @param $actionName
      * @return bool
      */
-    public function hasAction($action)
+    public function hasAction(string $actionName) : bool
     {
-        if (isset($this->actions[$action])) {
-            return true;
+        foreach ($this->actions as $action) {
+            if ($action->getName() === $actionName) {
+                return true;
+            }
         }
         return false;
     }
@@ -1128,4 +1144,47 @@ class RouteNode
         return implode('/', $segments);
 
     }
+
+    /**
+     * Get the page title of this node (defaults to the ucfirst-ified node-name).
+     *
+     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
+     * @param string $locale The language the title should be fetched for (default=current locale).
+     * @param string|null $forAction Will look for action-specific title (e.g. 'show', 'index', etc.), if stated.
+     * @return string
+     * @throws ActionNotFoundException
+     */
+    public function getTitle(?array $parameters = null, ?string $locale = null, ?string $forAction=null): string
+    {
+        $title = null;
+
+        // For active nodes, we try getting the action-specific title automatically.
+        if (is_null($forAction) && $this->isActive() && route_tree()->getCurrentAction() !== null) {
+            $forAction = route_tree()->getCurrentAction()->getName();
+        }
+
+        // Get action-specific title, if requested.
+        if (!is_null($forAction) && $this->hasAction($forAction)) {
+            $title =  $this->getAction($forAction)->payload->get('title', $parameters, $locale);
+        }
+
+        // Get title payload.
+        if (is_null($title)) {
+            $title = $this->payload->get('title', $parameters, $locale);
+        }
+
+        if (is_string($title)) {
+            return $title;
+        }
+
+        // Fallback for resources is to get the action specific default-title from the RouteResource,
+        // if $forAction set.
+        if (!is_null($forAction) && $this->isResource()) {
+            return $this->resource->getActionTitle($forAction, $parameters, $locale);
+        }
+
+        // Per default we fall back to the upper-cased node-name.
+        return ucfirst($this->getName());
+    }
+
 }

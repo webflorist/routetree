@@ -6,6 +6,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use RouteTreeTests\TestCase;
 
 class TestController extends Controller
 {
@@ -13,16 +14,9 @@ class TestController extends Controller
 
     public function __call($name, $arguments)
     {
-        return json_encode([
-            'id' => route_tree()->getCurrentNode()->getId(),
+        return TestCase::getRouteTestData([
             'controller' => 'test',
             'function' => $name,
-            'method' => \Request::getMethod(),
-            'path' => trim(\Request::getPathInfo(),'/'),
-            'locale' => app()->getLocale(),
-            'title' => route_tree()->getCurrentNode()->payload->getTitle(),
-            'navTitle' => route_tree()->getCurrentNode()->payload->getNavTitle(),
-            'h1Title' => route_tree()->getCurrentNode()->payload->getH1Title()
         ]);
     }
 

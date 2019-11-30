@@ -22,9 +22,9 @@ use Webflorist\RouteTree\RouteTree;
  *
  * Setters for default properties:
  * ===============================
- * @method   RoutePayload               title($title, string $forAction = null)
- * @method   RoutePayload               navTitle($navTitle, string $forAction = null)
- * @method   RoutePayload               h1Title($h1Title, string $forAction = null)
+ * @method   RoutePayload               title($title)
+ * @method   RoutePayload               navTitle($navTitle)
+ * @method   RoutePayload               h1Title($h1Title)
  *
  */
 class RoutePayload
@@ -38,6 +38,14 @@ class RoutePayload
     private $routeNode;
 
     /**
+     * The RouteAction this payload belongs to
+     * (in case it is an RouteAction Payload).
+     *
+     * @var RouteAction
+     */
+    private $routeAction;
+
+    /**
      * The language-file-key to be used for auto-translation of payload.
      *
      * Gets determined automatically.
@@ -47,32 +55,17 @@ class RoutePayload
     private $langFile = null;
 
     /**
-     * Action to be used for the next get/set call.
-     *
-     * @var array
-     */
-    private $actionPayloads;
-
-    /**
      * Payload constructor.
      *
-     * Can take a payload in array-form
-     * and populate this object with it.
-     *
      * @param RouteNode $routeNode
-     * @param array|null $payloadArray
+     * @param RouteAction|null $routeAction
      */
-    public function __construct(RouteNode $routeNode, array $payloadArray = null)
+    public function __construct(RouteNode $routeNode, ?RouteAction $routeAction = null)
     {
         $this->routeNode = $routeNode;
+        $this->routeAction = $routeAction;
 
         $this->setDataLangFile();
-
-        if (!is_null($payloadArray)) {
-            foreach ($payloadArray as $itemKey => $itemValue) {
-                $this->$itemKey($itemValue);
-            }
-        }
     }
 
     /**
@@ -107,8 +100,7 @@ class RoutePayload
     public function __call($payloadKey, $arguments)
     {
         $payloadValue = $arguments[0];
-        $action = $arguments[1] ?? null;
-        $this->set($payloadKey, $payloadValue, $action);
+        $this->set($payloadKey, $payloadValue);
         return $this;
     }
 
@@ -126,58 +118,51 @@ class RoutePayload
 
     /**
      * Set a payload.
-     * $action parameter allows setting of action-specific payload.
      *
      * @param $payloadKey
      * @param $payloadValue
-     * @param string|null $forAction
      * @return $this
      */
-    public function set($payloadKey, $payloadValue, ?string $forAction = null)
+    public function set($payloadKey, $payloadValue)
     {
-        if ($forAction !== null) {
-            if (!isset($this->actionPayloads[$forAction])) {
-                $this->actionPayloads[$forAction] = [];
-            }
-            $this->actionPayloads[$forAction][$payloadKey] = $payloadValue;
-        } else {
-            $this->$payloadKey = $payloadValue;
-        }
+        $this->$payloadKey = $payloadValue;
         return $this;
     }
 
-    public function get(string $payloadKey, ?array $parameters = null, ?string $locale = null, ?string $action = null)
+    public function has(string $payloadKey)
     {
-        return $this->resolvePayload($payloadKey, $parameters, $locale, $action);
-    }
-
-    public function has(string $payloadKey, string $forAction = null)
-    {
-        if ($forAction !== null && isset($this->actionPayloads[$forAction][$payloadKey])) {
+        if (isset($this->$payloadKey)) {
             return true;
         }
-        return isset($this->$payloadKey);
+        if (!is_null($this->routeAction) && isset($this->routeNode->payload->$payloadKey)) {
+            return true;
+        }
+        return false;
     }
 
     /**
-     * "Translate" a payload.
+     * Retrieve a payload.
      *
      * @param string $payloadKey Name of the payload.
      * @param string $locale The locale to translate to (default=current locale).
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters the payload should be fetched for (default=current route-parameters).
-     * @param string|null $action If an action is stated, you can set data action specific (e.g. "mynode_show" with auto-translation).
      * @return mixed
      */
-    protected function resolvePayload(string $payloadKey, ?array $parameters = null, ?string $locale = null, ?string $action = null)
+    public function get(string $payloadKey, ?array $parameters = null, ?string $locale = null)
     {
+        $debug = false;
+        if (isset($parameters['category']) && $parameters['category'] === 'baeume') {
+            $debug = true;
+        }
         RouteTree::establishLocale($locale);
         RouteTree::establishRouteParameters($parameters);
-
         $payload = $this->$payloadKey;
-        if ($action !== null && isset($this->actionPayloads[$action][$payloadKey])) {
-            $payload = $this->actionPayloads[$action][$payloadKey];
+        // If no payload was found and this
+        // is a RouteAction specific payload,
+        // try falling back to the RouteNode's payload.
+        if (is_null($payload) && !is_null($this->routeAction) && $this->routeNode->payload->has($payloadKey)) {
+            $payload =  $this->routeNode->payload->$payloadKey;
         }
-
         // If payload is a LocaleMap and contains an element for this language, that's our new $payload.
         if ($payload instanceof LanguageMapping && $payload->has($locale)) {
             $payload = $payload->get($locale);
@@ -195,7 +180,7 @@ class RoutePayload
         if (is_null($payload) && $this->routeNode->hasParameter() && $this->routeNode->parameter->hasModel()) {
             /** @var TranslatableRouteKey $modelClass */
             $modelClass = $this->routeNode->parameter->getModel();
-            $modelPayload = $modelClass::getRoutePayload($payloadKey, $parameters, $locale, $action);
+            $modelPayload = $modelClass::getRoutePayload($payloadKey, $parameters, $locale, (!is_null($this->routeAction) ? $this->routeAction->getName() : null));
             if (!is_null($modelPayload)) {
                 $payload = $modelPayload;
             }
@@ -205,18 +190,16 @@ class RoutePayload
         if (is_null($payload)) {
             $translationKey = $payloadKey . '.' . $this->routeNode->getName();
 
-            // If an action was explicitly stated, we append "_$action" to the translation-key.
-            if ($action !== null) {
-                $translationKey .= '_' . $action;
+            // If this is an action-specific payload, we append "_$actionName" to the translation-key.
+            if ($this->routeAction !== null) {
+                $translationKey .= '_' . $this->routeAction->getName();
             }
+
             $autoTranslatedValue = $this->performAutoTranslation($translationKey, $parameters, $locale);
             if ($autoTranslatedValue !== false) {
                 $payload = $autoTranslatedValue;
             }
         }
-
-
-
 
         // If a payload was found and is an array,
         // it might be a nested routeKey-mapping,
@@ -258,104 +241,5 @@ class RoutePayload
         return false;
 
     }
-
-
-    /**
-     * Get the page title of this node (defaults to the ucfirst-ified node-name).
-     *
-     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
-     * @param string $locale The language the title should be fetched for (default=current locale).
-     * @param null $action
-     * @return string
-     * @throws UrlParametersMissingException
-     */
-    public function getTitle(?array $parameters = null, ?string $locale = null, $action = null): string
-    {
-        $this->establishAction($action);
-        $title = $this->resolvePayload('title', $parameters, $locale, $action);
-
-        if (is_string($title)) {
-            return $title;
-        }
-
-        // Fallback for resources is to get the action specific default-title from the RouteResource,
-        // if $action set.
-        if (!is_null($action) && $this->routeNode->isResource()) {
-            return $this->routeNode->resource->getActionTitle($action, $parameters, $locale);
-        }
-
-        // If the title of an action was requested, we fall back to the title of the node,
-        // if no action-specific title was found.
-        if (!is_null($action)) {
-            return $this->getTitle($parameters, $locale, false);
-        }
-
-        // Per default we fall back to the upper-cased node-name.
-        return ucfirst($this->routeNode->getName());
-    }
-
-    /**
-     * Get the page title to be used in navigations (e.g. breadcrumbs or menus) of this node (defaults to the result of $this->getTitle()).
-     *
-     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
-     * @param string $locale The language the title should be fetched for (default=current locale).
-     * @return string
-     * @throws UrlParametersMissingException
-     */
-    public function getNavTitle(?array $parameters = null, ?string $locale = null, $action = null): string
-    {
-        $this->establishAction($action);
-
-        // Try retrieving navTitle.
-        $title = $this->resolvePayload('navTitle', $parameters, $locale, $action);
-
-        // If no title could be determined, we fall back to the result of the $this->getTitle() call.
-        if (is_null($title)) {
-            return $this->getTitle($parameters, $locale, $action);
-        }
-
-        return $title;
-    }
-
-    /**
-     * Get the page title to be used in the page's h1 tag (defaults to the result of $this->getTitle()).
-     *
-     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
-     * @param string $locale The language the title should be fetched for (default=current locale).
-     * @return string
-     * @throws UrlParametersMissingException
-     */
-    public function getH1Title(?array $parameters = null, ?string $locale = null, $action = null): string
-    {
-        $this->establishAction($action);
-
-        // Try retrieving navTitle.
-        $title = $this->resolvePayload('h1Title', $parameters, $locale, $action);
-
-        // If no title could be determined, we fall back to the result of the $this->getTitle() call.
-        if (is_null($title)) {
-            return $this->getTitle($parameters, $locale, $action);
-        }
-
-        return $title;
-    }
-
-    /**
-     * @param string|false|null $action
-     * @return string|null
-     */
-    protected function establishAction(&$action)
-    {
-
-        // If node is active, we try to retrieve action-specific node.
-        if (is_null($action) && $this->routeNode->isActive() && route_tree()->getCurrentAction() !== null) {
-            $action = route_tree()->getCurrentAction()->getName();
-        }
-
-        if ($action === false) {
-            $action = null;
-        }
-    }
-
 
 }

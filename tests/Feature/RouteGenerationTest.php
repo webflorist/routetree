@@ -18,15 +18,7 @@ class RouteGenerationTest extends TestCase
         $this->routeTree->root(function (RouteNode $rootNode) {
 
             $rootNode->get(function () {
-                return json_encode([
-                    'id' => route_tree()->getCurrentNode()->getId(),
-                    'method' => \Request::getMethod(),
-                    'path' => trim(\Request::getPathInfo(), '/'),
-                    'locale' => app()->getLocale(),
-                    'navTitle' => route_tree()->getCurrentNode()->payload->getNavTitle(),
-                    'h1Title' => route_tree()->getCurrentNode()->payload->getH1Title(),
-                    'title' => route_tree()->getCurrentNode()->payload->getTitle()
-                ]);
+                return TestCase::getRouteTestData();
             });
 
         });
@@ -353,7 +345,7 @@ class RouteGenerationTest extends TestCase
                 "uri" => "de",
                 "action" => '\Illuminate\Routing\RedirectController',
                 "middleware" => [],
-                "redirectTarget" => 'de/destination',
+                'redirectTarget' => '/de/destination',
                 "statusCode" => 302
             ],
             "en.get" => [
@@ -361,7 +353,7 @@ class RouteGenerationTest extends TestCase
                 "uri" => "en",
                 "action" => '\Illuminate\Routing\RedirectController',
                 "middleware" => [],
-                "redirectTarget" => 'en/destination',
+                'redirectTarget' => '/en/destination',
                 "statusCode" => 302
             ],
             "de.destination.get" => [
@@ -419,7 +411,7 @@ class RouteGenerationTest extends TestCase
                 "uri" => "de",
                 "action" => '\Illuminate\Routing\RedirectController',
                 "middleware" => [],
-                "redirectTarget" => 'de/destination',
+                'redirectTarget' => '/de/destination',
                 "statusCode" => 301
             ],
             "en.get" => [
@@ -427,7 +419,7 @@ class RouteGenerationTest extends TestCase
                 "uri" => "en",
                 "action" => '\Illuminate\Routing\RedirectController',
                 "middleware" => [],
-                "redirectTarget" => 'en/destination',
+                'redirectTarget' => '/en/destination',
                 "statusCode" => 301
             ],
             "de.destination.get" => [
@@ -602,7 +594,7 @@ class RouteGenerationTest extends TestCase
                 "uri" => "de/page2/page2-1",
                 "action" => '\Illuminate\Routing\RedirectController',
                 "middleware" => [],
-                "redirectTarget" => 'de/page1/page1-1',
+                'redirectTarget' => '/de/page1/page1-1',
                 "statusCode" => 302
             ],
             "en.page2.page2-1.get" => [
@@ -610,7 +602,7 @@ class RouteGenerationTest extends TestCase
                 "uri" => "en/page2/page2-1",
                 "action" => '\Illuminate\Routing\RedirectController',
                 "middleware" => [],
-                "redirectTarget" => 'en/page1/page1-1',
+                'redirectTarget' => '/en/page1/page1-1',
                 "statusCode" => 302
             ],
         ]);

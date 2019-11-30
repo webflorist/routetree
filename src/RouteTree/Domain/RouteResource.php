@@ -127,9 +127,9 @@ class RouteResource
 
     public function only(array $actionsOnly)
     {
-        foreach ($this->routeNode->getActions() as $actionName => $routeAction) {
-            if (array_search($actionName, $actionsOnly) === false) {
-                $this->routeNode->removeAction($actionName);
+        foreach ($this->routeNode->getActions() as $routeAction) {
+            if (array_search($routeAction->getName(), $actionsOnly) === false) {
+                $this->routeNode->removeAction($routeAction->getName());
             }
         }
         return $this;
@@ -137,9 +137,9 @@ class RouteResource
 
     public function except(array $actionsExcept)
     {
-        foreach ($this->routeNode->getActions() as $actionName => $routeAction) {
-            if (array_search($actionName, $actionsExcept) !== false) {
-                $this->routeNode->removeAction($actionName);
+        foreach ($this->routeNode->getActions() as $routeAction) {
+            if (array_search($routeAction->getName(), $actionsExcept) !== false) {
+                $this->routeNode->removeAction($routeAction->getName());
             }
         }
         return $this;

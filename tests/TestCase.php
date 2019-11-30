@@ -2,9 +2,7 @@
 
 namespace RouteTreeTests;
 
-use Carbon\Carbon;
 use Illuminate\Contracts\Config\Repository;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Orchestra\Testbench\TestCase as BaseTestCase;
@@ -12,10 +10,6 @@ use RouteTreeTests\Feature\Middleware\Test1Middleware;
 use RouteTreeTests\Feature\Middleware\Test2Middleware;
 use RouteTreeTests\Feature\Middleware\Test3Middleware;
 use RouteTreeTests\Feature\Middleware\Test4Middleware;
-use RouteTreeTests\Feature\Models\BlogArticle;
-use RouteTreeTests\Feature\Models\BlogCategory;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Webflorist\RouteTree\Domain\RouteNode;
 use Webflorist\RouteTree\Http\Resources\RouteCollection;
 use Webflorist\RouteTree\RouteTree;
 use Webflorist\RouteTree\RouteTreeServiceProvider;
@@ -63,7 +57,7 @@ class TestCase extends BaseTestCase
 
         // Set view config
         $this->config->set('view.paths', [
-            dirname(__FILE__).'/Feature/Views'
+            dirname(__FILE__) . '/Feature/Views'
         ]);
 
         $this->setConfig();
@@ -119,13 +113,11 @@ class TestCase extends BaseTestCase
             if ($response->isRedirection()) {
                 $routeData['redirectTarget'] = $response->headers->get('Location');
                 $routeData['statusCode'] = $response->getStatusCode();
-            }
-            else if ($response->getStatusCode() == 500) {
+            } else if ($response->getStatusCode() == 500) {
                 $routeData['statusCode'] = $response->getStatusCode();
-            }
-            else {
+            } else {
                 $content = $response->baseResponse->getContent();
-                if($this->isJson()->evaluate($content,'',true)) {
+                if ($this->isJson()->evaluate($content, '', true)) {
                     $content = json_decode($content, true);
                 }
                 $routeData['content'] = $content;
@@ -147,9 +139,9 @@ class TestCase extends BaseTestCase
 
     protected function setConfig()
     {
-        $this->config->set('app.locale','de');
-        $this->config->set('routetree.locales',['en','de']);
-        $this->config->set('routetree.localization.base_folder','RouteTreeTests::pages');
+        $this->config->set('app.locale', 'de');
+        $this->config->set('routetree.locales', ['en', 'de']);
+        $this->config->set('routetree.localization.base_folder', 'RouteTreeTests::pages');
     }
 
     protected function assertRegisteredRoutes(array $expectedRoutes)
@@ -157,11 +149,11 @@ class TestCase extends BaseTestCase
         //file_put_contents('test.txt',var_export(json_decode((new RouteCollection(route_tree()->getRegisteredRoutes(true)))->collection->toJson(),true),true));
         $this->assertEquals(
             $expectedRoutes,
-            json_decode((new RouteCollection(route_tree()->getRegisteredRoutes(true)))->collection->toJson(),true)
+            json_decode((new RouteCollection(route_tree()->getRegisteredRoutes(true)))->collection->toJson(), true)
         );
     }
 
-    protected function assertJsonResponse(string $uri, array $expected, bool$followRedirects=false, array $headers = [])
+    protected function assertJsonResponse(string $uri, array $expected, bool $followRedirects = false, array $headers = [])
     {
         $response = $this->get($uri, $headers);
         if ($followRedirects) {
@@ -185,6 +177,28 @@ class TestCase extends BaseTestCase
                 unlink($cacheFile);
             }
         }
+    }
+
+
+    public static function getRouteTestData(array $additionalData = []): string
+    {
+        if (route_tree()->getCurrentAction()->getName() === 'create') {
+            //dd(route_tree()->getCurrentNode()->getTitle());
+        }
+        return json_encode(
+            array_merge(
+                [
+                    'id' => route_tree()->getCurrentNode()->getId(),
+                    'method' => \Request::getMethod(),
+                    'path' => trim(\Request::getPathInfo(), '/'),
+                    'locale' => app()->getLocale(),
+                    'title' => route_tree()->getCurrentNode()->getTitle(),
+                    'navTitle' => route_tree()->getCurrentAction()->payload->get('navTitle') ?? route_tree()->getCurrentNode()->payload->get('navTitle') ?? route_tree()->getCurrentNode()->getTitle(),
+                    'h1Title' => route_tree()->getCurrentAction()->payload->get('h1Title') ?? route_tree()->getCurrentNode()->payload->get('h1Title') ?? route_tree()->getCurrentNode()->getTitle()
+                ],
+                $additionalData
+            )
+        );
     }
 
 

@@ -312,27 +312,22 @@ class PayloadTest extends TestCase
                 ->set('de', 'Kommentare')
                 ->set('en', 'Comments');
 
-            $node->payload->h1Title(
+            $node->getAction('index')->payload->h1Title =
                 LanguageMapping::create()
                     ->set('de', 'Liste von Kommentaren')
-                    ->set('en', 'List of comments'),
-                'index');
+                    ->set('en', 'List of comments');
 
-            $node->payload
-                ->set(
-                    'title',
-                    LanguageMapping::create()
-                        ->set('de', 'Neuen Kommentar erstellen')
-                        ->set('en', 'Add new comment'),
-                    'create'
-                )
-                ->set(
-                    'navTitle',
-                    LanguageMapping::create()
-                        ->set('de', 'Kommentar erstellen')
-                        ->set('en', 'Create comment'),
-                    'create'
-                );
+            $node->getAction('create')->payload->title(
+                LanguageMapping::create()
+                    ->set('de', 'Neuen Kommentar erstellen')
+                    ->set('en', 'Add new comment')
+            );
+
+            $node->getAction('create')->payload->navTitle(
+                LanguageMapping::create()
+                    ->set('de', 'Kommentar erstellen')
+                    ->set('en', 'Create comment')
+            );
         });
 
         $this->routeTree->generateAllRoutes();

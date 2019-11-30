@@ -36,17 +36,7 @@ class Route extends JsonResource
                 'uri' => $this->resource->path,
                 'locale' => $this->resource->locale,
                 'methods' => $this->resource->methods,
-                'title' => $this->resource->routeNode->payload->getTitle(
-                    $this->resource->routeKeys,
-                    $this->resource->locale,
-                    $this->resource->routeAction->getName()
-                ),
-                'navTitle' => $this->resource->routeNode->payload->getNavTitle(
-                    $this->resource->routeKeys,
-                    $this->resource->locale,
-                    $this->resource->routeAction->getName()
-                ),
-                'h1Title' => $this->resource->routeNode->payload->getH1Title(
+                'title' => $this->resource->routeNode->getTitle(
                     $this->resource->routeKeys,
                     $this->resource->locale,
                     $this->resource->routeAction->getName()
