@@ -15,13 +15,16 @@ return [
             'value1' => 'Wert 1',
             'value2' => 'Wert 2'
         ],
+        'photos' => 'Fotos',
+        'photos_create' => 'Foto erstellen',
+        'photos_edit' => 'Foto bearbeiten',
+        'photos_show' => 'Foto anzeigen',
     ],
 
-    'values' => [
-        'parameter' => [
-            'value1' => 'wert_1',
-            'value2' => 'wert_2'
-        ]
+    'navTitle' => [
+        'photos_create' => 'Erstellen',
+        'photos_edit' => 'Bearbeiten',
+        'photos_show' => 'Foto',
     ]
 
 ];

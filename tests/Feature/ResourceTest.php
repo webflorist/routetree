@@ -12,8 +12,7 @@ class ResourceTest extends TestCase
     {
 
         $this->routeTree->node('photos', function (RouteNode $node) {
-            $node->resource('photo', '\RouteTreeTests\Feature\Controllers\TestController')
-            ->transKey('RouteTreeTests::general.photo');
+            $node->resource('photo', '\RouteTreeTests\Feature\Controllers\TestController');
         });
 
         $this->routeTree->generateAllRoutes();
@@ -83,7 +82,7 @@ class ResourceTest extends TestCase
                     'locale' => 'en',
                     'path' => 'en/photos/create',
                     'title' => 'Create Photo',
-                    'navTitle' => 'Create',
+                    'navTitle' => 'Resource',
                     'h1Title' => 'Create Photo',
                 ],
             ],
@@ -267,7 +266,7 @@ class ResourceTest extends TestCase
         $this->routeTree->node('photos', function (RouteNode $node) {
             $node->resource('photo', '\RouteTreeTests\Feature\Controllers\TestController')->only([
                 'index', 'create'
-            ])->transKey('RouteTreeTests::general.photo');
+            ]);
         });
 
         $this->routeTree->generateAllRoutes();
@@ -337,7 +336,7 @@ class ResourceTest extends TestCase
                     'locale' => 'en',
                     'path' => 'en/photos/create',
                     'title' => 'Create Photo',
-                    'navTitle' => 'Create',
+                    'navTitle' => 'Resource',
                     'h1Title' => 'Create Photo',
                 ],
             ],
@@ -350,7 +349,7 @@ class ResourceTest extends TestCase
         $this->routeTree->node('photos', function (RouteNode $node) {
             $node->resource('photo', '\RouteTreeTests\Feature\Controllers\TestController')->except([
                 'show', 'update', 'destroy', 'edit', 'store'
-            ])->transKey('RouteTreeTests::general.photo');
+            ]);
         });
 
         $this->routeTree->generateAllRoutes();
@@ -420,7 +419,7 @@ class ResourceTest extends TestCase
                     'locale' => 'en',
                     'path' => 'en/photos/create',
                     'title' => 'Create Photo',
-                    'navTitle' => 'Create',
+                    'navTitle' => 'Resource',
                     'h1Title' => 'Create Photo',
                 ],
             ],

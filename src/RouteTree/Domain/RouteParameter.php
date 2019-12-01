@@ -62,7 +62,7 @@ class RouteParameter
     public function model(string $model)
     {
         if (!isset(class_implements($model)[TranslatableRouteKey::class])) {
-            throw new NoRouteParameterModelException("Model '$model' does not implement 'RouteParameterModelContract'");
+            throw new NoRouteParameterModelException("Model '$model' does not implement 'TranslatableRouteKey'");
         }
         $this->model = $model;
     }

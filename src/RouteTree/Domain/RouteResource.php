@@ -30,19 +30,6 @@ class RouteResource
      * @var string
      */
     private $name;
-    /**
-     * @var RouteAction
-     */
-    private $index;
-    /**
-     * @var Traits\CanHaveSegments
-     */
-    private $create;
-
-    /**
-     * @var string
-     */
-    private $transKey;
 
     /**
      * RouteAction constructor.
@@ -50,15 +37,12 @@ class RouteResource
      * @param string $name
      * @param $controller
      * @param RouteNode $routeNode
-     * @throws \Webflorist\RouteTree\Exceptions\NodeAlreadyHasChildWithSameNameException
-     * @throws \Webflorist\RouteTree\Exceptions\NodeNotFoundException
      */
     public function __construct(string $name, $controller, $routeNode)
     {
         $this->name = $name;
         $this->controller = $controller;
         $this->routeNode = $routeNode;
-        $this->transKey = 'Webflorist-RouteTree::routetree.resource';
         $this->routeNode->parameter($name, false);
 
         $this->setupActions();
@@ -74,18 +58,6 @@ class RouteResource
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Set the translation-key for a resource.
-     *
-     * @param string $transKey
-     * @return RouteResource
-     */
-    public function transKey(string $transKey)
-    {
-        $this->transKey = $transKey;
-        return $this;
     }
 
     private function setupActions()
@@ -145,6 +117,28 @@ class RouteResource
         return $this;
     }
 
+    public function model(string $class)
+    {
+        $this->routeNode->parameter->model($class);
+        return $this;
+    }
+
+    /**
+     * Create a new resource-child-node.
+     *
+     * @param string $name
+     * @param Closure $callback
+     * @return RouteNode
+     * @throws NodeNotFoundException
+     * @throws NodeAlreadyHasChildWithSameNameException
+     */
+    public function child(string $name, Closure $callback)
+    {
+        $child = $this->routeNode->child($name, $callback);
+        $child->isResourceChild = true;
+        return $child;
+    }
+
     public function getActionTitle(string $actionName, ?array $parameters = null, ?string $locale = null)
     {
         $resourceSingular = trans_choice($this->transKey, 1, [], $locale);
@@ -174,34 +168,6 @@ class RouteResource
             default:
                 return $this->getActionTitle($actionName, $parameters, $locale);
         }
-    }
-
-    public function model(string $class)
-    {
-        $this->routeNode->parameter->model($class);
-        return $this;
-    }
-
-    public function routeKeys(array $routeKeys)
-    {
-        $this->routeNode->parameter->routeKeys($routeKeys);
-        return $this;
-    }
-
-    /**
-     * Create a new resource-child-node.
-     *
-     * @param string $name
-     * @param Closure $callback
-     * @return RouteNode
-     * @throws NodeNotFoundException
-     * @throws NodeAlreadyHasChildWithSameNameException
-     */
-    public function child(string $name, Closure $callback)
-    {
-        $child = $this->routeNode->child($name, $callback);
-        $child->isResourceChild = true;
-        return $child;
     }
 
 }

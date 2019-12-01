@@ -24,6 +24,9 @@ class BlogArticle extends Model implements TranslatableRouteKey
 
     public static function getRoutePayload(string $payloadKey, array $parameters, string $locale, ?string $action)
     {
+        if ($payloadKey === 'title' && $action = 'show' && isset($parameters['category']) && isset($parameters['article'])) {
+            self::getArticleTitle($parameters['category'], $parameters['article'], $locale);
+        }
         return null;
     }
 
@@ -61,5 +64,25 @@ class BlogArticle extends Model implements TranslatableRouteKey
         $routeKeys['flowers'] = $routeKeys['blumen'];
         $routeKeys['trees'] = $routeKeys['baeume'];
         return $routeKeys[$category];
+    }
+
+
+    protected static function getArticleTitle(string $category, string $article, string $locale): ?string
+    {
+        $de = [
+            'blumen' => [
+                'die-rose' => 'Die Rose - Blume im Wandel der Zeit',
+                'die-tulpe' => 'Dit Tulpe im weltgeschichtlichen Finanzsystem',
+                'die-lilie' => 'Sehet die Lilien!',
+            ],
+            'baeume' => [
+                'die-laerche' => 'Und jetzt... Die Lärche',
+                'die-kastanie' => 'Und jetzt... Der Kastanienbaum',
+            ]
+        ];
+        if ($locale === 'de') {
+            return $de[$category][$article] ?? null;
+        }
+        return null;
     }
 }

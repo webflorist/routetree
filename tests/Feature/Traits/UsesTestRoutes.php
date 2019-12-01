@@ -212,9 +212,9 @@ trait UsesTestRoutes
                             'method' => 'GET',
                             'path' => 'de/blog-using-resources/{category}/articles',
                             'locale' => 'de',
-                            'title' => 'Ressourcen',
-                            'navTitle' => 'Ressourcen',
-                            'h1Title' => 'Ressourcen',
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles',
+                            'h1Title' => 'Articles',
                         ),
                 ),
             'de.blog-using-resources.articles.print.get' =>
@@ -252,9 +252,9 @@ trait UsesTestRoutes
                             'method' => 'GET',
                             'path' => 'de/blog-using-resources/{category}/articles/{article}',
                             'locale' => 'de',
-                            'title' => 'Ressource anzeigen',
-                            'navTitle' => 'Ressource',
-                            'h1Title' => 'Ressource anzeigen',
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles',
+                            'h1Title' => 'Articles',
                         ),
                 ),
             'de.blog-using-resources.index' =>
@@ -272,9 +272,9 @@ trait UsesTestRoutes
                             'method' => 'GET',
                             'path' => 'de/blog-using-resources',
                             'locale' => 'de',
-                            'title' => 'Ressourcen',
-                            'navTitle' => 'Ressourcen',
-                            'h1Title' => 'Ressourcen',
+                            'title' => 'Blog-using-resources',
+                            'navTitle' => 'Blog-using-resources',
+                            'h1Title' => 'Blog-using-resources',
                         ),
                 ),
             'de.blog-using-resources.show' =>
@@ -292,9 +292,9 @@ trait UsesTestRoutes
                             'method' => 'GET',
                             'path' => 'de/blog-using-resources/{category}',
                             'locale' => 'de',
-                            'title' => 'Ressource anzeigen',
-                            'navTitle' => 'Ressource',
-                            'h1Title' => 'Ressource anzeigen',
+                            'title' => 'Blog-using-resources',
+                            'navTitle' => 'Blog-using-resources',
+                            'h1Title' => 'Blog-using-resources',
                         ),
                 ),
             'de.excluded.excluded-child.get' =>
@@ -472,9 +472,9 @@ trait UsesTestRoutes
                             'method' => 'GET',
                             'path' => 'de/resource/erstellen',
                             'locale' => 'de',
-                            'title' => 'Ressource erstellen',
-                            'navTitle' => 'Erstellen',
-                            'h1Title' => 'Ressource erstellen',
+                            'title' => 'Resource',
+                            'navTitle' => 'Resource',
+                            'h1Title' => 'Resource',
                         ),
                 ),
             'de.resource.destroy' =>
@@ -492,9 +492,9 @@ trait UsesTestRoutes
                             'method' => 'DELETE',
                             'path' => 'de/resource/{resource}',
                             'locale' => 'de',
-                            'title' => 'Ressourcen',
-                            'navTitle' => 'Ressourcen',
-                            'h1Title' => 'Ressourcen',
+                            'title' => 'Resource',
+                            'navTitle' => 'Resource',
+                            'h1Title' => 'Resource',
                         ),
                 ),
             'de.resource.edit' =>
@@ -512,9 +512,9 @@ trait UsesTestRoutes
                             'method' => 'GET',
                             'path' => 'de/resource/{resource}/bearbeiten',
                             'locale' => 'de',
-                            'title' => 'Ressource bearbeiten',
-                            'navTitle' => 'Bearbeiten',
-                            'h1Title' => 'Ressource bearbeiten',
+                            'title' => 'Resource',
+                            'navTitle' => 'Resource',
+                            'h1Title' => 'Resource',
                         ),
                 ),
             'de.resource.index' =>
@@ -532,9 +532,9 @@ trait UsesTestRoutes
                             'method' => 'GET',
                             'path' => 'de/resource',
                             'locale' => 'de',
-                            'title' => 'Ressourcen',
-                            'navTitle' => 'Ressourcen',
-                            'h1Title' => 'Ressourcen',
+                            'title' => 'Resource',
+                            'navTitle' => 'Resource',
+                            'h1Title' => 'Resource',
                         ),
                 ),
             'de.resource.show' =>
@@ -552,9 +552,9 @@ trait UsesTestRoutes
                             'method' => 'GET',
                             'path' => 'de/resource/{resource}',
                             'locale' => 'de',
-                            'title' => 'Ressource anzeigen',
-                            'navTitle' => 'Ressource',
-                            'h1Title' => 'Ressource anzeigen',
+                            'title' => 'Resource',
+                            'navTitle' => 'Resource',
+                            'h1Title' => 'Resource',
                         ),
                 ),
             'de.resource.store' =>
@@ -572,9 +572,9 @@ trait UsesTestRoutes
                             'method' => 'POST',
                             'path' => 'de/resource',
                             'locale' => 'de',
-                            'title' => 'Ressourcen',
-                            'navTitle' => 'Ressourcen',
-                            'h1Title' => 'Ressourcen',
+                            'title' => 'Resource',
+                            'navTitle' => 'Resource',
+                            'h1Title' => 'Resource',
                         ),
                 ),
             'de.resource.update' =>
@@ -592,9 +592,9 @@ trait UsesTestRoutes
                             'method' => 'PUT',
                             'path' => 'de/resource/{resource}',
                             'locale' => 'de',
-                            'title' => 'Ressourcen',
-                            'navTitle' => 'Ressourcen',
-                            'h1Title' => 'Ressourcen',
+                            'title' => 'Resource',
+                            'navTitle' => 'Resource',
+                            'h1Title' => 'Resource',
                         ),
                 ),
             'en.auth.auth-child.get' =>
@@ -674,9 +674,9 @@ trait UsesTestRoutes
                             'method' => 'GET',
                             'path' => 'en/blog-using-resources/{category}/articles',
                             'locale' => 'en',
-                            'title' => 'Resources',
-                            'navTitle' => 'Resources',
-                            'h1Title' => 'Resources',
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles',
+                            'h1Title' => 'Articles',
                         ),
                 ),
             'en.blog-using-resources.articles.print.get' =>
@@ -714,9 +714,9 @@ trait UsesTestRoutes
                             'method' => 'GET',
                             'path' => 'en/blog-using-resources/{category}/articles/{article}',
                             'locale' => 'en',
-                            'title' => 'Show Resource',
-                            'navTitle' => 'Resource',
-                            'h1Title' => 'Show Resource',
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles',
+                            'h1Title' => 'Articles',
                         ),
                 ),
             'en.blog-using-resources.index' =>
@@ -734,9 +734,9 @@ trait UsesTestRoutes
                             'method' => 'GET',
                             'path' => 'en/blog-using-resources',
                             'locale' => 'en',
-                            'title' => 'Resources',
-                            'navTitle' => 'Resources',
-                            'h1Title' => 'Resources',
+                            'title' => 'Blog-using-resources',
+                            'navTitle' => 'Blog-using-resources',
+                            'h1Title' => 'Blog-using-resources',
                         ),
                 ),
             'en.blog-using-resources.show' =>
@@ -754,9 +754,9 @@ trait UsesTestRoutes
                             'method' => 'GET',
                             'path' => 'en/blog-using-resources/{category}',
                             'locale' => 'en',
-                            'title' => 'Show Resource',
-                            'navTitle' => 'Resource',
-                            'h1Title' => 'Show Resource',
+                            'title' => 'Blog-using-resources',
+                            'navTitle' => 'Blog-using-resources',
+                            'h1Title' => 'Blog-using-resources',
                         ),
                 ),
             'en.excluded.excluded-child.get' =>
@@ -934,9 +934,9 @@ trait UsesTestRoutes
                             'method' => 'GET',
                             'path' => 'en/resource/create',
                             'locale' => 'en',
-                            'title' => 'Create Resource',
-                            'navTitle' => 'Create',
-                            'h1Title' => 'Create Resource',
+                            'title' => 'Resource',
+                            'navTitle' => 'Resource',
+                            'h1Title' => 'Resource',
                         ),
                 ),
             'en.resource.destroy' =>
@@ -954,9 +954,9 @@ trait UsesTestRoutes
                             'method' => 'DELETE',
                             'path' => 'en/resource/{resource}',
                             'locale' => 'en',
-                            'title' => 'Resources',
-                            'navTitle' => 'Resources',
-                            'h1Title' => 'Resources',
+                            'title' => 'Resource',
+                            'navTitle' => 'Resource',
+                            'h1Title' => 'Resource',
                         ),
                 ),
             'en.resource.edit' =>
@@ -974,9 +974,9 @@ trait UsesTestRoutes
                             'method' => 'GET',
                             'path' => 'en/resource/{resource}/edit',
                             'locale' => 'en',
-                            'title' => 'Edit Resource',
-                            'navTitle' => 'Edit',
-                            'h1Title' => 'Edit Resource',
+                            'title' => 'Resource',
+                            'navTitle' => 'Resource',
+                            'h1Title' => 'Resource',
                         ),
                 ),
             'en.resource.index' =>
@@ -994,9 +994,9 @@ trait UsesTestRoutes
                             'method' => 'GET',
                             'path' => 'en/resource',
                             'locale' => 'en',
-                            'title' => 'Resources',
-                            'navTitle' => 'Resources',
-                            'h1Title' => 'Resources',
+                            'title' => 'Resource',
+                            'navTitle' => 'Resource',
+                            'h1Title' => 'Resource',
                         ),
                 ),
             'en.resource.show' =>
@@ -1014,9 +1014,9 @@ trait UsesTestRoutes
                             'method' => 'GET',
                             'path' => 'en/resource/{resource}',
                             'locale' => 'en',
-                            'title' => 'Show Resource',
+                            'title' => 'Resource',
                             'navTitle' => 'Resource',
-                            'h1Title' => 'Show Resource',
+                            'h1Title' => 'Resource',
                         ),
                 ),
             'en.resource.store' =>
@@ -1034,9 +1034,9 @@ trait UsesTestRoutes
                             'method' => 'POST',
                             'path' => 'en/resource',
                             'locale' => 'en',
-                            'title' => 'Resources',
-                            'navTitle' => 'Resources',
-                            'h1Title' => 'Resources',
+                            'title' => 'Resource',
+                            'navTitle' => 'Resource',
+                            'h1Title' => 'Resource',
                         ),
                 ),
             'en.resource.update' =>
@@ -1054,9 +1054,9 @@ trait UsesTestRoutes
                             'method' => 'PUT',
                             'path' => 'en/resource/{resource}',
                             'locale' => 'en',
-                            'title' => 'Resources',
-                            'navTitle' => 'Resources',
-                            'h1Title' => 'Resources',
+                            'title' => 'Resource',
+                            'navTitle' => 'Resource',
+                            'h1Title' => 'Resource',
                         ),
                 ),
         ));
@@ -1289,8 +1289,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Ressourcen',
-                            'navTitle' => 'Ressourcen'
+                            'title' => 'Blog-using-resources',
+                            'navTitle' => 'Blog-using-resources'
                         ),
                 ),
             12 =>
@@ -1308,8 +1308,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Ressource anzeigen',
-                            'navTitle' => 'Ressource'
+                            'title' => 'Blog-using-resources',
+                            'navTitle' => 'Blog-using-resources'
                         ),
                 ),
             13 =>
@@ -1327,8 +1327,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Ressource anzeigen',
-                            'navTitle' => 'Ressource'
+                            'title' => 'Blog-using-resources',
+                            'navTitle' => 'Blog-using-resources'
                         ),
                 ),
             14 =>
@@ -1346,8 +1346,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Ressourcen',
-                            'navTitle' => 'Ressourcen'
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles'
                         ),
                 ),
             15 =>
@@ -1365,8 +1365,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Ressourcen',
-                            'navTitle' => 'Ressourcen'
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles'
                         ),
 
                 ),
@@ -1385,8 +1385,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Ressource anzeigen',
-                            'navTitle' => 'Ressource'
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles'
                         ),
                 ),
             17 =>
@@ -1404,8 +1404,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Ressource anzeigen',
-                            'navTitle' => 'Ressource'
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles'
                         ),
                 ),
             18 =>
@@ -1423,8 +1423,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Ressource anzeigen',
-                            'navTitle' => 'Ressource'
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles'
                         ),
                 ),
             19 =>
@@ -1442,8 +1442,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Ressource anzeigen',
-                            'navTitle' => 'Ressource'
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles'
                         ),
                 ),
             20 =>
@@ -1461,8 +1461,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Ressource anzeigen',
-                            'navTitle' => 'Ressource'
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles'
                         ),
                 ),
             21 =>
@@ -1480,8 +1480,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Ressource anzeigen',
-                            'navTitle' => 'Ressource'
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles'
                         ),
                 ),
             22 =>
@@ -1680,8 +1680,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Ressourcen',
-                            'navTitle' => 'Ressourcen'
+                            'title' => 'Resource',
+                            'navTitle' => 'Resource'
                         ),
 
                 ),
@@ -1699,8 +1699,8 @@ trait UsesTestRoutes
                                 array(
                                     0 => 'POST',
                                 ),
-                            'title' => 'Ressourcen',
-                            'navTitle' => 'Ressourcen'
+                            'title' => 'Resource',
+                            'navTitle' => 'Resource'
                         ),
                 ),
             33 =>
@@ -1718,8 +1718,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Ressource erstellen',
-                            'navTitle' => 'Erstellen'
+                            'title' => 'Resource',
+                            'navTitle' => 'Resource'
                         ),
                 ),
             34 =>
@@ -1946,8 +1946,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Resources',
-                            'navTitle' => 'Resources'
+                            'title' => 'Blog-using-resources',
+                            'navTitle' => 'Blog-using-resources'
                         ),
                 ),
             46 =>
@@ -1965,8 +1965,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Show Resource',
-                            'navTitle' => 'Resource'
+                            'title' => 'Blog-using-resources',
+                            'navTitle' => 'Blog-using-resources'
                         ),
                 ),
             47 =>
@@ -1984,8 +1984,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Show Resource',
-                            'navTitle' => 'Resource'
+                            'title' => 'Blog-using-resources',
+                            'navTitle' => 'Blog-using-resources'
                         ),
                 ),
             48 =>
@@ -2003,8 +2003,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Resources',
-                            'navTitle' => 'Resources'
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles'
                         ),
                 ),
             49 =>
@@ -2022,8 +2022,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Resources',
-                            'navTitle' => 'Resources'
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles'
                         ),
                 ),
             50 =>
@@ -2041,8 +2041,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Show Resource',
-                            'navTitle' => 'Resource'
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles'
                         ),
                 ),
             51 =>
@@ -2060,8 +2060,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Show Resource',
-                            'navTitle' => 'Resource'
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles'
                         ),
                 ),
             52 =>
@@ -2079,8 +2079,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Show Resource',
-                            'navTitle' => 'Resource'
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles'
                         ),
                 ),
             53 =>
@@ -2098,8 +2098,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Show Resource',
-                            'navTitle' => 'Resource'
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles'
                         ),
                 ),
             54 =>
@@ -2117,8 +2117,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Show Resource',
-                            'navTitle' => 'Resource'
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles'
                         ),
                 ),
             55 =>
@@ -2136,8 +2136,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Show Resource',
-                            'navTitle' => 'Resource'
+                            'title' => 'Articles',
+                            'navTitle' => 'Articles'
                         ),
                 ),
             56 =>
@@ -2336,8 +2336,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Resources',
-                            'navTitle' => 'Resources'
+                            'title' => 'Resource',
+                            'navTitle' => 'Resource'
                         ),
                 ),
             66 =>
@@ -2354,8 +2354,8 @@ trait UsesTestRoutes
                                 array(
                                     0 => 'POST',
                                 ),
-                            'title' => 'Resources',
-                            'navTitle' => 'Resources'
+                            'title' => 'Resource',
+                            'navTitle' => 'Resource'
                         ),
                 ),
             67 =>
@@ -2373,8 +2373,8 @@ trait UsesTestRoutes
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Create Resource',
-                            'navTitle' => 'Create'
+                            'title' => 'Resource',
+                            'navTitle' => 'Resource'
                         ),
                 ),
         ));
