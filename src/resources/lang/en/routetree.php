@@ -2,7 +2,11 @@
 
 return [
 
+    'editTitle' => 'Edit :resource: :item',
+    'editNavTitle' => 'Edit',
     'editPathSegment' => 'edit',
-    'createPathSegment' => 'create'
+    'createTitle' => 'Create :resource',
+    'createNavTitle' => 'Create',
+    'createPathSegment' => 'create',
 
 ];

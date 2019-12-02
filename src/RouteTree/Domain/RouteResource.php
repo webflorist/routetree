@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Support\Facades\Lang;
 use Webflorist\RouteTree\Exceptions\NodeAlreadyHasChildWithSameNameException;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
+use Webflorist\RouteTree\RouteTree;
 
 class RouteResource
 {
@@ -141,33 +142,48 @@ class RouteResource
 
     public function getActionTitle(string $actionName, ?array $parameters = null, ?string $locale = null)
     {
-        $resourceSingular = trans_choice($this->transKey, 1, [], $locale);
-        $resourcePlural = trans_choice($this->transKey, 2, [], $locale);
+        RouteTree::establishLocale($locale);
+        $resourceTitle = $this->routeNode->getTitle($parameters, $locale, false);
+        $resourceItem = $this->getResourceItem($parameters, $locale);
         switch ($actionName) {
             case 'create':
-                return trans('Webflorist-RouteTree::routetree.createTitle', ['resource' => $resourceSingular], $locale);
+                return trans('Webflorist-RouteTree::routetree.createTitle', ['resource' => $resourceTitle], $locale);
             case 'show':
-                return trans('Webflorist-RouteTree::routetree.showTitle', ['resource' => $resourceSingular], $locale);
+                return "$resourceTitle: $resourceItem";
             case 'edit':
-                return trans('Webflorist-RouteTree::routetree.editTitle', ['resource' => $resourceSingular], $locale);
+                return trans('Webflorist-RouteTree::routetree.editTitle', ['resource' => $resourceTitle, 'item' => $resourceItem], $locale);
             default:
-                return $resourcePlural;
+                return $resourceTitle;
         }
     }
 
     public function getActionNavTitle(string $actionName, ?array $parameters = null, ?string $locale = null)
     {
-        $resourceSingular = trans_choice($this->transKey, 1, [], $locale);
         switch ($actionName) {
             case 'create':
                 return trans('Webflorist-RouteTree::routetree.createNavTitle', [], $locale);
             case 'show':
-                return trans('Webflorist-RouteTree::routetree.showNavTitle', ['resource' => $resourceSingular], $locale);
+                return $resourceItem = $this->getResourceItem($parameters, $locale);
             case 'edit':
                 return trans('Webflorist-RouteTree::routetree.editNavTitle', [], $locale);
             default:
-                return $this->getActionTitle($actionName, $parameters, $locale);
+                return $this->routeNode->getNavTitle($parameters, $locale, false);
         }
+    }
+
+    /**
+     * @param array|null $parameters
+     * @param string|null $locale
+     * @return mixed|null
+     */
+    protected function getResourceItem(?array $parameters, ?string $locale)
+    {
+        if (isset($parameters[$this->name])) {
+            $resourceItem = $parameters[$this->name];
+        } else {
+            $resourceItem = $this->routeNode->parameter->getActiveRouteKey($locale);
+        }
+        return $resourceItem;
     }
 
 }

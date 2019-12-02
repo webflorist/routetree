@@ -105,6 +105,9 @@ class RouteParameter
 
     public function isActive()
     {
+        if (is_null(\Route::current())) {
+            return false;
+        }
         return \Route::current()->hasParameter($this->name);
     }
 

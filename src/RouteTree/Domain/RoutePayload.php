@@ -150,10 +150,6 @@ class RoutePayload
      */
     public function get(string $payloadKey, ?array $parameters = null, ?string $locale = null)
     {
-        $debug = false;
-        if (isset($parameters['category']) && $parameters['category'] === 'baeume') {
-            $debug = true;
-        }
         RouteTree::establishLocale($locale);
         RouteTree::establishRouteParameters($parameters);
         $payload = $this->$payloadKey;

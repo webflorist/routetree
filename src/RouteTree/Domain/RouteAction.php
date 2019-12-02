@@ -641,12 +641,11 @@ class RouteAction
             return $title;
         }
 
-	/*
         // Fallback for resources is to get the action specific default-title from the RouteResource.
         if ($this->routeNode->isResource()) {
             return $this->routeNode->resource->getActionTitle($this->getName(), $parameters, $locale);
         }
-	*/
+
         // Per default we fall back to $this->routeNode->getTitle().
         return $this->routeNode->getTitle($parameters, $locale, false);
     }
@@ -667,12 +666,11 @@ class RouteAction
             return $title;
         }
 
-	/*
         // Fallback for resources is to get the action specific default-navTitle from the RouteResource.
         if ($this->routeNode->isResource()) {
             return $this->routeNode->resource->getActionNavTitle($this->getName(), $parameters, $locale);
         }
-	*/
+
         // Per default we fall back to $this->getTitle().
         return $this->getTitle($parameters,$locale);
     }

@@ -8,7 +8,7 @@ use Webflorist\RouteTree\Domain\RouteNode;
 class ResourceTest extends TestCase
 {
 
-    public function test_resource()
+    public function test_full_resource()
     {
 
         $this->routeTree->node('photos', function (RouteNode $node) {
