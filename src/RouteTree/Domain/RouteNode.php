@@ -1160,12 +1160,13 @@ class RouteNode
 
         // For active nodes, we try getting the action-specific title automatically,
         // if $useCurrentAction is true.
-        if ($useCurrentAction && $this->isActive() && route_tree()->getCurrentAction() !== null) {
+        if ($useCurrentAction && $this->isActive() && (route_tree()->getCurrentAction() !== null)) {
             return route_tree()->getCurrentAction()->getTitle($parameters, $locale);
         }
 
         // Get title payload.
         $title = $this->payload->get('title', $parameters, $locale);
+
 
         if (is_string($title)) {
             return $title;
@@ -1190,19 +1191,18 @@ class RouteNode
 
         // For active nodes, we try getting the action-specific title automatically,
         // if $useCurrentAction is true.
-        if ($useCurrentAction && $this->isActive() && route_tree()->getCurrentAction() !== null) {
+        if ($useCurrentAction && $this->isActive() && (route_tree()->getCurrentAction() !== null)) {
             return route_tree()->getCurrentAction()->getNavTitle($parameters, $locale);
         }
 
         // Get title payload.
         $title = $this->payload->get('navTitle', $parameters, $locale);
-
         if (is_string($title)) {
             return $title;
         }
 
         // Per default we fall back to $this->getTitle().
-        return $this->getTitle($parameters,$locale);
+        return $this->getTitle($parameters,$locale, $useCurrentAction);
     }
 
 }

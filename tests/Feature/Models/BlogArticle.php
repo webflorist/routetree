@@ -3,12 +3,14 @@
 namespace RouteTreeTests\Feature\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Webflorist\RouteTree\Interfaces\TranslatableRouteKey;
+use Webflorist\RouteTree\Interfaces\ProvidesRouteKeyList;
+use Webflorist\RouteTree\Interfaces\ProvidesRoutePayload;
+use Webflorist\RouteTree\Interfaces\TranslatesRouteKey;
 
-class BlogArticle extends Model implements TranslatableRouteKey
+class BlogArticle extends Model implements ProvidesRouteKeyList, ProvidesRoutePayload, TranslatesRouteKey
 {
 
-    public static function getAllRouteKeys(string $locale = null, ?array $parameters = null): ?array
+    public static function getRouteKeyList(string $locale = null, ?array $parameters = null): ?array
     {
         if (isset($parameters['category'])) {
             return self::getTestRouteKeys($parameters['category'])[$locale];
@@ -24,8 +26,12 @@ class BlogArticle extends Model implements TranslatableRouteKey
 
     public static function getRoutePayload(string $payloadKey, array $parameters, string $locale, ?string $action)
     {
-        if ($payloadKey === 'title' && $action = 'show' && isset($parameters['category']) && isset($parameters['article'])) {
-            self::getArticleTitle($parameters['category'], $parameters['article'], $locale);
+        switch($payloadKey) {
+            case 'title':
+            case 'navTitle':
+                if (isset($parameters['category']) && isset($parameters['article'])) {
+                    return self::getArticleTitle($parameters['category'], $parameters['article'], $locale);
+                }
         }
         return null;
     }

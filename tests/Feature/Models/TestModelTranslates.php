@@ -3,13 +3,14 @@
 namespace RouteTreeTests\Feature\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Webflorist\RouteTree\Interfaces\TranslatableRouteKey;
+use Webflorist\RouteTree\Interfaces\ProvidesRouteKeyList;
+use Webflorist\RouteTree\Interfaces\ProvidesRoutePayload;
+use Webflorist\RouteTree\Interfaces\TranslatesRouteKey;
 
-class TestModelTranslatable extends Model implements TranslatableRouteKey
+class TestModelTranslates extends Model implements ProvidesRouteKeyList, ProvidesRoutePayload, TranslatesRouteKey
 {
 
-
-    public static function getAllRouteKeys(string $locale = null, ?array $parameters = null): ?array
+    public static function getRouteKeyList(string $locale = null, ?array $parameters = null): ?array
     {
         return $locale === 'de' ? ['wert-1','wert-2'] : ['value-1','value-2'];
     }

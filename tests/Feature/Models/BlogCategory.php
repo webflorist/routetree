@@ -3,12 +3,14 @@
 namespace RouteTreeTests\Feature\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Webflorist\RouteTree\Interfaces\TranslatableRouteKey;
+use Webflorist\RouteTree\Interfaces\ProvidesRouteKeyList;
+use Webflorist\RouteTree\Interfaces\ProvidesRoutePayload;
+use Webflorist\RouteTree\Interfaces\TranslatesRouteKey;
 
-class BlogCategory extends Model implements TranslatableRouteKey
+class BlogCategory extends Model implements ProvidesRouteKeyList, ProvidesRoutePayload, TranslatesRouteKey
 {
 
-    public static function getAllRouteKeys(string $locale = null, ?array $parameters = null): ?array
+    public static function getRouteKeyList(string $locale = null, ?array $parameters = null): ?array
     {
         return self::getTestRouteKeys()[$locale];
     }
@@ -21,6 +23,13 @@ class BlogCategory extends Model implements TranslatableRouteKey
 
     public static function getRoutePayload(string $payloadKey, array $parameters, string $locale, ?string $action)
     {
+        switch ($payloadKey) {
+            case 'title':
+            case 'navTitle':
+                if (isset($parameters['category'])) {
+                    return self::getCategoryTitle($parameters['category'], $locale);
+                }
+        }
         return null;
     }
 
@@ -39,5 +48,22 @@ class BlogCategory extends Model implements TranslatableRouteKey
                 'trees'
             ]
         ];
+    }
+
+    protected static function getCategoryTitle($routeKey, $locale)
+    {
+        $titles = [
+            'de' => [
+                'blumen' => 'Artikel über Blumen',
+                'baeume' => 'Artikel über Bäume'
+            ],
+            'en' => [
+                'flowers' => 'Articles about flowers',
+                'trees' => 'Articles about trees'
+            ]
+        ];
+        if (isset($titles[$locale][$routeKey])) {
+            return $titles[$locale][$routeKey];
+        }
     }
 }

@@ -5,6 +5,7 @@ namespace RouteTreeTests\Feature;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use RouteTreeTests\Feature\Models\TestModelTranslatable;
+use RouteTreeTests\Feature\Models\TestModelTranslates;
 use RouteTreeTests\Feature\Traits\UsesTestRoutes;
 use RouteTreeTests\TestCase;
 use Webflorist\RouteTree\Domain\RouteNode;
@@ -151,7 +152,7 @@ class RouteNodeUrlTest extends TestCase
                     ]
                 ]);
                 $node->child('parameter2', function (RouteNode $node) {
-                    $node->parameter('parameter_with_model')->model(TestModelTranslatable::class);
+                    $node->parameter('parameter_with_model')->model(TestModelTranslates::class);
                     $node->child('display-url', function (RouteNode $node) {
                         $node->get(function(){
                             return json_encode([(string)route_node_url()->locale('en')]);

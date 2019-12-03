@@ -2,10 +2,10 @@
 
 namespace Webflorist\RouteTree\Domain;
 
-
 use Illuminate\Database\Eloquent\Model;
-use Webflorist\RouteTree\Exceptions\NoRouteParameterModelException;
-use Webflorist\RouteTree\Interfaces\TranslatableRouteKey;
+use Webflorist\RouteTree\Exceptions\NoValidModelException;
+use Webflorist\RouteTree\Interfaces\ProvidesRoutePayload;
+use Webflorist\RouteTree\Interfaces\TranslatesRouteKey;
 use Webflorist\RouteTree\RouteTree;
 
 /**
@@ -61,8 +61,8 @@ class RouteParameter
 
     public function model(string $model)
     {
-        if (!isset(class_implements($model)[TranslatableRouteKey::class])) {
-            throw new NoRouteParameterModelException("Model '$model' does not implement 'TranslatableRouteKey'");
+        if (!is_subclass_of($model, Model::class)) {
+            throw new NoValidModelException("Class '$model' does not seem to be an Eloquent Model.");
         }
         $this->model = $model;
     }
@@ -86,7 +86,7 @@ class RouteParameter
         }
 
         if (!is_null($this->model)) {
-            return $this->model::getAllRouteKeys($locale, $parameters);
+            return $this->model::getRouteKeyList($locale, $parameters);
         }
 
         return [];
@@ -139,7 +139,7 @@ class RouteParameter
             }
         }
 
-        if (!is_null($this->model)) {
+        if ($this->hasRoutekeyTranslatingModel()) {
             return $this->model::translateRouteKey($routeKey, $toLocale, $fromLocale);
         }
 
@@ -149,6 +149,14 @@ class RouteParameter
     public function hasModel()
     {
         return $this->model !== null;
+    }
+
+    public function hasRoutekeyTranslatingModel() {
+        return $this->hasModel() && in_array(TranslatesRouteKey::class, class_implements($this->model));
+    }
+
+    public function hasPayloadProvidingModel() {
+        return $this->hasModel() && in_array(ProvidesRoutePayload::class, class_implements($this->model));
     }
 
     public function getModel()

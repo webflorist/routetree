@@ -130,6 +130,8 @@ class TestCase extends BaseTestCase
         ksort($routes);
         ksort($expectedResult);
 
+        file_put_contents('test.txt',var_export($routes, true));
+
         // Assert, that expected and actual routes-array are equal.
         $this->assertEquals(
             $expectedResult,

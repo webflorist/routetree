@@ -651,7 +651,7 @@ class RouteAction
     }
 
     /**
-     * Get the navigation title of this action (defaults to $this->getTitle()).
+     * Get the navigation title of this action (defaults to $this->routeNode->getNavTitle()).
      *
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the title-generation (default=current route-parameters).
      * @param string $locale The language the title should be fetched for (default=current locale).
@@ -671,8 +671,8 @@ class RouteAction
             return $this->routeNode->resource->getActionNavTitle($this->getName(), $parameters, $locale);
         }
 
-        // Per default we fall back to $this->getTitle().
-        return $this->getTitle($parameters,$locale);
+        // Per default we fall back to $this->routeNode->getNavTitle().
+        return $this->routeNode->getNavTitle($parameters, $locale, false);
     }
 
 }

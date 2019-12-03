@@ -2,10 +2,7 @@
 
 namespace Webflorist\RouteTree\Domain;
 
-
-use Illuminate\Support\Arr;
-use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
-use Webflorist\RouteTree\Interfaces\TranslatableRouteKey;
+use Webflorist\RouteTree\Interfaces\ProvidesRoutePayload;
 use Webflorist\RouteTree\RouteTree;
 
 /**
@@ -159,6 +156,7 @@ class RoutePayload
         if (is_null($payload) && !is_null($this->routeAction) && $this->routeNode->payload->has($payloadKey)) {
             $payload =  $this->routeNode->payload->$payloadKey;
         }
+
         // If payload is a LocaleMap and contains an element for this language, that's our new $payload.
         if ($payload instanceof LanguageMapping && $payload->has($locale)) {
             $payload = $payload->get($locale);
@@ -173,8 +171,8 @@ class RoutePayload
         // and the payload belongs to a parameter-node,
         // which has a model attached,
         // we try getting the payload from the model.
-        if (is_null($payload) && $this->routeNode->hasParameter() && $this->routeNode->parameter->hasModel()) {
-            /** @var TranslatableRouteKey $modelClass */
+        if (is_null($payload) && $this->routeNode->hasParameter() && $this->routeNode->parameter->hasPayloadProvidingModel() ) {
+            /** @var ProvidesRoutePayload $modelClass */
             $modelClass = $this->routeNode->parameter->getModel();
             $modelPayload = $modelClass::getRoutePayload($payloadKey, $parameters, $locale, (!is_null($this->routeAction) ? $this->routeAction->getName() : null));
             if (!is_null($modelPayload)) {
@@ -196,15 +194,11 @@ class RoutePayload
                 $payload = $autoTranslatedValue;
             }
         }
-
         // If a payload was found and is an array,
         // it might be a nested routeKey-mapping,
         // if this route has a parameters.
         if (is_array($payload) && $this->routeNode->hasParameter()) {
-            $dotNotatedParameters =  implode('.',$parameters);
-            if (Arr::has($payload, $dotNotatedParameters)) {
-                $payload = Arr::get($payload, $dotNotatedParameters);
-            }
+            $payload = $this->resolveNestedRouteKeyPayload($parameters, $payload);
         }
 
         return $payload;
@@ -236,6 +230,26 @@ class RoutePayload
 
         return false;
 
+    }
+
+    /**
+     * @param array|null $parameters
+     * @param $payload
+     * @return mixed
+     */
+    protected function resolveNestedRouteKeyPayload(array $parameters, array $payload)
+    {
+        foreach ($parameters as $parameter) {
+            if (isset($payload[$parameter])) {
+                if (is_array($payload[$parameter])) {
+                    $parametersWithoutTheCurrentOne = $parameters;
+                    array_shift($parametersWithoutTheCurrentOne);
+                    return $this->resolveNestedRouteKeyPayload($parametersWithoutTheCurrentOne, $payload[$parameter]);
+                }
+                return $payload[$parameter];
+            }
+        }
+        return $payload;
     }
 
 }

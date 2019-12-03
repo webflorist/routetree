@@ -134,929 +134,975 @@ trait UsesTestRoutes
 
     protected function assertComplexTestRouteTree(): void
     {
-        $this->assertRouteTree(array(
+        $this->assertRouteTree(array (
             'de.auth.auth-child.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de/auth/auth-child',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(
+                        array (
                             'auth' => 'auth',
                         ),
                     'statusCode' => 500,
                 ),
             'de.auth.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de/auth',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(
+                        array (
                             'auth' => 'auth',
                         ),
                     'statusCode' => 500,
                 ),
             'de.blog-using-parameters.category.article.show' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de/blog-using-parameters/{category}/{article}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'blog-using-parameters.category.article',
-                            'controller' => 'test',
-                            'function' => 'get',
                             'method' => 'GET',
                             'path' => 'de/blog-using-parameters/{category}/{article}',
                             'locale' => 'de',
                             'title' => 'Article',
                             'navTitle' => 'Article',
                             'h1Title' => 'Article',
+                            'controller' => 'test',
+                            'function' => 'get',
                         ),
                 ),
             'de.blog-using-parameters.category.show' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de/blog-using-parameters/{category}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'blog-using-parameters.category',
-                            'controller' => 'test',
-                            'function' => 'get',
                             'method' => 'GET',
                             'path' => 'de/blog-using-parameters/{category}',
                             'locale' => 'de',
                             'title' => 'Category',
                             'navTitle' => 'Category',
                             'h1Title' => 'Category',
+                            'controller' => 'test',
+                            'function' => 'get',
                         ),
                 ),
             'de.blog-using-resources.articles.index' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de/blog-using-resources/{category}/articles',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@index',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'blog-using-resources.articles',
-                            'controller' => 'test',
-                            'function' => 'index',
                             'method' => 'GET',
                             'path' => 'de/blog-using-resources/{category}/articles',
                             'locale' => 'de',
                             'title' => 'Articles',
                             'navTitle' => 'Articles',
                             'h1Title' => 'Articles',
+                            'controller' => 'test',
+                            'function' => 'index',
                         ),
                 ),
             'de.blog-using-resources.articles.print.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de/blog-using-resources/articles/{article}/print',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@print',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'blog-using-resources.articles.print',
-                            'controller' => 'test',
-                            'function' => 'print',
                             'method' => 'GET',
                             'path' => 'de/blog-using-resources/articles/{article}/print',
                             'locale' => 'de',
                             'title' => 'Print',
                             'navTitle' => 'Print',
                             'h1Title' => 'Print',
+                            'controller' => 'test',
+                            'function' => 'print',
                         ),
                 ),
             'de.blog-using-resources.articles.show' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de/blog-using-resources/{category}/articles/{article}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@show',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'blog-using-resources.articles',
-                            'controller' => 'test',
-                            'function' => 'show',
                             'method' => 'GET',
                             'path' => 'de/blog-using-resources/{category}/articles/{article}',
                             'locale' => 'de',
-                            'title' => 'Articles',
-                            'navTitle' => 'Articles',
-                            'h1Title' => 'Articles',
+                            'title' => 'Articles: {article}',
+                            'navTitle' => '{article}',
+                            'h1Title' => 'Articles: {article}',
+                            'controller' => 'test',
+                            'function' => 'show',
                         ),
                 ),
             'de.blog-using-resources.index' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de/blog-using-resources',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@index',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'blog-using-resources',
-                            'controller' => 'test',
-                            'function' => 'index',
                             'method' => 'GET',
                             'path' => 'de/blog-using-resources',
                             'locale' => 'de',
                             'title' => 'Blog-using-resources',
                             'navTitle' => 'Blog-using-resources',
                             'h1Title' => 'Blog-using-resources',
+                            'controller' => 'test',
+                            'function' => 'index',
                         ),
                 ),
             'de.blog-using-resources.show' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de/blog-using-resources/{category}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@show',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'blog-using-resources',
-                            'controller' => 'test',
-                            'function' => 'show',
                             'method' => 'GET',
                             'path' => 'de/blog-using-resources/{category}',
                             'locale' => 'de',
-                            'title' => 'Blog-using-resources',
-                            'navTitle' => 'Blog-using-resources',
-                            'h1Title' => 'Blog-using-resources',
+                            'title' => 'Blog-using-resources: {category}',
+                            'navTitle' => '{category}',
+                            'h1Title' => 'Blog-using-resources: {category}',
+                            'controller' => 'test',
+                            'function' => 'show',
                         ),
                 ),
             'de.excluded.excluded-child.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de/excluded/excluded-child',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'excluded.excluded-child',
-                            'controller' => 'test',
-                            'function' => 'get',
                             'method' => 'GET',
                             'path' => 'de/excluded/excluded-child',
                             'locale' => 'de',
                             'title' => 'Excluded-child',
                             'navTitle' => 'Excluded-child',
                             'h1Title' => 'Excluded-child',
+                            'controller' => 'test',
+                            'function' => 'get',
                         ),
                 ),
             'de.excluded.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de/excluded',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'excluded',
-                            'controller' => 'test',
-                            'function' => 'get',
                             'method' => 'GET',
                             'path' => 'de/excluded',
                             'locale' => 'de',
                             'title' => 'Excluded',
                             'navTitle' => 'Excluded',
                             'h1Title' => 'Excluded',
+                            'controller' => 'test',
+                            'function' => 'get',
                         ),
                 ),
             'de.excluded.non-excluded-child.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de/excluded/non-excluded-child',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'excluded.non-excluded-child',
-                            'controller' => 'test',
-                            'function' => 'get',
                             'method' => 'GET',
                             'path' => 'de/excluded/non-excluded-child',
                             'locale' => 'de',
                             'title' => 'Non-excluded-child',
                             'navTitle' => 'Non-excluded-child',
                             'h1Title' => 'Non-excluded-child',
+                            'controller' => 'test',
+                            'function' => 'get',
                         ),
                 ),
             'de.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => '',
-                            'controller' => 'test',
-                            'function' => 'get',
                             'method' => 'GET',
                             'path' => 'de',
                             'locale' => 'de',
                             'title' => 'Startseite',
                             'navTitle' => 'Startseite',
                             'h1Title' => 'Startseite',
+                            'controller' => 'test',
+                            'function' => 'get',
                         ),
                 ),
             'de.parameter-with-translated-values.parameter-with-translated-values.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de/parameter-with-translated-values/{parameter-with-translated-values}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'parameter-with-translated-values.parameter-with-translated-values',
-                            'controller' => 'test',
-                            'function' => 'get',
                             'method' => 'GET',
                             'path' => 'de/parameter-with-translated-values/{parameter-with-translated-values}',
                             'locale' => 'de',
                             'title' => 'Parameter-with-translated-values',
                             'navTitle' => 'Parameter-with-translated-values',
                             'h1Title' => 'Parameter-with-translated-values',
+                            'controller' => 'test',
+                            'function' => 'get',
                         ),
                 ),
             'de.parameter-with-values.parameter-with-values.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de/parameter-with-values/{parameter-with-values}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'parameter-with-values.parameter-with-values',
-                            'controller' => 'test',
-                            'function' => 'get',
                             'method' => 'GET',
                             'path' => 'de/parameter-with-values/{parameter-with-values}',
                             'locale' => 'de',
                             'title' => 'Parameter-with-values',
                             'navTitle' => 'Parameter-with-values',
                             'h1Title' => 'Parameter-with-values',
+                            'controller' => 'test',
+                            'function' => 'get',
                         ),
                 ),
             'de.parameter.parameter.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de/parameter/{parameter}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'parameter.parameter',
-                            'controller' => 'test',
-                            'function' => 'get',
                             'method' => 'GET',
                             'path' => 'de/parameter/{parameter}',
                             'locale' => 'de',
                             'title' => 'Parameter',
                             'navTitle' => 'Parameter',
                             'h1Title' => 'Parameter',
+                            'controller' => 'test',
+                            'function' => 'get',
                         ),
                 ),
             'de.permanent-redirect.get' =>
-                array(
+                array (
                     'method' => 'GET|POST|PUT|PATCH|DELETE|OPTIONS',
                     'uri' => 'de/permanent-redirect',
                     'action' => '\\Illuminate\\Routing\\RedirectController',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'redirectTarget' => '/de/excluded',
                     'statusCode' => 301,
                 ),
             'de.redirect.get' =>
-                array(
+                array (
                     'method' => 'GET|POST|PUT|PATCH|DELETE|OPTIONS',
                     'uri' => 'de/redirect',
                     'action' => '\\Illuminate\\Routing\\RedirectController',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'redirectTarget' => '/de/excluded',
                     'statusCode' => 302,
                 ),
             'de.resource.create' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de/resource/erstellen',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@create',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'resource',
-                            'controller' => 'test',
-                            'function' => 'create',
                             'method' => 'GET',
                             'path' => 'de/resource/erstellen',
                             'locale' => 'de',
-                            'title' => 'Resource',
-                            'navTitle' => 'Resource',
-                            'h1Title' => 'Resource',
+                            'title' => 'Resource erstellen',
+                            'navTitle' => 'Erstellen',
+                            'h1Title' => 'Resource erstellen',
+                            'controller' => 'test',
+                            'function' => 'create',
                         ),
                 ),
             'de.resource.destroy' =>
-                array(
+                array (
                     'method' => 'DELETE',
                     'uri' => 'de/resource/{resource}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@destroy',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'resource',
-                            'controller' => 'test',
-                            'function' => 'destroy',
                             'method' => 'DELETE',
                             'path' => 'de/resource/{resource}',
                             'locale' => 'de',
                             'title' => 'Resource',
                             'navTitle' => 'Resource',
                             'h1Title' => 'Resource',
+                            'controller' => 'test',
+                            'function' => 'destroy',
                         ),
                 ),
             'de.resource.edit' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de/resource/{resource}/bearbeiten',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@edit',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'resource',
-                            'controller' => 'test',
-                            'function' => 'edit',
                             'method' => 'GET',
                             'path' => 'de/resource/{resource}/bearbeiten',
                             'locale' => 'de',
-                            'title' => 'Resource',
-                            'navTitle' => 'Resource',
-                            'h1Title' => 'Resource',
+                            'title' => 'Resource bearbeiten: {resource}',
+                            'navTitle' => 'Bearbeiten',
+                            'h1Title' => 'Resource bearbeiten: {resource}',
+                            'controller' => 'test',
+                            'function' => 'edit',
                         ),
                 ),
             'de.resource.index' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de/resource',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@index',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'resource',
-                            'controller' => 'test',
-                            'function' => 'index',
                             'method' => 'GET',
                             'path' => 'de/resource',
                             'locale' => 'de',
                             'title' => 'Resource',
                             'navTitle' => 'Resource',
                             'h1Title' => 'Resource',
+                            'controller' => 'test',
+                            'function' => 'index',
                         ),
                 ),
             'de.resource.show' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'de/resource/{resource}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@show',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'resource',
-                            'controller' => 'test',
-                            'function' => 'show',
                             'method' => 'GET',
                             'path' => 'de/resource/{resource}',
                             'locale' => 'de',
-                            'title' => 'Resource',
-                            'navTitle' => 'Resource',
-                            'h1Title' => 'Resource',
+                            'title' => 'Resource: {resource}',
+                            'navTitle' => '{resource}',
+                            'h1Title' => 'Resource: {resource}',
+                            'controller' => 'test',
+                            'function' => 'show',
                         ),
                 ),
             'de.resource.store' =>
-                array(
+                array (
                     'method' => 'POST',
                     'uri' => 'de/resource',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@store',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'resource',
-                            'controller' => 'test',
-                            'function' => 'store',
                             'method' => 'POST',
                             'path' => 'de/resource',
                             'locale' => 'de',
                             'title' => 'Resource',
                             'navTitle' => 'Resource',
                             'h1Title' => 'Resource',
+                            'controller' => 'test',
+                            'function' => 'store',
                         ),
                 ),
             'de.resource.update' =>
-                array(
+                array (
                     'method' => 'PUT',
                     'uri' => 'de/resource/{resource}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@update',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'resource',
-                            'controller' => 'test',
-                            'function' => 'update',
                             'method' => 'PUT',
                             'path' => 'de/resource/{resource}',
                             'locale' => 'de',
                             'title' => 'Resource',
                             'navTitle' => 'Resource',
                             'h1Title' => 'Resource',
+                            'controller' => 'test',
+                            'function' => 'update',
                         ),
                 ),
             'en.auth.auth-child.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en/auth/auth-child',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(
+                        array (
                             'auth' => 'auth',
                         ),
                     'statusCode' => 500,
                 ),
             'en.auth.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en/auth',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(
+                        array (
                             'auth' => 'auth',
                         ),
                     'statusCode' => 500,
                 ),
             'en.blog-using-parameters.category.article.show' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en/blog-using-parameters/{category}/{article}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'blog-using-parameters.category.article',
-                            'controller' => 'test',
-                            'function' => 'get',
                             'method' => 'GET',
                             'path' => 'en/blog-using-parameters/{category}/{article}',
                             'locale' => 'en',
                             'title' => 'Article',
                             'navTitle' => 'Article',
                             'h1Title' => 'Article',
+                            'controller' => 'test',
+                            'function' => 'get',
                         ),
                 ),
             'en.blog-using-parameters.category.show' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en/blog-using-parameters/{category}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'blog-using-parameters.category',
-                            'controller' => 'test',
-                            'function' => 'get',
                             'method' => 'GET',
                             'path' => 'en/blog-using-parameters/{category}',
                             'locale' => 'en',
                             'title' => 'Category',
                             'navTitle' => 'Category',
                             'h1Title' => 'Category',
+                            'controller' => 'test',
+                            'function' => 'get',
                         ),
                 ),
             'en.blog-using-resources.articles.index' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en/blog-using-resources/{category}/articles',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@index',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'blog-using-resources.articles',
-                            'controller' => 'test',
-                            'function' => 'index',
                             'method' => 'GET',
                             'path' => 'en/blog-using-resources/{category}/articles',
                             'locale' => 'en',
                             'title' => 'Articles',
                             'navTitle' => 'Articles',
                             'h1Title' => 'Articles',
+                            'controller' => 'test',
+                            'function' => 'index',
                         ),
                 ),
             'en.blog-using-resources.articles.print.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en/blog-using-resources/articles/{article}/print',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@print',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'blog-using-resources.articles.print',
-                            'controller' => 'test',
-                            'function' => 'print',
                             'method' => 'GET',
                             'path' => 'en/blog-using-resources/articles/{article}/print',
                             'locale' => 'en',
                             'title' => 'Print',
                             'navTitle' => 'Print',
                             'h1Title' => 'Print',
+                            'controller' => 'test',
+                            'function' => 'print',
                         ),
                 ),
             'en.blog-using-resources.articles.show' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en/blog-using-resources/{category}/articles/{article}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@show',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'blog-using-resources.articles',
-                            'controller' => 'test',
-                            'function' => 'show',
                             'method' => 'GET',
                             'path' => 'en/blog-using-resources/{category}/articles/{article}',
                             'locale' => 'en',
-                            'title' => 'Articles',
-                            'navTitle' => 'Articles',
-                            'h1Title' => 'Articles',
+                            'title' => 'Articles: {article}',
+                            'navTitle' => '{article}',
+                            'h1Title' => 'Articles: {article}',
+                            'controller' => 'test',
+                            'function' => 'show',
                         ),
                 ),
             'en.blog-using-resources.index' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en/blog-using-resources',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@index',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'blog-using-resources',
-                            'controller' => 'test',
-                            'function' => 'index',
                             'method' => 'GET',
                             'path' => 'en/blog-using-resources',
                             'locale' => 'en',
                             'title' => 'Blog-using-resources',
                             'navTitle' => 'Blog-using-resources',
                             'h1Title' => 'Blog-using-resources',
+                            'controller' => 'test',
+                            'function' => 'index',
                         ),
                 ),
             'en.blog-using-resources.show' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en/blog-using-resources/{category}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@show',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'blog-using-resources',
-                            'controller' => 'test',
-                            'function' => 'show',
                             'method' => 'GET',
                             'path' => 'en/blog-using-resources/{category}',
                             'locale' => 'en',
-                            'title' => 'Blog-using-resources',
-                            'navTitle' => 'Blog-using-resources',
-                            'h1Title' => 'Blog-using-resources',
+                            'title' => 'Blog-using-resources: {category}',
+                            'navTitle' => '{category}',
+                            'h1Title' => 'Blog-using-resources: {category}',
+                            'controller' => 'test',
+                            'function' => 'show',
                         ),
                 ),
             'en.excluded.excluded-child.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en/excluded/excluded-child',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'excluded.excluded-child',
-                            'controller' => 'test',
-                            'function' => 'get',
                             'method' => 'GET',
                             'path' => 'en/excluded/excluded-child',
                             'locale' => 'en',
                             'title' => 'Excluded-child',
                             'navTitle' => 'Excluded-child',
                             'h1Title' => 'Excluded-child',
+                            'controller' => 'test',
+                            'function' => 'get',
                         ),
                 ),
             'en.excluded.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en/excluded',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'excluded',
-                            'controller' => 'test',
-                            'function' => 'get',
                             'method' => 'GET',
                             'path' => 'en/excluded',
                             'locale' => 'en',
                             'title' => 'Excluded',
                             'navTitle' => 'Excluded',
                             'h1Title' => 'Excluded',
+                            'controller' => 'test',
+                            'function' => 'get',
                         ),
                 ),
             'en.excluded.non-excluded-child.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en/excluded/non-excluded-child',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'excluded.non-excluded-child',
-                            'controller' => 'test',
-                            'function' => 'get',
                             'method' => 'GET',
                             'path' => 'en/excluded/non-excluded-child',
                             'locale' => 'en',
                             'title' => 'Non-excluded-child',
                             'navTitle' => 'Non-excluded-child',
                             'h1Title' => 'Non-excluded-child',
+                            'controller' => 'test',
+                            'function' => 'get',
                         ),
                 ),
             'en.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => '',
-                            'controller' => 'test',
-                            'function' => 'get',
                             'method' => 'GET',
                             'path' => 'en',
                             'locale' => 'en',
                             'title' => 'Startpage',
                             'navTitle' => 'Startpage',
                             'h1Title' => 'Startpage',
+                            'controller' => 'test',
+                            'function' => 'get',
                         ),
                 ),
             'en.parameter-with-translated-values.parameter-with-translated-values.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en/parameter-with-translated-values/{parameter-with-translated-values}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'parameter-with-translated-values.parameter-with-translated-values',
-                            'controller' => 'test',
-                            'function' => 'get',
                             'method' => 'GET',
                             'path' => 'en/parameter-with-translated-values/{parameter-with-translated-values}',
                             'locale' => 'en',
                             'title' => 'Parameter-with-translated-values',
                             'navTitle' => 'Parameter-with-translated-values',
                             'h1Title' => 'Parameter-with-translated-values',
+                            'controller' => 'test',
+                            'function' => 'get',
                         ),
                 ),
             'en.parameter-with-values.parameter-with-values.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en/parameter-with-values/{parameter-with-values}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'parameter-with-values.parameter-with-values',
-                            'controller' => 'test',
-                            'function' => 'get',
                             'method' => 'GET',
                             'path' => 'en/parameter-with-values/{parameter-with-values}',
                             'locale' => 'en',
                             'title' => 'Parameter-with-values',
                             'navTitle' => 'Parameter-with-values',
                             'h1Title' => 'Parameter-with-values',
+                            'controller' => 'test',
+                            'function' => 'get',
                         ),
                 ),
             'en.parameter.parameter.get' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en/parameter/{parameter}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'parameter.parameter',
-                            'controller' => 'test',
-                            'function' => 'get',
                             'method' => 'GET',
                             'path' => 'en/parameter/{parameter}',
                             'locale' => 'en',
                             'title' => 'Parameter',
                             'navTitle' => 'Parameter',
                             'h1Title' => 'Parameter',
+                            'controller' => 'test',
+                            'function' => 'get',
                         ),
                 ),
             'en.permanent-redirect.get' =>
-                array(
+                array (
                     'method' => 'GET|POST|PUT|PATCH|DELETE|OPTIONS',
                     'uri' => 'en/permanent-redirect',
                     'action' => '\\Illuminate\\Routing\\RedirectController',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'redirectTarget' => '/en/excluded',
                     'statusCode' => 301,
                 ),
             'en.redirect.get' =>
-                array(
+                array (
                     'method' => 'GET|POST|PUT|PATCH|DELETE|OPTIONS',
                     'uri' => 'en/redirect',
                     'action' => '\\Illuminate\\Routing\\RedirectController',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'redirectTarget' => '/en/excluded',
                     'statusCode' => 302,
                 ),
             'en.resource.create' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en/resource/create',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@create',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'resource',
-                            'controller' => 'test',
-                            'function' => 'create',
                             'method' => 'GET',
                             'path' => 'en/resource/create',
                             'locale' => 'en',
-                            'title' => 'Resource',
-                            'navTitle' => 'Resource',
-                            'h1Title' => 'Resource',
+                            'title' => 'Create Resource',
+                            'navTitle' => 'Create',
+                            'h1Title' => 'Create Resource',
+                            'controller' => 'test',
+                            'function' => 'create',
                         ),
                 ),
             'en.resource.destroy' =>
-                array(
+                array (
                     'method' => 'DELETE',
                     'uri' => 'en/resource/{resource}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@destroy',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'resource',
-                            'controller' => 'test',
-                            'function' => 'destroy',
                             'method' => 'DELETE',
                             'path' => 'en/resource/{resource}',
                             'locale' => 'en',
                             'title' => 'Resource',
                             'navTitle' => 'Resource',
                             'h1Title' => 'Resource',
+                            'controller' => 'test',
+                            'function' => 'destroy',
                         ),
                 ),
             'en.resource.edit' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en/resource/{resource}/edit',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@edit',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'resource',
-                            'controller' => 'test',
-                            'function' => 'edit',
                             'method' => 'GET',
                             'path' => 'en/resource/{resource}/edit',
                             'locale' => 'en',
-                            'title' => 'Resource',
-                            'navTitle' => 'Resource',
-                            'h1Title' => 'Resource',
+                            'title' => 'Edit Resource: {resource}',
+                            'navTitle' => 'Edit',
+                            'h1Title' => 'Edit Resource: {resource}',
+                            'controller' => 'test',
+                            'function' => 'edit',
                         ),
                 ),
             'en.resource.index' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en/resource',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@index',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'resource',
-                            'controller' => 'test',
-                            'function' => 'index',
                             'method' => 'GET',
                             'path' => 'en/resource',
                             'locale' => 'en',
                             'title' => 'Resource',
                             'navTitle' => 'Resource',
                             'h1Title' => 'Resource',
+                            'controller' => 'test',
+                            'function' => 'index',
                         ),
                 ),
             'en.resource.show' =>
-                array(
+                array (
                     'method' => 'GET',
                     'uri' => 'en/resource/{resource}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@show',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'resource',
-                            'controller' => 'test',
-                            'function' => 'show',
                             'method' => 'GET',
                             'path' => 'en/resource/{resource}',
                             'locale' => 'en',
-                            'title' => 'Resource',
-                            'navTitle' => 'Resource',
-                            'h1Title' => 'Resource',
+                            'title' => 'Resource: {resource}',
+                            'navTitle' => '{resource}',
+                            'h1Title' => 'Resource: {resource}',
+                            'controller' => 'test',
+                            'function' => 'show',
                         ),
                 ),
             'en.resource.store' =>
-                array(
+                array (
                     'method' => 'POST',
                     'uri' => 'en/resource',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@store',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'resource',
-                            'controller' => 'test',
-                            'function' => 'store',
                             'method' => 'POST',
                             'path' => 'en/resource',
                             'locale' => 'en',
                             'title' => 'Resource',
                             'navTitle' => 'Resource',
                             'h1Title' => 'Resource',
+                            'controller' => 'test',
+                            'function' => 'store',
                         ),
                 ),
             'en.resource.update' =>
-                array(
+                array (
                     'method' => 'PUT',
                     'uri' => 'en/resource/{resource}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@update',
                     'middleware' =>
-                        array(),
+                        array (
+                        ),
                     'content' =>
-                        array(
+                        array (
                             'id' => 'resource',
-                            'controller' => 'test',
-                            'function' => 'update',
                             'method' => 'PUT',
                             'path' => 'en/resource/{resource}',
                             'locale' => 'en',
                             'title' => 'Resource',
                             'navTitle' => 'Resource',
                             'h1Title' => 'Resource',
+                            'controller' => 'test',
+                            'function' => 'update',
                         ),
                 ),
         ));
@@ -1064,571 +1110,570 @@ trait UsesTestRoutes
 
     private function assertComplexRegisteredRoutes()
     {
-        $this->assertRegisteredRoutes(array(
+        $this->assertRegisteredRoutes(array (
             0 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.get',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => '',
                             'action' => 'get',
                             'uri' => 'de',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Startseite',
-                            'navTitle' => 'Startseite'
+                            'navTitle' => 'Startseite',
                         ),
                 ),
             1 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.auth.get',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'auth',
                             'action' => 'get',
                             'uri' => 'de/auth',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Auth',
-                            'navTitle' => 'Auth'
+                            'navTitle' => 'Auth',
                         ),
                 ),
             2 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.auth.auth-child.get',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'auth.auth-child',
                             'action' => 'get',
                             'uri' => 'de/auth/auth-child',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Auth-child',
-                            'navTitle' => 'Auth-child'
+                            'navTitle' => 'Auth-child',
                         ),
                 ),
             3 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.blog-using-parameters.category.show:blumen',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-parameters.category',
                             'action' => 'show',
                             'uri' => 'de/blog-using-parameters/blumen',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Artikel über Blumen',
-                            'navTitle' => 'Artikel über Blumen'
+                            'navTitle' => 'Artikel über Blumen',
                         ),
                 ),
             4 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.blog-using-parameters.category.show:baeume',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-parameters.category',
                             'action' => 'show',
                             'uri' => 'de/blog-using-parameters/baeume',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Artikel über Bäume',
-                            'navTitle' => 'Artikel über Bäume'
+                            'navTitle' => 'Artikel über Bäume',
                         ),
                 ),
             5 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.blog-using-parameters.category.article.show:blumen,die-rose',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'de/blog-using-parameters/blumen/die-rose',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Die Rose - Blume im Wandel der Zeit',
-                            'navTitle' => 'Die Rose - Blume im Wandel der Zeit'
+                            'navTitle' => 'Die Rose - Blume im Wandel der Zeit',
                         ),
                 ),
             6 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.blog-using-parameters.category.article.show:blumen,die-tulpe',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'de/blog-using-parameters/blumen/die-tulpe',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Dit Tulpe im weltgeschichtlichen Finanzsystem',
-                            'navTitle' => 'Dit Tulpe im weltgeschichtlichen Finanzsystem'
+                            'navTitle' => 'Dit Tulpe im weltgeschichtlichen Finanzsystem',
                         ),
                 ),
             7 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.blog-using-parameters.category.article.show:blumen,die-lilie',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'de/blog-using-parameters/blumen/die-lilie',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Sehet die Lilien!',
-                            'navTitle' => 'Sehet die Lilien!'
+                            'navTitle' => 'Sehet die Lilien!',
                         ),
                 ),
             8 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.blog-using-parameters.category.article.show:baeume,die-laerche',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'de/blog-using-parameters/baeume/die-laerche',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Und jetzt... Die Lärche',
-                            'navTitle' => 'Und jetzt... Die Lärche'
+                            'navTitle' => 'Und jetzt... Die Lärche',
                         ),
                 ),
             9 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.blog-using-parameters.category.article.show:baeume,die-laerche',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'de/blog-using-parameters/baeume/die-laerche',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Und jetzt... Die Lärche',
-                            'navTitle' => 'Und jetzt... Die Lärche'
+                            'navTitle' => 'Und jetzt... Die Lärche',
                         ),
                 ),
             10 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.blog-using-parameters.category.article.show:baeume,die-kastanie',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'de/blog-using-parameters/baeume/die-kastanie',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Und jetzt... Der Kastanienbaum',
-                            'navTitle' => 'Und jetzt... Der Kastanienbaum'
+                            'navTitle' => 'Und jetzt... Der Kastanienbaum',
                         ),
                 ),
             11 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.index',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources',
                             'action' => 'index',
                             'uri' => 'de/blog-using-resources',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Blog-using-resources',
-                            'navTitle' => 'Blog-using-resources'
+                            'navTitle' => 'Blog-using-resources',
                         ),
                 ),
             12 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.show:blumen',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources',
                             'action' => 'show',
                             'uri' => 'de/blog-using-resources/blumen',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Blog-using-resources',
-                            'navTitle' => 'Blog-using-resources'
+                            'title' => 'Artikel über Blumen',
+                            'navTitle' => 'Artikel über Blumen',
                         ),
                 ),
             13 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.show:baeume',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources',
                             'action' => 'show',
                             'uri' => 'de/blog-using-resources/baeume',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Blog-using-resources',
-                            'navTitle' => 'Blog-using-resources'
+                            'title' => 'Artikel über Bäume',
+                            'navTitle' => 'Artikel über Bäume',
                         ),
                 ),
             14 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.articles.index:blumen',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources.articles',
                             'action' => 'index',
                             'uri' => 'de/blog-using-resources/blumen/articles',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Articles',
-                            'navTitle' => 'Articles'
+                            'navTitle' => 'Articles',
                         ),
                 ),
             15 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.articles.index:baeume',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources.articles',
                             'action' => 'index',
                             'uri' => 'de/blog-using-resources/baeume/articles',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Articles',
-                            'navTitle' => 'Articles'
+                            'navTitle' => 'Articles',
                         ),
-
                 ),
             16 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.articles.show:blumen,die-rose',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'de/blog-using-resources/blumen/articles/die-rose',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Articles',
-                            'navTitle' => 'Articles'
+                            'title' => 'Die Rose - Blume im Wandel der Zeit',
+                            'navTitle' => 'Die Rose - Blume im Wandel der Zeit',
                         ),
                 ),
             17 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.articles.show:blumen,die-tulpe',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'de/blog-using-resources/blumen/articles/die-tulpe',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Articles',
-                            'navTitle' => 'Articles'
+                            'title' => 'Dit Tulpe im weltgeschichtlichen Finanzsystem',
+                            'navTitle' => 'Dit Tulpe im weltgeschichtlichen Finanzsystem',
                         ),
                 ),
             18 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.articles.show:blumen,die-lilie',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'de/blog-using-resources/blumen/articles/die-lilie',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Articles',
-                            'navTitle' => 'Articles'
+                            'title' => 'Sehet die Lilien!',
+                            'navTitle' => 'Sehet die Lilien!',
                         ),
                 ),
             19 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.articles.show:baeume,die-laerche',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'de/blog-using-resources/baeume/articles/die-laerche',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Articles',
-                            'navTitle' => 'Articles'
+                            'title' => 'Und jetzt... Die Lärche',
+                            'navTitle' => 'Und jetzt... Die Lärche',
                         ),
                 ),
             20 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.articles.show:baeume,die-laerche',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'de/blog-using-resources/baeume/articles/die-laerche',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Articles',
-                            'navTitle' => 'Articles'
+                            'title' => 'Und jetzt... Die Lärche',
+                            'navTitle' => 'Und jetzt... Die Lärche',
                         ),
                 ),
             21 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.articles.show:baeume,die-kastanie',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'de/blog-using-resources/baeume/articles/die-kastanie',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Articles',
-                            'navTitle' => 'Articles'
+                            'title' => 'Und jetzt... Der Kastanienbaum',
+                            'navTitle' => 'Und jetzt... Der Kastanienbaum',
                         ),
                 ),
             22 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.excluded.get',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'excluded',
                             'action' => 'get',
                             'uri' => 'de/excluded',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Excluded',
-                            'navTitle' => 'Excluded'
+                            'navTitle' => 'Excluded',
                         ),
                 ),
             23 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.excluded.excluded-child.get',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'excluded.excluded-child',
                             'action' => 'get',
                             'uri' => 'de/excluded/excluded-child',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Excluded-child',
-                            'navTitle' => 'Excluded-child'
+                            'navTitle' => 'Excluded-child',
                         ),
                 ),
             24 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.excluded.non-excluded-child.get',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'excluded.non-excluded-child',
                             'action' => 'get',
                             'uri' => 'de/excluded/non-excluded-child',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Non-excluded-child',
-                            'navTitle' => 'Non-excluded-child'
+                            'navTitle' => 'Non-excluded-child',
                         ),
                 ),
             25 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.parameter-with-translated-values.parameter-with-translated-values.get:parameter-array-wert1',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'parameter-with-translated-values.parameter-with-translated-values',
                             'action' => 'get',
                             'uri' => 'de/parameter-with-translated-values/parameter-array-wert1',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Parameter-with-translated-values',
-                            'navTitle' => 'Parameter-with-translated-values'
+                            'navTitle' => 'Parameter-with-translated-values',
                         ),
                 ),
             26 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.parameter-with-translated-values.parameter-with-translated-values.get:parameter-array-wert2',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'parameter-with-translated-values.parameter-with-translated-values',
                             'action' => 'get',
                             'uri' => 'de/parameter-with-translated-values/parameter-array-wert2',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Parameter-with-translated-values',
-                            'navTitle' => 'Parameter-with-translated-values'
+                            'navTitle' => 'Parameter-with-translated-values',
                         ),
                 ),
             27 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.parameter-with-values.parameter-with-values.get:parameter-array-value1',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'parameter-with-values.parameter-with-values',
                             'action' => 'get',
                             'uri' => 'de/parameter-with-values/parameter-array-value1',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Parameter-with-values',
-                            'navTitle' => 'Parameter-with-values'
+                            'navTitle' => 'Parameter-with-values',
                         ),
                 ),
             28 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.parameter-with-values.parameter-with-values.get:parameter-array-value2',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'parameter-with-values.parameter-with-values',
                             'action' => 'get',
                             'uri' => 'de/parameter-with-values/parameter-array-value2',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Parameter-with-values',
-                            'navTitle' => 'Parameter-with-values'
+                            'navTitle' => 'Parameter-with-values',
                         ),
                 ),
             29 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.permanent-redirect.get',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'permanent-redirect',
                             'action' => 'get',
                             'uri' => 'de/permanent-redirect',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                     2 => 'POST',
@@ -1638,21 +1683,21 @@ trait UsesTestRoutes
                                     6 => 'OPTIONS',
                                 ),
                             'title' => 'Permanent-redirect',
-                            'navTitle' => 'Permanent-redirect'
+                            'navTitle' => 'Permanent-redirect',
                         ),
                 ),
             30 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.redirect.get',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'redirect',
                             'action' => 'get',
                             'uri' => 'de/redirect',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                     2 => 'POST',
@@ -1662,629 +1707,628 @@ trait UsesTestRoutes
                                     6 => 'OPTIONS',
                                 ),
                             'title' => 'Redirect',
-                            'navTitle' => 'Redirect'
+                            'navTitle' => 'Redirect',
                         ),
                 ),
             31 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.resource.index',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'resource',
                             'action' => 'index',
                             'uri' => 'de/resource',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Resource',
-                            'navTitle' => 'Resource'
+                            'navTitle' => 'Resource',
                         ),
-
                 ),
             32 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.resource.store',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'resource',
                             'action' => 'store',
                             'uri' => 'de/resource',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'POST',
                                 ),
                             'title' => 'Resource',
-                            'navTitle' => 'Resource'
+                            'navTitle' => 'Resource',
                         ),
                 ),
             33 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'de.resource.create',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'resource',
                             'action' => 'create',
                             'uri' => 'de/resource/erstellen',
                             'locale' => 'de',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Resource',
-                            'navTitle' => 'Resource'
+                            'title' => 'Resource erstellen',
+                            'navTitle' => 'Erstellen',
                         ),
                 ),
             34 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.get',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => '',
                             'action' => 'get',
                             'uri' => 'en',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Startpage',
-                            'navTitle' => 'Startpage'
+                            'navTitle' => 'Startpage',
                         ),
                 ),
             35 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.auth.get',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'auth',
                             'action' => 'get',
                             'uri' => 'en/auth',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Auth',
-                            'navTitle' => 'Auth'
+                            'navTitle' => 'Auth',
                         ),
                 ),
             36 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.auth.auth-child.get',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'auth.auth-child',
                             'action' => 'get',
                             'uri' => 'en/auth/auth-child',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Auth-child',
-                            'navTitle' => 'Auth-child'
+                            'navTitle' => 'Auth-child',
                         ),
                 ),
             37 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.blog-using-parameters.category.show:flowers',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-parameters.category',
                             'action' => 'show',
                             'uri' => 'en/blog-using-parameters/flowers',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Category',
-                            'navTitle' => 'Category'
+                            'title' => 'Articles about flowers',
+                            'navTitle' => 'Articles about flowers',
                         ),
                 ),
             38 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.blog-using-parameters.category.show:trees',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-parameters.category',
                             'action' => 'show',
                             'uri' => 'en/blog-using-parameters/trees',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Category',
-                            'navTitle' => 'Category'
+                            'title' => 'Articles about trees',
+                            'navTitle' => 'Articles about trees',
                         ),
                 ),
             39 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.blog-using-parameters.category.article.show:flowers,the-rose',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'en/blog-using-parameters/flowers/the-rose',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Article',
-                            'navTitle' => 'Article'
+                            'navTitle' => 'Article',
                         ),
                 ),
             40 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.blog-using-parameters.category.article.show:flowers,the-tulip',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'en/blog-using-parameters/flowers/the-tulip',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Article',
-                            'navTitle' => 'Article'
+                            'navTitle' => 'Article',
                         ),
                 ),
             41 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.blog-using-parameters.category.article.show:flowers,the-lily',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'en/blog-using-parameters/flowers/the-lily',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Article',
-                            'navTitle' => 'Article'
+                            'navTitle' => 'Article',
                         ),
                 ),
             42 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.blog-using-parameters.category.article.show:trees,the-larch',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'en/blog-using-parameters/trees/the-larch',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Article',
-                            'navTitle' => 'Article'
+                            'navTitle' => 'Article',
                         ),
                 ),
             43 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.blog-using-parameters.category.article.show:trees,the-larch',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'en/blog-using-parameters/trees/the-larch',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Article',
-                            'navTitle' => 'Article'
+                            'navTitle' => 'Article',
                         ),
                 ),
             44 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.blog-using-parameters.category.article.show:trees,the-chestnut',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'en/blog-using-parameters/trees/the-chestnut',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Article',
-                            'navTitle' => 'Article'
+                            'navTitle' => 'Article',
                         ),
                 ),
             45 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.index',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources',
                             'action' => 'index',
                             'uri' => 'en/blog-using-resources',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Blog-using-resources',
-                            'navTitle' => 'Blog-using-resources'
+                            'navTitle' => 'Blog-using-resources',
                         ),
                 ),
             46 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.show:flowers',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources',
                             'action' => 'show',
                             'uri' => 'en/blog-using-resources/flowers',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Blog-using-resources',
-                            'navTitle' => 'Blog-using-resources'
+                            'title' => 'Articles about flowers',
+                            'navTitle' => 'Articles about flowers',
                         ),
                 ),
             47 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.show:trees',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources',
                             'action' => 'show',
                             'uri' => 'en/blog-using-resources/trees',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Blog-using-resources',
-                            'navTitle' => 'Blog-using-resources'
+                            'title' => 'Articles about trees',
+                            'navTitle' => 'Articles about trees',
                         ),
                 ),
             48 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.articles.index:flowers',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources.articles',
                             'action' => 'index',
                             'uri' => 'en/blog-using-resources/flowers/articles',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Articles',
-                            'navTitle' => 'Articles'
+                            'navTitle' => 'Articles',
                         ),
                 ),
             49 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.articles.index:trees',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources.articles',
                             'action' => 'index',
                             'uri' => 'en/blog-using-resources/trees/articles',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Articles',
-                            'navTitle' => 'Articles'
+                            'navTitle' => 'Articles',
                         ),
                 ),
             50 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.articles.show:flowers,the-rose',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'en/blog-using-resources/flowers/articles/the-rose',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Articles',
-                            'navTitle' => 'Articles'
+                            'title' => 'Articles: the-rose',
+                            'navTitle' => 'the-rose',
                         ),
                 ),
             51 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.articles.show:flowers,the-tulip',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'en/blog-using-resources/flowers/articles/the-tulip',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Articles',
-                            'navTitle' => 'Articles'
+                            'title' => 'Articles: the-tulip',
+                            'navTitle' => 'the-tulip',
                         ),
                 ),
             52 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.articles.show:flowers,the-lily',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'en/blog-using-resources/flowers/articles/the-lily',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Articles',
-                            'navTitle' => 'Articles'
+                            'title' => 'Articles: the-lily',
+                            'navTitle' => 'the-lily',
                         ),
                 ),
             53 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.articles.show:trees,the-larch',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'en/blog-using-resources/trees/articles/the-larch',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Articles',
-                            'navTitle' => 'Articles'
+                            'title' => 'Articles: the-larch',
+                            'navTitle' => 'the-larch',
                         ),
                 ),
             54 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.articles.show:trees,the-larch',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'en/blog-using-resources/trees/articles/the-larch',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Articles',
-                            'navTitle' => 'Articles'
+                            'title' => 'Articles: the-larch',
+                            'navTitle' => 'the-larch',
                         ),
                 ),
             55 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.articles.show:trees,the-chestnut',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'en/blog-using-resources/trees/articles/the-chestnut',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Articles',
-                            'navTitle' => 'Articles'
+                            'title' => 'Articles: the-chestnut',
+                            'navTitle' => 'the-chestnut',
                         ),
                 ),
             56 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.excluded.get',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'excluded',
                             'action' => 'get',
                             'uri' => 'en/excluded',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Excluded',
-                            'navTitle' => 'Excluded'
+                            'navTitle' => 'Excluded',
                         ),
                 ),
             57 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.excluded.excluded-child.get',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'excluded.excluded-child',
                             'action' => 'get',
                             'uri' => 'en/excluded/excluded-child',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Excluded-child',
-                            'navTitle' => 'Excluded-child'
+                            'navTitle' => 'Excluded-child',
                         ),
                 ),
             58 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.excluded.non-excluded-child.get',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'excluded.non-excluded-child',
                             'action' => 'get',
                             'uri' => 'en/excluded/non-excluded-child',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Non-excluded-child',
-                            'navTitle' => 'Non-excluded-child'
+                            'navTitle' => 'Non-excluded-child',
                         ),
                 ),
             59 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.parameter-with-translated-values.parameter-with-translated-values.get:parameter-array-value1',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'parameter-with-translated-values.parameter-with-translated-values',
                             'action' => 'get',
                             'uri' => 'en/parameter-with-translated-values/parameter-array-value1',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Parameter-with-translated-values',
-                            'navTitle' => 'Parameter-with-translated-values'
+                            'navTitle' => 'Parameter-with-translated-values',
                         ),
                 ),
             60 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.parameter-with-translated-values.parameter-with-translated-values.get:parameter-array-value2',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'parameter-with-translated-values.parameter-with-translated-values',
                             'action' => 'get',
                             'uri' => 'en/parameter-with-translated-values/parameter-array-value2',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Parameter-with-translated-values',
-                            'navTitle' => 'Parameter-with-translated-values'
+                            'navTitle' => 'Parameter-with-translated-values',
                         ),
                 ),
             61 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.parameter-with-values.parameter-with-values.get:parameter-array-value1',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'parameter-with-values.parameter-with-values',
                             'action' => 'get',
                             'uri' => 'en/parameter-with-values/parameter-array-value1',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Parameter-with-values',
-                            'navTitle' => 'Parameter-with-values'
+                            'navTitle' => 'Parameter-with-values',
                         ),
                 ),
             62 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.parameter-with-values.parameter-with-values.get:parameter-array-value2',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'parameter-with-values.parameter-with-values',
                             'action' => 'get',
                             'uri' => 'en/parameter-with-values/parameter-array-value2',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Parameter-with-values',
-                            'navTitle' => 'Parameter-with-values'
+                            'navTitle' => 'Parameter-with-values',
                         ),
                 ),
             63 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.permanent-redirect.get',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'permanent-redirect',
                             'action' => 'get',
                             'uri' => 'en/permanent-redirect',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                     2 => 'POST',
@@ -2294,21 +2338,21 @@ trait UsesTestRoutes
                                     6 => 'OPTIONS',
                                 ),
                             'title' => 'Permanent-redirect',
-                            'navTitle' => 'Permanent-redirect'
+                            'navTitle' => 'Permanent-redirect',
                         ),
                 ),
             64 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.redirect.get',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'redirect',
                             'action' => 'get',
                             'uri' => 'en/redirect',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                     2 => 'POST',
@@ -2318,63 +2362,63 @@ trait UsesTestRoutes
                                     6 => 'OPTIONS',
                                 ),
                             'title' => 'Redirect',
-                            'navTitle' => 'Redirect'
+                            'navTitle' => 'Redirect',
                         ),
                 ),
             65 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.resource.index',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'resource',
                             'action' => 'index',
                             'uri' => 'en/resource',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
                             'title' => 'Resource',
-                            'navTitle' => 'Resource'
+                            'navTitle' => 'Resource',
                         ),
                 ),
             66 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.resource.store',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'resource',
                             'action' => 'store',
                             'uri' => 'en/resource',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'POST',
                                 ),
                             'title' => 'Resource',
-                            'navTitle' => 'Resource'
+                            'navTitle' => 'Resource',
                         ),
                 ),
             67 =>
-                array(
+                array (
                     'type' => 'routes',
                     'id' => 'en.resource.create',
                     'attributes' =>
-                        array(
+                        array (
                             'node' => 'resource',
                             'action' => 'create',
                             'uri' => 'en/resource/create',
                             'locale' => 'en',
                             'methods' =>
-                                array(
+                                array (
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
-                            'title' => 'Resource',
-                            'navTitle' => 'Resource'
+                            'title' => 'Create Resource',
+                            'navTitle' => 'Create',
                         ),
                 ),
         ));
