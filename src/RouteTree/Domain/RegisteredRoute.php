@@ -121,7 +121,7 @@ class RegisteredRoute
                 if ($this->hasMethod('get')) {
                     //dump($this->routeName.':'.$this->path.':'. route($this->routeName, $routeKeySet, false));
                 }
-                $registeredRoutes->add(
+                $registeredRoutes->push(
                     (new RegisteredRoute($this->route))
                         ->routeKeys($routeKeySet)
                         ->routeAction($this->routeAction)

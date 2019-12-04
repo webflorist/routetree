@@ -64,14 +64,14 @@ class SitemapUrl
         return $this;
     }
 
-    public function hasLastmod()
+    public function hasLastmod(?array $parameters = null, ?string $locale = null)
     {
-        return $this->lastmod !== null;
+        return $this->getLastmod($parameters, $locale) !== null;
     }
 
-    public function getLastmod()
+    public function getLastmod(?array $parameters = null, ?string $locale = null)
     {
-        return $this->lastmod;
+        return $this->lastmod ?? $this->routeNode->payload->get('lastmod', $parameters, $locale);
     }
 
     public function changefreq(string $value)
@@ -92,14 +92,14 @@ class SitemapUrl
         return $this;
     }
 
-    public function hasChangefreq()
+    public function hasChangefreq(?array $parameters = null, ?string $locale = null)
     {
-        return $this->changefreq !== null;
+        return $this->getChangefreq($parameters, $locale) !== null;
     }
 
-    public function getChangefreq()
+    public function getChangefreq(?array $parameters = null, ?string $locale = null)
     {
-        return $this->changefreq;
+        return $this->changefreq ?? $this->routeNode->payload->get('changefreq', $parameters, $locale);
     }
 
     public function priority(float $value)
@@ -111,14 +111,18 @@ class SitemapUrl
         return $this;
     }
 
-    public function hasPriority()
+    public function hasPriority(?array $parameters = null, ?string $locale = null)
     {
-        return $this->priority !== null;
+        return $this->getPriority($parameters, $locale) !== null;
     }
 
-    public function getPriority()
+    public function getPriority(?array $parameters = null, ?string $locale = null)
     {
-        return number_format($this->priority,1);
+        $priority = $this->priority ?? $this->routeNode->payload->get('priority', $parameters, $locale);
+        if (!is_null($priority)) {
+            $priority = number_format($this->priority,1);
+        }
+        return $priority;
     }
 
     public function isExcluded()

@@ -10,7 +10,7 @@ use Webflorist\RouteTree\Interfaces\TranslatesRouteKey;
 class BlogCategory extends Model implements ProvidesRouteKeyList, ProvidesRoutePayload, TranslatesRouteKey
 {
 
-    public static function getRouteKeyList(string $locale = null, ?array $parameters = null): ?array
+    public static function getRouteKeyList(string $locale = null, ?array $parameters = null): array
     {
         return self::getTestRouteKeys()[$locale];
     }

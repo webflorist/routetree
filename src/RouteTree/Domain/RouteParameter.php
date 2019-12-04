@@ -4,6 +4,7 @@ namespace Webflorist\RouteTree\Domain;
 
 use Illuminate\Database\Eloquent\Model;
 use Webflorist\RouteTree\Exceptions\NoValidModelException;
+use Webflorist\RouteTree\Interfaces\ProvidesRouteKeyList;
 use Webflorist\RouteTree\Interfaces\ProvidesRoutePayload;
 use Webflorist\RouteTree\Interfaces\TranslatesRouteKey;
 use Webflorist\RouteTree\RouteTree;
@@ -85,7 +86,7 @@ class RouteParameter
             return $this->routeKeys;
         }
 
-        if (!is_null($this->model)) {
+        if ($this->hasRouteKeyListProvidingModel()) {
             return $this->model::getRouteKeyList($locale, $parameters);
         }
 
@@ -151,7 +152,11 @@ class RouteParameter
         return $this->model !== null;
     }
 
-    public function hasRoutekeyTranslatingModel() {
+    public function hasRouteKeyListProvidingModel() {
+        return $this->hasModel() && in_array(ProvidesRouteKeyList::class, class_implements($this->model));
+    }
+
+    public function hasRouteKeyTranslatingModel() {
         return $this->hasModel() && in_array(TranslatesRouteKey::class, class_implements($this->model));
     }
 

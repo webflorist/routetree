@@ -280,7 +280,7 @@ class RouteTree
                 $return = $return->merge($registeredRoute->getForAllRouteKeys());
             }
             else {
-                $return->add($registeredRoute);
+                $return->push($registeredRoute);
             }
         });
         return $return;
