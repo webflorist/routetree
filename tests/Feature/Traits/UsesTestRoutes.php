@@ -134,39 +134,38 @@ trait UsesTestRoutes
 
     protected function assertComplexTestRouteTree(): void
     {
-        $this->assertRouteTree(array (
+        $this->assertRouteTree(array(
             'de.auth.auth-child.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de/auth/auth-child',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
+                        array(
                             'auth' => 'auth',
                         ),
                     'statusCode' => 500,
                 ),
             'de.auth.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de/auth',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
+                        array(
                             'auth' => 'auth',
                         ),
                     'statusCode' => 500,
                 ),
             'de.blog-using-parameters.category.article.show' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de/blog-using-parameters/{category}/{article}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'blog-using-parameters.category.article',
                             'method' => 'GET',
                             'path' => 'de/blog-using-parameters/{category}/{article}',
@@ -179,15 +178,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.blog-using-parameters.category.show' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de/blog-using-parameters/{category}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'blog-using-parameters.category',
                             'method' => 'GET',
                             'path' => 'de/blog-using-parameters/{category}',
@@ -200,15 +198,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.blog-using-resources.articles.index' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de/blog-using-resources/{category}/articles',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@index',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'blog-using-resources.articles',
                             'method' => 'GET',
                             'path' => 'de/blog-using-resources/{category}/articles',
@@ -221,15 +218,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.blog-using-resources.articles.print.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de/blog-using-resources/articles/{article}/print',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@print',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'blog-using-resources.articles.print',
                             'method' => 'GET',
                             'path' => 'de/blog-using-resources/articles/{article}/print',
@@ -242,15 +238,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.blog-using-resources.articles.show' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de/blog-using-resources/{category}/articles/{article}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@show',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'blog-using-resources.articles',
                             'method' => 'GET',
                             'path' => 'de/blog-using-resources/{category}/articles/{article}',
@@ -263,15 +258,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.blog-using-resources.index' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de/blog-using-resources',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@index',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'blog-using-resources',
                             'method' => 'GET',
                             'path' => 'de/blog-using-resources',
@@ -284,15 +278,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.blog-using-resources.show' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de/blog-using-resources/{category}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@show',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'blog-using-resources',
                             'method' => 'GET',
                             'path' => 'de/blog-using-resources/{category}',
@@ -305,15 +298,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.excluded.excluded-child.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de/excluded/excluded-child',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'excluded.excluded-child',
                             'method' => 'GET',
                             'path' => 'de/excluded/excluded-child',
@@ -326,15 +318,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.excluded.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de/excluded',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'excluded',
                             'method' => 'GET',
                             'path' => 'de/excluded',
@@ -347,15 +338,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.excluded.non-excluded-child.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de/excluded/non-excluded-child',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'excluded.non-excluded-child',
                             'method' => 'GET',
                             'path' => 'de/excluded/non-excluded-child',
@@ -368,15 +358,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => '',
                             'method' => 'GET',
                             'path' => 'de',
@@ -389,15 +378,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.parameter-with-translated-values.parameter-with-translated-values.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de/parameter-with-translated-values/{parameter-with-translated-values}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'parameter-with-translated-values.parameter-with-translated-values',
                             'method' => 'GET',
                             'path' => 'de/parameter-with-translated-values/{parameter-with-translated-values}',
@@ -410,15 +398,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.parameter-with-values.parameter-with-values.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de/parameter-with-values/{parameter-with-values}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'parameter-with-values.parameter-with-values',
                             'method' => 'GET',
                             'path' => 'de/parameter-with-values/{parameter-with-values}',
@@ -431,15 +418,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.parameter.parameter.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de/parameter/{parameter}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'parameter.parameter',
                             'method' => 'GET',
                             'path' => 'de/parameter/{parameter}',
@@ -452,37 +438,34 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.permanent-redirect.get' =>
-                array (
+                array(
                     'method' => 'GET|POST|PUT|PATCH|DELETE|OPTIONS',
                     'uri' => 'de/permanent-redirect',
                     'action' => '\\Illuminate\\Routing\\RedirectController',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'redirectTarget' => '/de/excluded',
                     'statusCode' => 301,
                 ),
             'de.redirect.get' =>
-                array (
+                array(
                     'method' => 'GET|POST|PUT|PATCH|DELETE|OPTIONS',
                     'uri' => 'de/redirect',
                     'action' => '\\Illuminate\\Routing\\RedirectController',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'redirectTarget' => '/de/excluded',
                     'statusCode' => 302,
                 ),
             'de.resource.create' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de/resource/erstellen',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@create',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'resource',
                             'method' => 'GET',
                             'path' => 'de/resource/erstellen',
@@ -495,15 +478,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.resource.destroy' =>
-                array (
+                array(
                     'method' => 'DELETE',
                     'uri' => 'de/resource/{resource}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@destroy',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'resource',
                             'method' => 'DELETE',
                             'path' => 'de/resource/{resource}',
@@ -516,15 +498,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.resource.edit' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de/resource/{resource}/bearbeiten',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@edit',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'resource',
                             'method' => 'GET',
                             'path' => 'de/resource/{resource}/bearbeiten',
@@ -537,15 +518,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.resource.index' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de/resource',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@index',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'resource',
                             'method' => 'GET',
                             'path' => 'de/resource',
@@ -558,15 +538,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.resource.show' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'de/resource/{resource}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@show',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'resource',
                             'method' => 'GET',
                             'path' => 'de/resource/{resource}',
@@ -579,15 +558,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.resource.store' =>
-                array (
+                array(
                     'method' => 'POST',
                     'uri' => 'de/resource',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@store',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'resource',
                             'method' => 'POST',
                             'path' => 'de/resource',
@@ -600,15 +578,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'de.resource.update' =>
-                array (
+                array(
                     'method' => 'PUT',
                     'uri' => 'de/resource/{resource}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@update',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'resource',
                             'method' => 'PUT',
                             'path' => 'de/resource/{resource}',
@@ -621,37 +598,36 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.auth.auth-child.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en/auth/auth-child',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
+                        array(
                             'auth' => 'auth',
                         ),
                     'statusCode' => 500,
                 ),
             'en.auth.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en/auth',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
+                        array(
                             'auth' => 'auth',
                         ),
                     'statusCode' => 500,
                 ),
             'en.blog-using-parameters.category.article.show' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en/blog-using-parameters/{category}/{article}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'blog-using-parameters.category.article',
                             'method' => 'GET',
                             'path' => 'en/blog-using-parameters/{category}/{article}',
@@ -664,15 +640,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.blog-using-parameters.category.show' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en/blog-using-parameters/{category}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'blog-using-parameters.category',
                             'method' => 'GET',
                             'path' => 'en/blog-using-parameters/{category}',
@@ -685,15 +660,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.blog-using-resources.articles.index' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en/blog-using-resources/{category}/articles',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@index',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'blog-using-resources.articles',
                             'method' => 'GET',
                             'path' => 'en/blog-using-resources/{category}/articles',
@@ -706,15 +680,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.blog-using-resources.articles.print.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en/blog-using-resources/articles/{article}/print',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@print',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'blog-using-resources.articles.print',
                             'method' => 'GET',
                             'path' => 'en/blog-using-resources/articles/{article}/print',
@@ -727,15 +700,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.blog-using-resources.articles.show' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en/blog-using-resources/{category}/articles/{article}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@show',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'blog-using-resources.articles',
                             'method' => 'GET',
                             'path' => 'en/blog-using-resources/{category}/articles/{article}',
@@ -748,15 +720,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.blog-using-resources.index' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en/blog-using-resources',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@index',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'blog-using-resources',
                             'method' => 'GET',
                             'path' => 'en/blog-using-resources',
@@ -769,15 +740,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.blog-using-resources.show' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en/blog-using-resources/{category}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@show',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'blog-using-resources',
                             'method' => 'GET',
                             'path' => 'en/blog-using-resources/{category}',
@@ -790,15 +760,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.excluded.excluded-child.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en/excluded/excluded-child',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'excluded.excluded-child',
                             'method' => 'GET',
                             'path' => 'en/excluded/excluded-child',
@@ -811,15 +780,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.excluded.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en/excluded',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'excluded',
                             'method' => 'GET',
                             'path' => 'en/excluded',
@@ -832,15 +800,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.excluded.non-excluded-child.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en/excluded/non-excluded-child',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'excluded.non-excluded-child',
                             'method' => 'GET',
                             'path' => 'en/excluded/non-excluded-child',
@@ -853,15 +820,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => '',
                             'method' => 'GET',
                             'path' => 'en',
@@ -874,15 +840,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.parameter-with-translated-values.parameter-with-translated-values.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en/parameter-with-translated-values/{parameter-with-translated-values}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'parameter-with-translated-values.parameter-with-translated-values',
                             'method' => 'GET',
                             'path' => 'en/parameter-with-translated-values/{parameter-with-translated-values}',
@@ -895,15 +860,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.parameter-with-values.parameter-with-values.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en/parameter-with-values/{parameter-with-values}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'parameter-with-values.parameter-with-values',
                             'method' => 'GET',
                             'path' => 'en/parameter-with-values/{parameter-with-values}',
@@ -916,15 +880,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.parameter.parameter.get' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en/parameter/{parameter}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'parameter.parameter',
                             'method' => 'GET',
                             'path' => 'en/parameter/{parameter}',
@@ -937,37 +900,34 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.permanent-redirect.get' =>
-                array (
+                array(
                     'method' => 'GET|POST|PUT|PATCH|DELETE|OPTIONS',
                     'uri' => 'en/permanent-redirect',
                     'action' => '\\Illuminate\\Routing\\RedirectController',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'redirectTarget' => '/en/excluded',
                     'statusCode' => 301,
                 ),
             'en.redirect.get' =>
-                array (
+                array(
                     'method' => 'GET|POST|PUT|PATCH|DELETE|OPTIONS',
                     'uri' => 'en/redirect',
                     'action' => '\\Illuminate\\Routing\\RedirectController',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'redirectTarget' => '/en/excluded',
                     'statusCode' => 302,
                 ),
             'en.resource.create' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en/resource/create',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@create',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'resource',
                             'method' => 'GET',
                             'path' => 'en/resource/create',
@@ -980,15 +940,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.resource.destroy' =>
-                array (
+                array(
                     'method' => 'DELETE',
                     'uri' => 'en/resource/{resource}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@destroy',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'resource',
                             'method' => 'DELETE',
                             'path' => 'en/resource/{resource}',
@@ -1001,15 +960,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.resource.edit' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en/resource/{resource}/edit',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@edit',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'resource',
                             'method' => 'GET',
                             'path' => 'en/resource/{resource}/edit',
@@ -1022,15 +980,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.resource.index' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en/resource',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@index',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'resource',
                             'method' => 'GET',
                             'path' => 'en/resource',
@@ -1043,15 +1000,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.resource.show' =>
-                array (
+                array(
                     'method' => 'GET',
                     'uri' => 'en/resource/{resource}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@show',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'resource',
                             'method' => 'GET',
                             'path' => 'en/resource/{resource}',
@@ -1064,15 +1020,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.resource.store' =>
-                array (
+                array(
                     'method' => 'POST',
                     'uri' => 'en/resource',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@store',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'resource',
                             'method' => 'POST',
                             'path' => 'en/resource',
@@ -1085,15 +1040,14 @@ trait UsesTestRoutes
                         ),
                 ),
             'en.resource.update' =>
-                array (
+                array(
                     'method' => 'PUT',
                     'uri' => 'en/resource/{resource}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@update',
                     'middleware' =>
-                        array (
-                        ),
+                        array(),
                     'content' =>
-                        array (
+                        array(
                             'id' => 'resource',
                             'method' => 'PUT',
                             'path' => 'en/resource/{resource}',
@@ -1110,19 +1064,19 @@ trait UsesTestRoutes
 
     private function assertComplexRegisteredRoutes()
     {
-        $this->assertRegisteredRoutes(array (
+        $this->assertRegisteredRoutes(array(
             0 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.get',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => '',
                             'action' => 'get',
                             'uri' => 'de',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1131,17 +1085,17 @@ trait UsesTestRoutes
                         ),
                 ),
             1 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.auth.get',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'auth',
                             'action' => 'get',
                             'uri' => 'de/auth',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1150,17 +1104,17 @@ trait UsesTestRoutes
                         ),
                 ),
             2 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.auth.auth-child.get',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'auth.auth-child',
                             'action' => 'get',
                             'uri' => 'de/auth/auth-child',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1169,17 +1123,17 @@ trait UsesTestRoutes
                         ),
                 ),
             3 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.blog-using-parameters.category.show:blumen',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-parameters.category',
                             'action' => 'show',
                             'uri' => 'de/blog-using-parameters/blumen',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1188,17 +1142,17 @@ trait UsesTestRoutes
                         ),
                 ),
             4 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.blog-using-parameters.category.show:baeume',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-parameters.category',
                             'action' => 'show',
                             'uri' => 'de/blog-using-parameters/baeume',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1207,17 +1161,17 @@ trait UsesTestRoutes
                         ),
                 ),
             5 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.blog-using-parameters.category.article.show:blumen,die-rose',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'de/blog-using-parameters/blumen/die-rose',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1226,17 +1180,17 @@ trait UsesTestRoutes
                         ),
                 ),
             6 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.blog-using-parameters.category.article.show:blumen,die-tulpe',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'de/blog-using-parameters/blumen/die-tulpe',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1245,17 +1199,17 @@ trait UsesTestRoutes
                         ),
                 ),
             7 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.blog-using-parameters.category.article.show:blumen,die-lilie',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'de/blog-using-parameters/blumen/die-lilie',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1264,17 +1218,17 @@ trait UsesTestRoutes
                         ),
                 ),
             8 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.blog-using-parameters.category.article.show:baeume,die-laerche',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'de/blog-using-parameters/baeume/die-laerche',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1283,17 +1237,17 @@ trait UsesTestRoutes
                         ),
                 ),
             9 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.blog-using-parameters.category.article.show:baeume,die-laerche',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'de/blog-using-parameters/baeume/die-laerche',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1302,17 +1256,17 @@ trait UsesTestRoutes
                         ),
                 ),
             10 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.blog-using-parameters.category.article.show:baeume,die-kastanie',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'de/blog-using-parameters/baeume/die-kastanie',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1321,17 +1275,17 @@ trait UsesTestRoutes
                         ),
                 ),
             11 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.index',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources',
                             'action' => 'index',
                             'uri' => 'de/blog-using-resources',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1340,17 +1294,17 @@ trait UsesTestRoutes
                         ),
                 ),
             12 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.show:blumen',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources',
                             'action' => 'show',
                             'uri' => 'de/blog-using-resources/blumen',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1359,17 +1313,17 @@ trait UsesTestRoutes
                         ),
                 ),
             13 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.show:baeume',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources',
                             'action' => 'show',
                             'uri' => 'de/blog-using-resources/baeume',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1378,17 +1332,17 @@ trait UsesTestRoutes
                         ),
                 ),
             14 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.articles.index:blumen',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources.articles',
                             'action' => 'index',
                             'uri' => 'de/blog-using-resources/blumen/articles',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1397,17 +1351,17 @@ trait UsesTestRoutes
                         ),
                 ),
             15 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.articles.index:baeume',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources.articles',
                             'action' => 'index',
                             'uri' => 'de/blog-using-resources/baeume/articles',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1416,17 +1370,17 @@ trait UsesTestRoutes
                         ),
                 ),
             16 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.articles.show:blumen,die-rose',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'de/blog-using-resources/blumen/articles/die-rose',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1435,17 +1389,17 @@ trait UsesTestRoutes
                         ),
                 ),
             17 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.articles.show:blumen,die-tulpe',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'de/blog-using-resources/blumen/articles/die-tulpe',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1454,17 +1408,17 @@ trait UsesTestRoutes
                         ),
                 ),
             18 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.articles.show:blumen,die-lilie',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'de/blog-using-resources/blumen/articles/die-lilie',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1473,17 +1427,17 @@ trait UsesTestRoutes
                         ),
                 ),
             19 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.articles.show:baeume,die-laerche',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'de/blog-using-resources/baeume/articles/die-laerche',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1492,17 +1446,17 @@ trait UsesTestRoutes
                         ),
                 ),
             20 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.articles.show:baeume,die-laerche',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'de/blog-using-resources/baeume/articles/die-laerche',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1511,17 +1465,17 @@ trait UsesTestRoutes
                         ),
                 ),
             21 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.blog-using-resources.articles.show:baeume,die-kastanie',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'de/blog-using-resources/baeume/articles/die-kastanie',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1530,17 +1484,17 @@ trait UsesTestRoutes
                         ),
                 ),
             22 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.excluded.get',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'excluded',
                             'action' => 'get',
                             'uri' => 'de/excluded',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1549,17 +1503,17 @@ trait UsesTestRoutes
                         ),
                 ),
             23 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.excluded.excluded-child.get',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'excluded.excluded-child',
                             'action' => 'get',
                             'uri' => 'de/excluded/excluded-child',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1568,17 +1522,17 @@ trait UsesTestRoutes
                         ),
                 ),
             24 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.excluded.non-excluded-child.get',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'excluded.non-excluded-child',
                             'action' => 'get',
                             'uri' => 'de/excluded/non-excluded-child',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1587,17 +1541,17 @@ trait UsesTestRoutes
                         ),
                 ),
             25 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.parameter-with-translated-values.parameter-with-translated-values.get:parameter-array-wert1',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'parameter-with-translated-values.parameter-with-translated-values',
                             'action' => 'get',
                             'uri' => 'de/parameter-with-translated-values/parameter-array-wert1',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1606,17 +1560,17 @@ trait UsesTestRoutes
                         ),
                 ),
             26 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.parameter-with-translated-values.parameter-with-translated-values.get:parameter-array-wert2',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'parameter-with-translated-values.parameter-with-translated-values',
                             'action' => 'get',
                             'uri' => 'de/parameter-with-translated-values/parameter-array-wert2',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1625,17 +1579,17 @@ trait UsesTestRoutes
                         ),
                 ),
             27 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.parameter-with-values.parameter-with-values.get:parameter-array-value1',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'parameter-with-values.parameter-with-values',
                             'action' => 'get',
                             'uri' => 'de/parameter-with-values/parameter-array-value1',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1644,17 +1598,17 @@ trait UsesTestRoutes
                         ),
                 ),
             28 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.parameter-with-values.parameter-with-values.get:parameter-array-value2',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'parameter-with-values.parameter-with-values',
                             'action' => 'get',
                             'uri' => 'de/parameter-with-values/parameter-array-value2',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1663,17 +1617,17 @@ trait UsesTestRoutes
                         ),
                 ),
             29 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.permanent-redirect.get',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'permanent-redirect',
                             'action' => 'get',
                             'uri' => 'de/permanent-redirect',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                     2 => 'POST',
@@ -1687,17 +1641,17 @@ trait UsesTestRoutes
                         ),
                 ),
             30 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.redirect.get',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'redirect',
                             'action' => 'get',
                             'uri' => 'de/redirect',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                     2 => 'POST',
@@ -1711,17 +1665,17 @@ trait UsesTestRoutes
                         ),
                 ),
             31 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.resource.index',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'resource',
                             'action' => 'index',
                             'uri' => 'de/resource',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1730,17 +1684,17 @@ trait UsesTestRoutes
                         ),
                 ),
             32 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.resource.store',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'resource',
                             'action' => 'store',
                             'uri' => 'de/resource',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'POST',
                                 ),
                             'title' => 'Resource',
@@ -1748,17 +1702,17 @@ trait UsesTestRoutes
                         ),
                 ),
             33 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'de.resource.create',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'resource',
                             'action' => 'create',
                             'uri' => 'de/resource/erstellen',
                             'locale' => 'de',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1767,17 +1721,17 @@ trait UsesTestRoutes
                         ),
                 ),
             34 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.get',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => '',
                             'action' => 'get',
                             'uri' => 'en',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1786,17 +1740,17 @@ trait UsesTestRoutes
                         ),
                 ),
             35 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.auth.get',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'auth',
                             'action' => 'get',
                             'uri' => 'en/auth',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1805,17 +1759,17 @@ trait UsesTestRoutes
                         ),
                 ),
             36 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.auth.auth-child.get',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'auth.auth-child',
                             'action' => 'get',
                             'uri' => 'en/auth/auth-child',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1824,17 +1778,17 @@ trait UsesTestRoutes
                         ),
                 ),
             37 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.blog-using-parameters.category.show:flowers',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-parameters.category',
                             'action' => 'show',
                             'uri' => 'en/blog-using-parameters/flowers',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1843,17 +1797,17 @@ trait UsesTestRoutes
                         ),
                 ),
             38 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.blog-using-parameters.category.show:trees',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-parameters.category',
                             'action' => 'show',
                             'uri' => 'en/blog-using-parameters/trees',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1862,17 +1816,17 @@ trait UsesTestRoutes
                         ),
                 ),
             39 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.blog-using-parameters.category.article.show:flowers,the-rose',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'en/blog-using-parameters/flowers/the-rose',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1881,17 +1835,17 @@ trait UsesTestRoutes
                         ),
                 ),
             40 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.blog-using-parameters.category.article.show:flowers,the-tulip',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'en/blog-using-parameters/flowers/the-tulip',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1900,17 +1854,17 @@ trait UsesTestRoutes
                         ),
                 ),
             41 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.blog-using-parameters.category.article.show:flowers,the-lily',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'en/blog-using-parameters/flowers/the-lily',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1919,17 +1873,17 @@ trait UsesTestRoutes
                         ),
                 ),
             42 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.blog-using-parameters.category.article.show:trees,the-larch',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'en/blog-using-parameters/trees/the-larch',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1938,17 +1892,17 @@ trait UsesTestRoutes
                         ),
                 ),
             43 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.blog-using-parameters.category.article.show:trees,the-larch',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'en/blog-using-parameters/trees/the-larch',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1957,17 +1911,17 @@ trait UsesTestRoutes
                         ),
                 ),
             44 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.blog-using-parameters.category.article.show:trees,the-chestnut',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-parameters.category.article',
                             'action' => 'show',
                             'uri' => 'en/blog-using-parameters/trees/the-chestnut',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1976,17 +1930,17 @@ trait UsesTestRoutes
                         ),
                 ),
             45 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.index',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources',
                             'action' => 'index',
                             'uri' => 'en/blog-using-resources',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -1995,17 +1949,17 @@ trait UsesTestRoutes
                         ),
                 ),
             46 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.show:flowers',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources',
                             'action' => 'show',
                             'uri' => 'en/blog-using-resources/flowers',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -2014,17 +1968,17 @@ trait UsesTestRoutes
                         ),
                 ),
             47 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.show:trees',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources',
                             'action' => 'show',
                             'uri' => 'en/blog-using-resources/trees',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -2033,17 +1987,17 @@ trait UsesTestRoutes
                         ),
                 ),
             48 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.articles.index:flowers',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources.articles',
                             'action' => 'index',
                             'uri' => 'en/blog-using-resources/flowers/articles',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -2052,17 +2006,17 @@ trait UsesTestRoutes
                         ),
                 ),
             49 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.articles.index:trees',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources.articles',
                             'action' => 'index',
                             'uri' => 'en/blog-using-resources/trees/articles',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -2071,17 +2025,17 @@ trait UsesTestRoutes
                         ),
                 ),
             50 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.articles.show:flowers,the-rose',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'en/blog-using-resources/flowers/articles/the-rose',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -2090,17 +2044,17 @@ trait UsesTestRoutes
                         ),
                 ),
             51 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.articles.show:flowers,the-tulip',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'en/blog-using-resources/flowers/articles/the-tulip',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -2109,17 +2063,17 @@ trait UsesTestRoutes
                         ),
                 ),
             52 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.articles.show:flowers,the-lily',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'en/blog-using-resources/flowers/articles/the-lily',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -2128,17 +2082,17 @@ trait UsesTestRoutes
                         ),
                 ),
             53 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.articles.show:trees,the-larch',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'en/blog-using-resources/trees/articles/the-larch',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -2147,17 +2101,17 @@ trait UsesTestRoutes
                         ),
                 ),
             54 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.articles.show:trees,the-larch',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'en/blog-using-resources/trees/articles/the-larch',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -2166,17 +2120,17 @@ trait UsesTestRoutes
                         ),
                 ),
             55 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.blog-using-resources.articles.show:trees,the-chestnut',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'blog-using-resources.articles',
                             'action' => 'show',
                             'uri' => 'en/blog-using-resources/trees/articles/the-chestnut',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -2185,17 +2139,17 @@ trait UsesTestRoutes
                         ),
                 ),
             56 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.excluded.get',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'excluded',
                             'action' => 'get',
                             'uri' => 'en/excluded',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -2204,17 +2158,17 @@ trait UsesTestRoutes
                         ),
                 ),
             57 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.excluded.excluded-child.get',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'excluded.excluded-child',
                             'action' => 'get',
                             'uri' => 'en/excluded/excluded-child',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -2223,17 +2177,17 @@ trait UsesTestRoutes
                         ),
                 ),
             58 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.excluded.non-excluded-child.get',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'excluded.non-excluded-child',
                             'action' => 'get',
                             'uri' => 'en/excluded/non-excluded-child',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -2242,17 +2196,17 @@ trait UsesTestRoutes
                         ),
                 ),
             59 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.parameter-with-translated-values.parameter-with-translated-values.get:parameter-array-value1',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'parameter-with-translated-values.parameter-with-translated-values',
                             'action' => 'get',
                             'uri' => 'en/parameter-with-translated-values/parameter-array-value1',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -2261,17 +2215,17 @@ trait UsesTestRoutes
                         ),
                 ),
             60 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.parameter-with-translated-values.parameter-with-translated-values.get:parameter-array-value2',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'parameter-with-translated-values.parameter-with-translated-values',
                             'action' => 'get',
                             'uri' => 'en/parameter-with-translated-values/parameter-array-value2',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -2280,17 +2234,17 @@ trait UsesTestRoutes
                         ),
                 ),
             61 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.parameter-with-values.parameter-with-values.get:parameter-array-value1',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'parameter-with-values.parameter-with-values',
                             'action' => 'get',
                             'uri' => 'en/parameter-with-values/parameter-array-value1',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -2299,17 +2253,17 @@ trait UsesTestRoutes
                         ),
                 ),
             62 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.parameter-with-values.parameter-with-values.get:parameter-array-value2',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'parameter-with-values.parameter-with-values',
                             'action' => 'get',
                             'uri' => 'en/parameter-with-values/parameter-array-value2',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -2318,17 +2272,17 @@ trait UsesTestRoutes
                         ),
                 ),
             63 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.permanent-redirect.get',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'permanent-redirect',
                             'action' => 'get',
                             'uri' => 'en/permanent-redirect',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                     2 => 'POST',
@@ -2342,17 +2296,17 @@ trait UsesTestRoutes
                         ),
                 ),
             64 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.redirect.get',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'redirect',
                             'action' => 'get',
                             'uri' => 'en/redirect',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                     2 => 'POST',
@@ -2366,17 +2320,17 @@ trait UsesTestRoutes
                         ),
                 ),
             65 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.resource.index',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'resource',
                             'action' => 'index',
                             'uri' => 'en/resource',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),
@@ -2385,17 +2339,17 @@ trait UsesTestRoutes
                         ),
                 ),
             66 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.resource.store',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'resource',
                             'action' => 'store',
                             'uri' => 'en/resource',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'POST',
                                 ),
                             'title' => 'Resource',
@@ -2403,17 +2357,17 @@ trait UsesTestRoutes
                         ),
                 ),
             67 =>
-                array (
+                array(
                     'type' => 'routes',
                     'id' => 'en.resource.create',
                     'attributes' =>
-                        array (
+                        array(
                             'node' => 'resource',
                             'action' => 'create',
                             'uri' => 'en/resource/create',
                             'locale' => 'en',
                             'methods' =>
-                                array (
+                                array(
                                     0 => 'GET',
                                     1 => 'HEAD',
                                 ),

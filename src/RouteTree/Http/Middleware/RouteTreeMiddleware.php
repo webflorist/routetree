@@ -6,10 +6,10 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Webflorist\RouteTree\Domain\RegisteredRoute;
 use Webflorist\RouteTree\Domain\RouteAction;
 use Webflorist\RouteTree\RouteTree;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RouteTreeMiddleware
 {
@@ -49,8 +49,7 @@ class RouteTreeMiddleware
     {
         if (app()->routesAreCached()) {
             $this->routeTree->loadCachedRouteTree();
-        }
-        else {
+        } else {
             $this->routeTree->generateAllRoutes();
         }
 
@@ -84,8 +83,7 @@ class RouteTreeMiddleware
     {
         try {
             return $this->router->getRoutes()->match($request);
-        }
-        catch(NotFoundHttpException $exception) {
+        } catch (NotFoundHttpException $exception) {
             return null;
         }
     }
@@ -120,7 +118,7 @@ class RouteTreeMiddleware
         // First try getting locale from first part of the current route name,
         // if a currentRoute was determined.
         if (!is_null($currentRoute)) {
-            $firstRouteNameSegment = explode('.',$currentRoute->getName())[0];
+            $firstRouteNameSegment = explode('.', $currentRoute->getName())[0];
             if ($this->isValidLocale($firstRouteNameSegment)) {
                 return $firstRouteNameSegment;
             }
@@ -134,7 +132,7 @@ class RouteTreeMiddleware
         // If a HTTP_ACCEPT_LANGUAGE header was sent by the client,
         // we use that.
         if (!is_null($acceptLanguage = $request->header('accept-language'))) {
-            foreach (explode(',',$acceptLanguage) as $acceptedLocale) {
+            foreach (explode(',', $acceptLanguage) as $acceptedLocale) {
                 if ($this->isValidLocale($acceptedLocale)) {
                     return $acceptedLocale;
                 }
@@ -170,7 +168,7 @@ class RouteTreeMiddleware
         return $foundPath;
     }
 
-    private function setLocale(\Illuminate\Http\Request $request,?Route $currentRoute)
+    private function setLocale(\Illuminate\Http\Request $request, ?Route $currentRoute)
     {
         $locale = $this->determineLocale($request, $currentRoute);
         app()->setLocale($locale);

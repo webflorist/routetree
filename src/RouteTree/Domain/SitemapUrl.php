@@ -120,7 +120,7 @@ class SitemapUrl
     {
         $priority = $this->priority ?? $this->routeNode->payload->get('priority', $parameters, $locale);
         if (!is_null($priority)) {
-            $priority = number_format($this->priority,1);
+            $priority = number_format($this->priority, 1);
         }
         return $priority;
     }
@@ -138,7 +138,7 @@ class SitemapUrl
         return false;
     }
 
-    public function exclude(bool $exclude=true)
+    public function exclude(bool $exclude = true)
     {
         $this->isExcluded = $exclude;
     }

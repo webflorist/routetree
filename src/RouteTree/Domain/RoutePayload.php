@@ -154,7 +154,7 @@ class RoutePayload
         // is a RouteAction specific payload,
         // try falling back to the RouteNode's payload.
         if (is_null($payload) && !is_null($this->routeAction) && $this->routeNode->payload->has($payloadKey)) {
-            $payload =  $this->routeNode->payload->$payloadKey;
+            $payload = $this->routeNode->payload->$payloadKey;
         }
 
         // If payload is a LocaleMap and contains an element for this language, that's our new $payload.
@@ -171,7 +171,7 @@ class RoutePayload
         // and the payload belongs to a parameter-node,
         // which has a model attached,
         // we try getting the payload from the model.
-        if (is_null($payload) && $this->routeNode->hasParameter() && $this->routeNode->parameter->hasPayloadProvidingModel() ) {
+        if (is_null($payload) && $this->routeNode->hasParameter() && $this->routeNode->parameter->hasPayloadProvidingModel()) {
             /** @var ProvidesRoutePayload $modelClass */
             $modelClass = $this->routeNode->parameter->getModel();
             $modelPayload = $modelClass::getRoutePayload($payloadKey, $parameters, $locale, (!is_null($this->routeAction) ? $this->routeAction->getName() : null));

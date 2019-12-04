@@ -8,7 +8,7 @@
         }
     ],
     "require": {
-		"laravel/framework": "~5.5"
+        "laravel/framework": "~5.5"
     },
     "require-dev": {
         "orchestra/testbench": "~3.5"
@@ -16,7 +16,7 @@
     "autoload": {
         "psr-4": {
             "Webflorist\\RouteTree\\": "src/RouteTree/",
-	        "RouteTreeTests\\": "tests/"
+            "RouteTreeTests\\": "tests/"
         },
         "files": [
             "src/helpers.php"

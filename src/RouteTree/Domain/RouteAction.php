@@ -9,7 +9,6 @@ use Webflorist\RouteTree\Domain\Traits\CanHaveParameterRegex;
 use Webflorist\RouteTree\Domain\Traits\CanHaveSegments;
 use Webflorist\RouteTree\Exceptions\ActionNotFoundException;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
-use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
 use Webflorist\RouteTree\RouteTree;
 use Webflorist\RouteTree\Services\RouteUrlBuilder;
 
@@ -529,7 +528,7 @@ class RouteAction
         if (!is_null($this->redirect)) {
             return \Illuminate\Support\Facades\Route::redirect(
                 $uri,
-                '/'.route_tree()->getNode($this->redirect)->getPath($locale),
+                '/' . route_tree()->getNode($this->redirect)->getPath($locale),
                 $this->redirectStatus
             );
         }
@@ -594,7 +593,7 @@ class RouteAction
 
     public function hasParameterValues(string $locale)
     {
-        $rootLineParameters =  $this->routeNode->getRootLineParameters();
+        $rootLineParameters = $this->routeNode->getRootLineParameters();
         foreach ($this->getPathParameters($locale) as $pathParameter) {
             if (!isset($rootLineParameters[$pathParameter])) {
                 return false;

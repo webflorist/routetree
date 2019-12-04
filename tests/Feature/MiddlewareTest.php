@@ -71,8 +71,8 @@ class MiddlewareTest extends TestCase
         $this->routeTree->node('parent', function (RouteNode $node) {
             $node->get($this->getDefaultAction());
             $node->segment(LanguageMapping::create()
-                ->set('de','eltern')
-                ->set('en','parent'));
+                ->set('de', 'eltern')
+                ->set('en', 'parent'));
             $node->child('child', function (RouteNode $node) {
                 $node->get($this->getDefaultAction());
             });
@@ -90,8 +90,8 @@ class MiddlewareTest extends TestCase
         $this->routeTree->node('parent', function (RouteNode $node) {
             $node->get($this->getDefaultAction());
             $node->segment(LanguageMapping::create()
-                ->set('de','eltern')
-                ->set('en','parent'));
+                ->set('de', 'eltern')
+                ->set('en', 'parent'));
             $node->child('child', function (RouteNode $node) {
                 $node->get($this->getDefaultAction());
             });
@@ -110,13 +110,13 @@ class MiddlewareTest extends TestCase
         $this->routeTree->node('parent', function (RouteNode $node) {
             $node->get($this->getDefaultAction());
             $node->segment(LanguageMapping::create()
-                ->set('de','eltern')
-                ->set('en','parent'));
+                ->set('de', 'eltern')
+                ->set('en', 'parent'));
             $node->child('child', function (RouteNode $node) {
                 $node->get($this->getDefaultAction());
                 $node->segment(LanguageMapping::create()
-                    ->set('de','kind')
-                    ->set('en','child'));
+                    ->set('de', 'kind')
+                    ->set('en', 'child'));
             });
         });
 
@@ -133,13 +133,13 @@ class MiddlewareTest extends TestCase
         $this->routeTree->node('parent', function (RouteNode $node) {
             $node->get($this->getDefaultAction());
             $node->segment(LanguageMapping::create()
-                ->set('de','eltern')
-                ->set('en','parent'));
+                ->set('de', 'eltern')
+                ->set('en', 'parent'));
             $node->child('child', function (RouteNode $node) {
                 $node->get($this->getDefaultAction());
                 $node->segment(LanguageMapping::create()
-                    ->set('de','kind')
-                    ->set('en','child'));
+                    ->set('de', 'kind')
+                    ->set('en', 'child'));
             });
         });
 
@@ -161,9 +161,9 @@ class MiddlewareTest extends TestCase
         $this->assertJsonResponse(
             '',
             [
-            "id" => "",
-            "path" => "en",
-            "language" => "en",
+                "id" => "",
+                "path" => "en",
+                "language" => "en",
             ],
             true,
             ['HTTP_ACCEPT_LANGUAGE' => 'es,en']

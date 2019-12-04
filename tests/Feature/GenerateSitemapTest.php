@@ -2,10 +2,7 @@
 
 namespace RouteTreeTests\Feature;
 
-use Carbon\Carbon;
 use Illuminate\Filesystem\Filesystem;
-use RouteTreeTests\Feature\Models\BlogArticle;
-use RouteTreeTests\Feature\Models\BlogCategory;
 use RouteTreeTests\Feature\Models\TestModelTranslatable;
 use RouteTreeTests\Feature\Traits\UsesTestRoutes;
 use RouteTreeTests\TestCase;
@@ -72,8 +69,7 @@ class GenerateSitemapTest extends TestCase
 
         $this->artisan('routetree:generate-sitemap')
             //->expectsOutput('test')
-            ->assertExitCode('0')
-        ;
+            ->assertExitCode('0');
         $this->assertFileExists($this->getSitemapOutputFile());
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -249,7 +245,6 @@ class GenerateSitemapTest extends TestCase
         </url>
     </urlset>', file_get_contents($this->getSitemapOutputFile()));
     }
-
 
 
 }

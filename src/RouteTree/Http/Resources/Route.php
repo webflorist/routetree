@@ -4,7 +4,6 @@ namespace Webflorist\RouteTree\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Routing\Router;
 use Webflorist\RouteTree\Domain\RegisteredRoute;
 use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
 
@@ -55,8 +54,8 @@ class Route extends JsonResource
     protected function generateRouteId(): string
     {
         $routeId = $this->resource->route->getName();
-        if (!is_null($this->resource->routeKeys) && count($this->resource->routeKeys)>0) {
-            $routeId .= ':'.implode(',',$this->resource->routeKeys);
+        if (!is_null($this->resource->routeKeys) && count($this->resource->routeKeys) > 0) {
+            $routeId .= ':' . implode(',', $this->resource->routeKeys);
         }
         return $routeId;
     }

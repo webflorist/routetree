@@ -4,7 +4,7 @@ use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
 use Webflorist\RouteTree\RouteTree;
 use Webflorist\RouteTree\Services\RouteUrlBuilder;
 
-if (! function_exists('route_tree')) {
+if (!function_exists('route_tree')) {
     /**
      * Gets the RouteTree singleton from Laravel's service-container
      *
@@ -17,7 +17,7 @@ if (! function_exists('route_tree')) {
 }
 
 
-if ( ! function_exists('route_node_url()')) {
+if (!function_exists('route_node_url()')) {
     /**
      * Generate an URL to the action of a route-node.
      *
@@ -29,13 +29,13 @@ if ( ! function_exists('route_node_url()')) {
      * @return RouteUrlBuilder
      * @throws NodeNotFoundException
      */
-    function route_node_url($nodeId=null, $action=null, $parameters = null, $locale=null, $absolute=null) : RouteUrlBuilder
+    function route_node_url($nodeId = null, $action = null, $parameters = null, $locale = null, $absolute = null): RouteUrlBuilder
     {
         return new RouteUrlBuilder($nodeId, $action, $parameters, $locale, $absolute);
     }
 }
 
-if ( ! function_exists('route_node_id()')) {
+if (!function_exists('route_node_id()')) {
     /**
      * Get the node-id of the current route.
      *
@@ -47,7 +47,7 @@ if ( ! function_exists('route_node_id()')) {
     }
 }
 
-if (! function_exists('trans_by_route')) {
+if (!function_exists('trans_by_route')) {
 
     /**
      * Translate the given message and work with current route.
@@ -63,10 +63,9 @@ if (! function_exists('trans_by_route')) {
     function trans_by_route($id = null, $useParentNode = false, $nodeId = '', $parameters = [], $locale = null)
     {
 
-        if(empty($nodeId)) {
+        if (empty($nodeId)) {
             $routeNode = route_tree()->getCurrentNode();
-        }
-        else {
+        } else {
             $routeNode = route_tree()->getNode($nodeId);
         }
 

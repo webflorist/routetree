@@ -26,7 +26,7 @@ class BlogArticle extends Model implements ProvidesRouteKeyList, ProvidesRoutePa
 
     public static function getRoutePayload(string $payloadKey, array $parameters, string $locale, ?string $action)
     {
-        switch($payloadKey) {
+        switch ($payloadKey) {
             case 'title':
             case 'navTitle':
                 if (isset($parameters['category']) && isset($parameters['article'])) {

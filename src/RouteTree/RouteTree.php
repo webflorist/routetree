@@ -268,18 +268,17 @@ class RouteTree
      * @param bool $resolveRouteKeys
      * @return Collection
      */
-    public function getRegisteredRoutes(bool $resolveRouteKeys=false)
+    public function getRegisteredRoutes(bool $resolveRouteKeys = false)
     {
         if ($resolveRouteKeys === false) {
             return $this->registeredRoutes;
         }
 
         $return = new Collection();
-        $this->registeredRoutes->values()->each(function (RegisteredRoute $registeredRoute) use(&$return) {
+        $this->registeredRoutes->values()->each(function (RegisteredRoute $registeredRoute) use (&$return) {
             if ($registeredRoute->routeAction->hasParameters()) {
                 $return = $return->merge($registeredRoute->getForAllRouteKeys());
-            }
-            else {
+            } else {
                 $return->push($registeredRoute);
             }
         });
@@ -466,17 +465,17 @@ class RouteTree
      */
     public function getCachedRouteTreePath()
     {
-        return $_ENV['APP_ROUTETREE_CACHE'] ??  app()->bootstrapPath().'/cache/routetree.php';
+        return $_ENV['APP_ROUTETREE_CACHE'] ?? app()->bootstrapPath() . '/cache/routetree.php';
     }
 
     public function cacheRouteTree()
     {
         /** @var Filesystem $filesystem */
-        $filesystem = app(Filesystem::class );
+        $filesystem = app(Filesystem::class);
 
         $filesystem->put(
             route_tree()->getCachedRouteTreePath(),
-            '<?php $cachedRouteTree = "'.base64_encode(serialize($this->getRootNode())).'";'
+            '<?php $cachedRouteTree = "' . base64_encode(serialize($this->getRootNode())) . '";'
         );
     }
 

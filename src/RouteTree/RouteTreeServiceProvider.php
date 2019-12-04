@@ -3,16 +3,14 @@
 namespace Webflorist\RouteTree;
 
 use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Webflorist\RouteTree\Console\Commands\GenerateSitemapCommand;
 use Webflorist\RouteTree\Console\Commands\RouteCacheCommand;
 use Webflorist\RouteTree\Console\Commands\RouteClearCommand;
 use Webflorist\RouteTree\Http\Controllers\Api\RoutesController;
 use Webflorist\RouteTree\Http\Middleware\RouteTreeMiddleware;
 use Webflorist\RouteTree\Http\Middleware\SetLocalFromSession;
-use Webflorist\RouteTree\Console\Commands\GenerateSitemapCommand;
 use Webflorist\RouteTree\Listeners\CommandListener;
-use Illuminate\Console\Events\CommandFinished;
 
 class RouteTreeServiceProvider extends ServiceProvider
 {
@@ -38,7 +36,7 @@ class RouteTreeServiceProvider extends ServiceProvider
         $this->publishConfig();
         $this->registerArtisanCommands();
         $this->loadTranslations();
-	    $this->addGlobalMiddleware(RouteTreeMiddleware::class);
+        $this->addGlobalMiddleware(RouteTreeMiddleware::class);
         $this->loadViews();
         $this->addRoutes();
 

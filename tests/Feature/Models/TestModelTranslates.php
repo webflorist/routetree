@@ -12,7 +12,7 @@ class TestModelTranslates extends Model implements ProvidesRouteKeyList, Provide
 
     public static function getRouteKeyList(string $locale = null, ?array $parameters = null): array
     {
-        return $locale === 'de' ? ['wert-1','wert-2'] : ['value-1','value-2'];
+        return $locale === 'de' ? ['wert-1', 'wert-2'] : ['value-1', 'value-2'];
     }
 
     public static function translateRouteKey(string $value, string $toLocale, string $fromLocale): string

@@ -49,7 +49,7 @@ return [
         /*
          * The base-folder for translations (optionally including any namespace).
          */
-        'base_folder'  => 'pages',
+        'base_folder' => 'pages',
 
         /*
          * The name of the file, in which auto-translations reside.

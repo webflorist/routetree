@@ -8,7 +8,6 @@ use Webflorist\RouteTree\Domain\Traits\CanHaveSegments;
 use Webflorist\RouteTree\Exceptions\ActionNotFoundException;
 use Webflorist\RouteTree\Exceptions\NodeAlreadyHasChildWithSameNameException;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
-use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
 use Webflorist\RouteTree\RouteTree;
 use Webflorist\RouteTree\Services\RouteUrlBuilder;
 
@@ -373,7 +372,7 @@ class RouteNode
      * @param bool $includeCurrent
      * @return RouteNode[]
      */
-    public function getRootLineNodes(bool $includeCurrent=false)
+    public function getRootLineNodes(bool $includeCurrent = false)
     {
 
         $rootLineNodes = [];
@@ -454,12 +453,12 @@ class RouteNode
     public function getLowestRootLineAction()
     {
 
-        $currentActionUrl = (string) route_tree()->getCurrentAction()->getUrl();
+        $currentActionUrl = (string)route_tree()->getCurrentAction()->getUrl();
 
         $mostActiveRootLineAction = false;
         $mostActiveRootLineActionUrlLength = 0;
         foreach ($this->actions as $action) {
-            $actionUrl = (string) $action->getUrl();
+            $actionUrl = (string)$action->getUrl();
             $actionUrlLength = strlen($actionUrl);
 
             if ((strpos($currentActionUrl, $actionUrl) === 0) && (strlen($actionUrl) > $mostActiveRootLineActionUrlLength)) {
@@ -486,11 +485,11 @@ class RouteNode
      * @param string $parameter
      * @return RouteParameter
      */
-    public function parameter(string $parameter, bool $setSegment=true) : RouteParameter
+    public function parameter(string $parameter, bool $setSegment = true): RouteParameter
     {
         $this->parameter = new RouteParameter($parameter, $this);
         if ($setSegment) {
-            $this->segment("{".$parameter."}");
+            $this->segment("{" . $parameter . "}");
         }
         return $this->parameter;
     }
@@ -696,7 +695,7 @@ class RouteNode
      *
      * @return array
      */
-    public function hasLocale(string $locale) : bool
+    public function hasLocale(string $locale): bool
     {
         return array_search($locale, $this->getLocales()) !== false;
     }
@@ -806,7 +805,7 @@ class RouteNode
      * @throws ActionNotFoundException
      * @throws NodeNotFoundException
      */
-    public function getUrl($parameters = null, $locale = null, $absolute = null) : RouteUrlBuilder
+    public function getUrl($parameters = null, $locale = null, $absolute = null): RouteUrlBuilder
     {
 
         $action = $this->hasAction('index') ? 'index' :
@@ -818,7 +817,7 @@ class RouteNode
             throw new ActionNotFoundException('Node with Id "' . $this->getId() . '" does not have any action to generate an URL to.');
         }
 
-        return $this->getUrlByAction($action, $parameters, $locale, $absolute );
+        return $this->getUrlByAction($action, $parameters, $locale, $absolute);
     }
 
     /**
@@ -832,7 +831,7 @@ class RouteNode
      * @throws ActionNotFoundException
      * @throws NodeNotFoundException
      */
-    public function getUrlByAction($action, $parameters = null, $locale = null, $absolute = null) : RouteUrlBuilder
+    public function getUrlByAction($action, $parameters = null, $locale = null, $absolute = null): RouteUrlBuilder
     {
         if ($this->hasAction($action)) {
             return $this->getAction($action)->getUrl($parameters, $locale, $absolute);
@@ -952,7 +951,7 @@ class RouteNode
      * @return RouteAction
      * @throws ActionNotFoundException
      */
-    public function getAction(string $actionName) : RouteAction
+    public function getAction(string $actionName): RouteAction
     {
         foreach ($this->actions as $action) {
             if ($action->getName() === $actionName) {
@@ -993,7 +992,7 @@ class RouteNode
      * @param $actionName
      * @return bool
      */
-    public function hasAction(string $actionName) : bool
+    public function hasAction(string $actionName): bool
     {
         foreach ($this->actions as $action) {
             if ($action->getName() === $actionName) {
@@ -1154,7 +1153,7 @@ class RouteNode
      * @return string
      * @throws ActionNotFoundException
      */
-    public function getTitle(?array $parameters = null, ?string $locale = null, ?bool $useCurrentAction=true): string
+    public function getTitle(?array $parameters = null, ?string $locale = null, ?bool $useCurrentAction = true): string
     {
         $title = null;
 
@@ -1185,7 +1184,7 @@ class RouteNode
      * @return string
      * @throws ActionNotFoundException
      */
-    public function getNavTitle(?array $parameters = null, ?string $locale = null, ?bool $useCurrentAction=true): string
+    public function getNavTitle(?array $parameters = null, ?string $locale = null, ?bool $useCurrentAction = true): string
     {
         $title = null;
 
@@ -1202,7 +1201,7 @@ class RouteNode
         }
 
         // Per default we fall back to $this->getTitle().
-        return $this->getTitle($parameters,$locale, $useCurrentAction);
+        return $this->getTitle($parameters, $locale, $useCurrentAction);
     }
 
 }

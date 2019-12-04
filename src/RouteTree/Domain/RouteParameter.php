@@ -152,15 +152,18 @@ class RouteParameter
         return $this->model !== null;
     }
 
-    public function hasRouteKeyListProvidingModel() {
+    public function hasRouteKeyListProvidingModel()
+    {
         return $this->hasModel() && in_array(ProvidesRouteKeyList::class, class_implements($this->model));
     }
 
-    public function hasRouteKeyTranslatingModel() {
+    public function hasRouteKeyTranslatingModel()
+    {
         return $this->hasModel() && in_array(TranslatesRouteKey::class, class_implements($this->model));
     }
 
-    public function hasPayloadProvidingModel() {
+    public function hasPayloadProvidingModel()
+    {
         return $this->hasModel() && in_array(ProvidesRoutePayload::class, class_implements($this->model));
     }
 

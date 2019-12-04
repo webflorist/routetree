@@ -2,7 +2,7 @@
 
 namespace Webflorist\RouteTree\Exceptions;
 
-use \Exception;
+use Exception;
 
 class InvalidChangefreqValueException extends Exception
 {

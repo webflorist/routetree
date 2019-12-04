@@ -2,12 +2,10 @@
 
 namespace RouteTreeTests\Feature;
 
-use Illuminate\Http\Request;
 use RouteTreeTests\Feature\Traits\UsesTestRoutes;
 use RouteTreeTests\TestCase;
 use Webflorist\RouteTree\Domain\LanguageMapping;
 use Webflorist\RouteTree\Domain\RouteNode;
-use Webflorist\RouteTree\Http\Resources\RouteCollection;
 
 class RouteGenerationTest extends TestCase
 {
@@ -464,19 +462,19 @@ class RouteGenerationTest extends TestCase
         route_tree()->root(function (RouteNode $node) {
             $node->namespace('\RouteTreeTests\Feature\Controllers');
 
-            $node->child('page1', function(RouteNode $node) {
+            $node->child('page1', function (RouteNode $node) {
                 $node->get('TestController@get');
 
-                $node->child('page1-1', function(RouteNode $node) {
+                $node->child('page1-1', function (RouteNode $node) {
                     $node->get('TestController@get');
                 });
 
             });
 
-            $node->child('page2', function(RouteNode $node) {
+            $node->child('page2', function (RouteNode $node) {
                 $node->get('TestController@get');
 
-                $node->child('page2-1', function(RouteNode $node) {
+                $node->child('page2-1', function (RouteNode $node) {
                     $node->redirect('page1.page1-1');
                 });
 
@@ -620,7 +618,7 @@ class RouteGenerationTest extends TestCase
                 'title' => 'Page1-1'
             ],
             true
-            );
+        );
     }
 
 
@@ -1047,7 +1045,7 @@ class RouteGenerationTest extends TestCase
         $this->routeTree->node('page', function (RouteNode $node) {
             $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
             $node->segment(LanguageMapping::create()
-                ->set('de','custom-segment-de')
+                ->set('de', 'custom-segment-de')
                 ->set('en', 'custom-segment-en')
             );
         });

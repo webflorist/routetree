@@ -26,7 +26,7 @@ class MethodsTest extends TestCase
 
         $this->assertEquals(
             'page1.get',
-            route_tree()->getCurrentAction()->getRouteNode()->getId().'.'.route_tree()->getCurrentAction()->getName()
+            route_tree()->getCurrentAction()->getRouteNode()->getId() . '.' . route_tree()->getCurrentAction()->getName()
         );
 
     }
@@ -74,8 +74,6 @@ class MethodsTest extends TestCase
         );
 
     }
-
-
 
 
 }

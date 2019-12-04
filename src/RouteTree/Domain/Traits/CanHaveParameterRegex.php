@@ -15,8 +15,8 @@ trait CanHaveParameterRegex
     /**
      * Set a regular expression requirement on the RouteNode.
      *
-     * @param  array|string  $name
-     * @param  string|null  $expression
+     * @param array|string $name
+     * @param string|null $expression
      * @return $this
      */
     public function where($name, $expression = null)
@@ -31,8 +31,8 @@ trait CanHaveParameterRegex
     /**
      * Parse arguments to the where method into an array.
      *
-     * @param  array|string  $name
-     * @param  string  $expression
+     * @param array|string $name
+     * @param string $expression
      * @return array
      */
     protected function parseWhere($name, $expression)

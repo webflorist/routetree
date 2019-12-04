@@ -145,7 +145,7 @@ class RouteUrlBuilder
      * which is only possible, if the parent-nodes they belong to are currently active.
      *
      * @param RouteAction $routeAction
-     * @param string|null $locale: The language to be used for auto-fetching the parameter-values.
+     * @param string|null $locale : The language to be used for auto-fetching the parameter-values.
      * @return array
      * @throws UrlParametersMissingException
      */
@@ -210,7 +210,6 @@ class RouteUrlBuilder
             }
         }
     }
-
 
 
 }

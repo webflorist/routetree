@@ -129,7 +129,7 @@ class RegisteredRoute
                         ->methods($this->methods)
                         ->locale($this->locale)
                         ->routeName($this->routeName)
-                        ->path(substr(route($this->routeName, $routeKeySet, false),1))
+                        ->path(substr(route($this->routeName, $routeKeySet, false), 1))
                 );
             }
         }
@@ -141,7 +141,7 @@ class RegisteredRoute
      * @param array $currentSet
      * @param array $routeKeySets
      */
-    protected function fillRouteKeySets(array $routeParameters, array &$routeKeySets, ?array &$currentSet=null)
+    protected function fillRouteKeySets(array $routeParameters, array &$routeKeySets, ?array &$currentSet = null)
     {
         $nextParameter = array_shift($routeParameters);
         foreach ($nextParameter->getRouteKeys($this->locale, $currentSet) as $paramValue) {
@@ -149,10 +149,9 @@ class RegisteredRoute
                 $currentSet = [];
             }
             $currentSet[$nextParameter->getName()] = $paramValue;
-            if (count($routeParameters)>0) {
+            if (count($routeParameters) > 0) {
                 $this->fillRouteKeySets($routeParameters, $routeKeySets, $currentSet);
-            }
-            else {
+            } else {
                 $routeKeySets[] = $currentSet;
             }
         };

@@ -72,7 +72,7 @@ trait CanHaveSegments
 
         // If the path segment is a parameter, we also store it in $this->parameter (if not already done).
         if ((substr($segment, 0, 1) === '{') && (substr($segment, -1) === '}')) {
-            if (method_exists($this,'parameter') && is_null($this->parameter)) {
+            if (method_exists($this, 'parameter') && is_null($this->parameter)) {
                 $this->parameter(str_replace('{', '', str_replace('}', '', $segment)));
             }
         }
