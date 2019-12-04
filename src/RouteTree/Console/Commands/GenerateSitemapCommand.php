@@ -23,6 +23,11 @@ class GenerateSitemapCommand extends Command
      */
     protected $description = 'Generates a sitemap.xml.';
 
+    /**
+     * The generated Urlset for the sitemap.
+     *
+     * @var array
+     */
     private $urlset = [];
 
     /**
@@ -48,6 +53,8 @@ class GenerateSitemapCommand extends Command
     }
 
     /**
+     * Get location of output file.
+     *
      * @return string
      */
     protected function getOutputFile(): string
@@ -55,6 +62,9 @@ class GenerateSitemapCommand extends Command
         return app()->basePath() . '/' . config('routetree.sitemap.output_file');
     }
 
+    /**
+     * Generates Urlset from Routes registered with RouteTree.
+     */
     private function generateUrlset()
     {
         route_tree()->getRegisteredRoutes(true)->each(function (RegisteredRoute $registeredRoute, $index) {
@@ -68,7 +78,7 @@ class GenerateSitemapCommand extends Command
                 return;
             }
 
-            if (is_null($registeredRoute->routeKeys) && $registeredRoute->routeAction->hasParameters() && !$registeredRoute->routeAction->hasParameterValues($registeredRoute->locale)) {
+            if (is_null($registeredRoute->routeKeys) && $registeredRoute->routeAction->hasParameters() && !$registeredRoute->routeAction->canResolveAllRouteKeys($registeredRoute->locale)) {
                 $this->warn($registeredRoute->path . " EXCLUDED due to parameters without stated values or model-binding.");
                 return;
             }
@@ -90,6 +100,12 @@ class GenerateSitemapCommand extends Command
         });
     }
 
+    /**
+     * Routes using these middleware
+     * will be excluded from the sitemap.
+     *
+     * @return array
+     */
     private function getExcludedMiddleware()
     {
         return [
@@ -98,8 +114,9 @@ class GenerateSitemapCommand extends Command
     }
 
     /**
+     * Parses a RegisteredRoute object and adds it to $this->urlset.
+     *
      * @param RegisteredRoute $registeredRoute
-     * @param array|null $parameters
      */
     function addRegisteredRouteToUrlset(RegisteredRoute $registeredRoute): void
     {

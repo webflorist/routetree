@@ -2,6 +2,7 @@
 
 namespace Webflorist\RouteTree\Console\Commands;
 
+use Illuminate\Contracts\Foundation\Application;
 use Throwable;
 
 class RouteCacheCommand extends \Illuminate\Foundation\Console\RouteCacheCommand
@@ -19,7 +20,7 @@ class RouteCacheCommand extends \Illuminate\Foundation\Console\RouteCacheCommand
      *
      * @var string
      */
-    protected $description = "Calls Laravel's route:cache and also caches the routetree";
+    protected $description = "Calls Laravel's route:cache and also caches the RouteTree";
 
     /**
      * Execute the console command.
@@ -36,12 +37,16 @@ class RouteCacheCommand extends \Illuminate\Foundation\Console\RouteCacheCommand
         $this->info('RouteTree cached successfully!');
     }
 
+    /**
+     * This override is to circumvent errors on testing.
+     *
+     * @return Application|mixed
+     */
     protected function getFreshApplication()
     {
         if (app()->environment() === 'testing') {
             return app();
         }
-
         return parent::getFreshApplication();
     }
 

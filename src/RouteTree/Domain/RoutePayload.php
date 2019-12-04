@@ -6,22 +6,23 @@ use Webflorist\RouteTree\Interfaces\ProvidesRoutePayload;
 use Webflorist\RouteTree\RouteTree;
 
 /**
- * Payload for RouteNodes.
- *
  * Class RoutePayload
+ *
+ * This class provides functionality to
+ * store/retrieve/translate custom data
+ * for RouteNodes and RouteActions.
+ *
  * @package Webflorist\RouteTree
  *
  * Default properties:
  * ===================
  * @property string $title              Page's Meta-Title.
  * @property string $navTitle           Page's Nav-Title.
- * @property string $h1Title            Page's H1-Title.
  *
  * Setters for default properties:
  * ===============================
  * @method   RoutePayload               title($title)
  * @method   RoutePayload               navTitle($navTitle)
- * @method   RoutePayload               h1Title($h1Title)
  *
  */
 class RoutePayload
@@ -36,9 +37,9 @@ class RoutePayload
 
     /**
      * The RouteAction this payload belongs to
-     * (in case it is an RouteAction Payload).
+     * (in case it is an action-specific payload).
      *
-     * @var RouteAction
+     * @var RouteAction|null
      */
     private $routeAction;
 
@@ -62,13 +63,13 @@ class RoutePayload
         $this->routeNode = $routeNode;
         $this->routeAction = $routeAction;
 
-        $this->setDataLangFile();
+        $this->setLangFile();
     }
 
     /**
      * Set the location of the language-file to be used for the translation of meta-data.
      */
-    protected function setDataLangFile()
+    protected function setLangFile()
     {
 
         // Set the base-folder for localization-files as stated in the config.
@@ -126,6 +127,13 @@ class RoutePayload
         return $this;
     }
 
+    /**
+     * Does this object have a payload
+     * with key $payloadKey?
+     *
+     * @param string $payloadKey
+     * @return bool
+     */
     public function has(string $payloadKey)
     {
         if (isset($this->$payloadKey)) {
@@ -138,7 +146,12 @@ class RoutePayload
     }
 
     /**
-     * Retrieve a payload.
+     * Retrieve a payload in the following fallback order:
+     *
+     * 1. Payload set directly in this class.
+     * (2. Payload set in the RouteNode's RoutePayload - only if this RoutePayload is RouteAction-specific.)
+     * (3. Payload returned from an Eloquent Model - only if RouteNode has a RouteParameter associated with an Eloquent Model, that implements ProvidesRoutePayload)
+     * 4. Using Auto-Translation by searching for payload at a translation-key relative to the RouteNode's ID.
      *
      * @param string $payloadKey Name of the payload.
      * @param string $locale The locale to translate to (default=current locale).
@@ -150,6 +163,7 @@ class RoutePayload
         RouteTree::establishLocale($locale);
         RouteTree::establishRouteParameters($parameters);
         $payload = $this->$payloadKey;
+
         // If no payload was found and this
         // is a RouteAction specific payload,
         // try falling back to the RouteNode's payload.
@@ -157,7 +171,7 @@ class RoutePayload
             $payload = $this->routeNode->payload->$payloadKey;
         }
 
-        // If payload is a LocaleMap and contains an element for this language, that's our new $payload.
+        // If payload is a LanguageMapping and contains an element for this language, that's our new $payload.
         if ($payload instanceof LanguageMapping && $payload->has($locale)) {
             $payload = $payload->get($locale);
         }
@@ -233,16 +247,33 @@ class RoutePayload
     }
 
     /**
-     * @param array|null $parameters
+     * Returns the value for a specific route-key-set ($routeKeys)
+     * from a multidimensional array ($payload).
+     *
+     * E.g.
+     * $routeKeys = [
+     *      'category' => 'my-blog-category',
+     *      'article' => 'my-second-blog-article'
+     * ];
+     * $payload = [
+     *      'my-blog-category' => [
+     *          'my-first-blog-article' => 'This is my first blog article!',
+     *          'my-second-blog-article' => 'This is my second blog article!',
+     *      ]
+     *      'my-other-blog-category' => [...]
+     * ];
+     * returns 'This is my second blog article!'
+     *
+     * @param array|null $routeKeys
      * @param $payload
      * @return mixed
      */
-    protected function resolveNestedRouteKeyPayload(array $parameters, array $payload)
+    protected function resolveNestedRouteKeyPayload(array $routeKeys, array $payload)
     {
-        foreach ($parameters as $parameter) {
+        foreach ($routeKeys as $parameter) {
             if (isset($payload[$parameter])) {
                 if (is_array($payload[$parameter])) {
-                    $parametersWithoutTheCurrentOne = $parameters;
+                    $parametersWithoutTheCurrentOne = $routeKeys;
                     array_shift($parametersWithoutTheCurrentOne);
                     return $this->resolveNestedRouteKeyPayload($parametersWithoutTheCurrentOne, $payload[$parameter]);
                 }

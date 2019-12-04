@@ -4,6 +4,15 @@ namespace Webflorist\RouteTree\Domain\Traits;
 
 use Webflorist\RouteTree\Domain\LanguageMapping;
 
+/**
+ * Trait CanHaveParameterRegex
+ *
+ * This trait provides RouteNodes and RouteActions
+ * with functionality to manage path segments
+ * for different locales.
+ *
+ * @package Webflorist\RouteTree
+ */
 trait CanHaveSegments
 {
 
@@ -41,12 +50,24 @@ trait CanHaveSegments
         return $this;
     }
 
-    protected function hasSegment($locale)
+    /**
+     * Is a segment set for $locale?
+     *
+     * @param $locale
+     * @return bool
+     */
+    protected function hasSegment(string $locale) : bool
     {
         return $this->getSegment($locale) !== null;
     }
 
-    protected function getSegment($locale)
+    /**
+     * Returns the segment set for $locale.
+     *
+     * @param string $locale
+     * @return string|null
+     */
+    protected function getSegment(string $locale) : ?string
     {
         if (is_string($this->segments)) {
             return $this->segments;

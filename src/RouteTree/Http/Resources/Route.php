@@ -5,6 +5,7 @@ namespace Webflorist\RouteTree\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Webflorist\RouteTree\Domain\RegisteredRoute;
+use Webflorist\RouteTree\Exceptions\ActionNotFoundException;
 use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
 
 class Route extends JsonResource
@@ -22,7 +23,7 @@ class Route extends JsonResource
      *
      * @param Request $request
      * @return array
-     * @throws UrlParametersMissingException
+     * @throws ActionNotFoundException
      */
     public function toArray($request)
     {

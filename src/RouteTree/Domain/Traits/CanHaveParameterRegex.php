@@ -2,6 +2,15 @@
 
 namespace Webflorist\RouteTree\Domain\Traits;
 
+/**
+ * Trait CanHaveParameterRegex
+ *
+ * This trait provides RouteNodes and RouteActions
+ * with functionality to set Regular Expression Constraints.
+ * (see https://laravel.com/docs/master/routing#parameters-regular-expression-constraints)
+ *
+ * @package Webflorist\RouteTree
+ */
 trait CanHaveParameterRegex
 {
 

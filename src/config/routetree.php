@@ -22,6 +22,9 @@ return [
     | This will result in a single-language-page (using config 'app.locale')
     | with URIs not starting with e.g. /en/.
     |
+    | You can also disable prefixing of path with locale
+    | for a single node and all child-nodes using 'noLocalePrefix()'.
+    |
     */
     'no_locale_prefix' => false,
 
@@ -30,7 +33,8 @@ return [
     | Create absolute paths instead of relative paths by default?
     |--------------------------------------------------------------------------
     |
-    | Can still be overridden with function-parameters.
+    | Can still be overridden using the 'absolute()' method
+    | on route-generation (e.g. route_node_url()->absolute()).
     |
     */
     'absolute_urls' => true,

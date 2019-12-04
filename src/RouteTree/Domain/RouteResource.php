@@ -6,13 +6,24 @@ use Closure;
 use Illuminate\Support\Facades\Lang;
 use Webflorist\RouteTree\Exceptions\NodeAlreadyHasChildWithSameNameException;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
+use Webflorist\RouteTree\Exceptions\NoValidModelException;
 use Webflorist\RouteTree\RouteTree;
 
+/**
+ * Class RouteResource
+ *
+ * This class manages data for
+ * resourceful RouteNodes.
+ *
+ * (see https://laravel.com/docs/master/controllers#restful-partial-resource-routes)
+ *
+ * @package Webflorist\RouteTree
+ */
 class RouteResource
 {
 
     /**
-     * The route-node this resource belongs to.
+     * The RouteNode this resource belongs to.
      *
      * @var RouteNode
      */
@@ -26,7 +37,7 @@ class RouteResource
     protected $controller = null;
 
     /**
-     * The name of the resource.
+     * The name of the resource / route parameter.
      *
      * @var string
      */
@@ -61,6 +72,9 @@ class RouteResource
         return $this->name;
     }
 
+    /**
+     * Setup all resourceful actions.
+     */
     private function setupActions()
     {
         $controller = $this->controller;
@@ -75,6 +89,12 @@ class RouteResource
         $this->routeNode->delete("$controller@destroy", 'destroy')->segment($paramSegment);
     }
 
+    /**
+     * Creates the path-segments for create actions
+     * (defaults to '/create' in english).
+     *
+     * @return LanguageMapping
+     */
     private function getCreateActionSegments()
     {
         $segments = LanguageMapping::create();
@@ -86,6 +106,12 @@ class RouteResource
         return $segments;
     }
 
+    /**
+     * Creates the path-segments for edit actions
+     * (defaults to '/{resource}/edit' in english).
+     *
+     * @return LanguageMapping
+     */
     private function getEditActionSegments()
     {
         $paramSegment = '{' . $this->name . '}';
@@ -98,6 +124,12 @@ class RouteResource
         return $segments;
     }
 
+    /**
+     * Register only the stated actions for this RouteResource.
+     *
+     * @param array $actionsOnly
+     * @return $this
+     */
     public function only(array $actionsOnly)
     {
         foreach ($this->routeNode->getActions() as $routeAction) {
@@ -108,6 +140,12 @@ class RouteResource
         return $this;
     }
 
+    /**
+     * Register all resource actions except the stated ones.
+     *
+     * @param array $actionsExcept
+     * @return $this
+     */
     public function except(array $actionsExcept)
     {
         foreach ($this->routeNode->getActions() as $routeAction) {
@@ -118,6 +156,14 @@ class RouteResource
         return $this;
     }
 
+    /**
+     * Attaches an Eloquent Model to the RouteParameter
+     * to use for various functionality.
+     *
+     * @param string $class
+     * @return $this
+     * @throws NoValidModelException
+     */
     public function model(string $class)
     {
         $this->routeNode->parameter->model($class);
@@ -126,6 +172,9 @@ class RouteResource
 
     /**
      * Create a new resource-child-node.
+     *
+     * Resource children inherit the path of the parent's show-action.
+     * (e.g. /parent-which-is-resource/{resource}/resource-child)
      *
      * @param string $name
      * @param Closure $callback
@@ -140,6 +189,15 @@ class RouteResource
         return $child;
     }
 
+    /**
+     * Retrieve a default page title for a resource action.
+     *
+     * @param string $actionName
+     * @param array|null $parameters
+     * @param string|null $locale
+     * @return array|\Illuminate\Contracts\Translation\Translator|string|null
+     * @throws \Webflorist\RouteTree\Exceptions\ActionNotFoundException
+     */
     public function getActionTitle(string $actionName, ?array $parameters = null, ?string $locale = null)
     {
         RouteTree::establishLocale($locale);
@@ -157,6 +215,15 @@ class RouteResource
         }
     }
 
+    /**
+     * Retrieve a default page navigation-title for a resource action.
+     *
+     * @param string $actionName
+     * @param array|null $parameters
+     * @param string|null $locale
+     * @return array|\Illuminate\Contracts\Translation\Translator|mixed|string|null
+     * @throws \Webflorist\RouteTree\Exceptions\ActionNotFoundException
+     */
     public function getActionNavTitle(string $actionName, ?array $parameters = null, ?string $locale = null)
     {
         switch ($actionName) {
@@ -172,6 +239,9 @@ class RouteResource
     }
 
     /**
+     * Retrieves the current route-key for this resource -
+     * either from $parameters or from the currently active URL.
+     *
      * @param array|null $parameters
      * @param string|null $locale
      * @return mixed|null

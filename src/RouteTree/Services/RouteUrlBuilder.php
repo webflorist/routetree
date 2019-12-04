@@ -8,69 +8,57 @@ use Webflorist\RouteTree\Exceptions\ActionNotFoundException;
 use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
 use Webflorist\RouteTree\RouteTree;
 
+/**
+ * Class RouteUrlBuilder
+ *
+ * This class is used to build URLs
+ * via fluent setters and a __toString() method.
+ *
+ * It's returned by the route_node_url() helper,
+ * and the getUrl() methods of
+ * RouteNode and RouteAction.
+ *
+ * @package Webflorist\RouteTree
+ */
 class RouteUrlBuilder
 {
     /**
+     * The RouteNode to build an URL to.
+     *
      * @var RouteNode
      */
     private $routeNode;
 
     /**
+     * Name of the action (e.g. index, edit, create, show, etc.)
+     * to build the URL to.
+     *
+     * (Omit for auto-detection).
+     *
      * @var string
      */
     private $action;
 
     /**
+     * An associative array of [parameterName => parameterValue]
+     * pairs to be used for any route-parameters in the url
+     * (default=current route-parameters).
+     *
      * @var array|null
      */
     private $parameters;
 
     /**
+     * The language this url should be generated for (default=current locale).
+     *
      * @var string|null
      */
     private $locale;
 
     /**
-     * @param string $action
-     * @return RouteUrlBuilder
-     */
-    public function action(string $action): RouteUrlBuilder
-    {
-        $this->action = $action;
-        return $this;
-    }
-
-    /**
-     * @param array|null $parameters
-     * @return RouteUrlBuilder
-     */
-    public function parameters(array $parameters): RouteUrlBuilder
-    {
-        $this->parameters = $parameters;
-        return $this;
-    }
-
-    /**
-     * @param string|null $locale
-     * @return RouteUrlBuilder
-     */
-    public function locale(string $locale): RouteUrlBuilder
-    {
-        $this->locale = $locale;
-        return $this;
-    }
-
-    /**
-     * @param bool|null $absolute
-     * @return RouteUrlBuilder
-     */
-    public function absolute(bool $absolute = true): RouteUrlBuilder
-    {
-        $this->absolute = $absolute;
-        return $this;
-    }
-
-    /**
+     * Should the URL be absolute or relative?
+     * (Configurable; defaults to true)
+     *
      * @var bool|null
      */
     private $absolute;
@@ -109,26 +97,67 @@ class RouteUrlBuilder
         $this->absolute = $absolute;
     }
 
-    public function __toString()
+    /**
+     * State the name of the action (e.g. index, edit, create, show, etc.)
+     * to build the URL to.
+     *
+     * (Omit for auto-detection).
+     *
+     * @param string $action
+     * @return RouteUrlBuilder
+     */
+    public function action(string $action): RouteUrlBuilder
     {
-        $locale = $this->locale;
-        // If no language is specifically stated, we use the current locale.
-        RouteTree::establishLocale($locale);
-
-        $routeAction = $this->getRouteAction();
-
-        $absolute = $this->absolute;
-        if (is_null($this->absolute)) {
-            $absolute = config('routetree.absolute_urls');
-        }
-
-        return route(
-            $routeAction->getRouteName($locale),
-            $this->autoFillPathParameters($routeAction, $locale),
-            $absolute
-        );
+        $this->action = $action;
+        return $this;
     }
 
+    /**
+     * State an associative array of [parameterName => parameterValue]
+     * pairs to be used for any route-parameters in the url
+     * (default=current route-parameters).
+     *
+     * @param array|null $parameters
+     * @return RouteUrlBuilder
+     */
+    public function parameters(array $parameters): RouteUrlBuilder
+    {
+        $this->parameters = $parameters;
+        return $this;
+    }
+
+    /**
+     * State the language this url should be generated for
+     * (default=current locale).
+     *
+     * @param string|null $locale
+     * @return RouteUrlBuilder
+     */
+    public function locale(string $locale): RouteUrlBuilder
+    {
+        $this->locale = $locale;
+        return $this;
+    }
+
+    /**
+     * Create absolute paths instead of relative paths
+     * (default=true/configurable).
+     *
+     * @param bool|null $absolute
+     * @return RouteUrlBuilder
+     */
+    public function absolute(bool $absolute = true): RouteUrlBuilder
+    {
+        $this->absolute = $absolute;
+        return $this;
+    }
+
+    /**
+     * Returns the RouteAction object to which the URL should be generated.
+     *
+     * @return RouteAction
+     * @throws ActionNotFoundException
+     */
     private function getRouteAction(): RouteAction
     {
         if ($this->routeNode->hasAction($this->action)) {
@@ -199,7 +228,6 @@ class RouteUrlBuilder
      * @param $sourceParameters
      * @param $requiredParameters
      * @param $targetParameters
-     * @return array
      */
     protected function fillParameterArray($sourceParameters, &$requiredParameters, &$targetParameters)
     {
@@ -211,5 +239,36 @@ class RouteUrlBuilder
         }
     }
 
+    /**
+     * Generates the URL.
+     *
+     * @return string
+     * @throws ActionNotFoundException
+     * @throws UrlParametersMissingException
+     */
+    public function generate(): string
+    {
+        $locale = $this->locale;
+        // If no language is specifically stated, we use the current locale.
+        RouteTree::establishLocale($locale);
+
+        $routeAction = $this->getRouteAction();
+
+        $absolute = $this->absolute;
+        if (is_null($this->absolute)) {
+            $absolute = config('routetree.absolute_urls');
+        }
+
+        return route(
+            $routeAction->getRouteName($locale),
+            $this->autoFillPathParameters($routeAction, $locale),
+            $absolute
+        );
+    }
+
+    public function __toString()
+    {
+        return $this->generate();
+    }
 
 }

@@ -22,6 +22,8 @@ class RouteTreeMiddleware
     protected $routeTree;
 
     /**
+     * Laravel's Router.
+     *
      * @var Router
      */
     private $router;
@@ -41,15 +43,18 @@ class RouteTreeMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure $next
+     * @param Request $request
+     * @param Closure $next
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
+        // If routes are cached, we load the RouteTree from cache.
         if (app()->routesAreCached()) {
             $this->routeTree->loadCachedRouteTree();
-        } else {
+        }
+        // Otherwise we make sure, all routes are generated.
+        else {
             $this->routeTree->generateAllRoutes();
         }
 
@@ -76,6 +81,8 @@ class RouteTreeMiddleware
     }
 
     /**
+     * Tries to match the current request to a Laravel Route.
+     *
      * @param $request
      * @return Route|null
      */
@@ -89,6 +96,8 @@ class RouteTreeMiddleware
     }
 
     /**
+     * Set's RouteTree's current action.
+     *
      * @param Route|null $currentRoute
      */
     protected function setCurrentAction(?Route $currentRoute): void
@@ -113,6 +122,18 @@ class RouteTreeMiddleware
         return array_search($locale, RouteTree::getLocales()) !== false;
     }
 
+    /**
+     * Determines locale using the following fallback:
+     *
+     * 1. From the first name-segment of a RouteTree generated Route. (e.g. "en.company.news.get").
+     * 2. From a (previously saved) session value.
+     * 3. From a HTTP_ACCEPT_LANGUAGE header sent by the client.
+     * 4. From config('app.locale').
+     *
+     * @param Request $request
+     * @param Route|null $currentRoute
+     * @return \Illuminate\Config\Repository|mixed
+     */
     private function determineLocale(Request $request, ?Route $currentRoute)
     {
         // First try getting locale from first part of the current route name,
@@ -143,7 +164,13 @@ class RouteTreeMiddleware
 
     }
 
-    private function determineRedirect(\Illuminate\Http\Request $request)
+    /**
+     * Determine, if a redirect should take place.
+     *
+     * @param Request $request
+     * @return string|null
+     */
+    private function determineRedirect(Request $request)
     {
         // We only do redirects for GET requests.
         if ($request->method() !== 'GET') {
@@ -168,7 +195,13 @@ class RouteTreeMiddleware
         return $foundPath;
     }
 
-    private function setLocale(\Illuminate\Http\Request $request, ?Route $currentRoute)
+    /**
+     * Sets locale in app() and session().
+     *
+     * @param Request $request
+     * @param Route|null $currentRoute
+     */
+    private function setLocale(Request $request, ?Route $currentRoute)
     {
         $locale = $this->determineLocale($request, $currentRoute);
         app()->setLocale($locale);

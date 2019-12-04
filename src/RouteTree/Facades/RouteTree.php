@@ -12,7 +12,7 @@ class RouteTree extends Facade
 {
 
     /**
-     * Static access-proxy for the PackageBlueprint
+     * Static access-proxy for the RouteTree service.
      *
      * @return string
      */

@@ -23,21 +23,37 @@ class SitemapUrl
     public $routeNode;
 
     /**
-     * @var string
-     */
-    private $lastmod;
-
-    /**
+     * Is this node (and all children) excluded from sitemap?
+     *
      * @var bool
      */
     private $isExcluded;
 
     /**
+     * The date of last modification of the page.
+     *
+     * @var string
+     */
+    private $lastmod;
+
+    /**
+     * How frequently the page is likely to change. Valid values are:
+     *  - always
+     *  - hourly
+     *  - daily
+     *  - weekly
+     *  - monthly
+     *  - yearly
+     *  - never
+     *
      * @var string
      */
     private $changefreq;
 
     /**
+     * The priority of this URL relative to other URLs on your site.
+     * Valid values range from 0.0 to 1.0.
+     *
      * @var float
      */
     private $priority;
@@ -52,28 +68,58 @@ class SitemapUrl
         $this->routeNode = $routeNode;
     }
 
-    public function routeNode(RouteNode $routeNode)
-    {
-        $this->routeNode = $routeNode;
-        return $this;
-    }
-
+    /**
+     * Sets the date of last modification of the page.
+     *
+     * @param Carbon $date
+     * @return $this
+     */
     public function lastmod(Carbon $date)
     {
         $this->lastmod = $date->toW3cString();
         return $this;
     }
 
+    /**
+     * Is a lastmod date set?
+     *
+     * @param array|null $parameters
+     * @param string|null $locale
+     * @return bool
+     */
     public function hasLastmod(?array $parameters = null, ?string $locale = null)
     {
         return $this->getLastmod($parameters, $locale) !== null;
     }
 
+    /**
+     * Get the lastmod date -
+     * either from this object,
+     * or via RoutePayload.
+     *
+     * @param array|null $parameters
+     * @param string|null $locale
+     * @return mixed|string
+     */
     public function getLastmod(?array $parameters = null, ?string $locale = null)
     {
         return $this->lastmod ?? $this->routeNode->payload->get('lastmod', $parameters, $locale);
     }
 
+    /**
+     * State how frequently the page is likely to change. Valid values are:
+     *  - always
+     *  - hourly
+     *  - daily
+     *  - weekly
+     *  - monthly
+     *  - yearly
+     *  - never
+     *
+     * @param string $value
+     * @return $this
+     * @throws InvalidChangefreqValueException
+     */
     public function changefreq(string $value)
     {
         switch ($value) {
@@ -92,16 +138,40 @@ class SitemapUrl
         return $this;
     }
 
+    /**
+     * Is a changefreq date set?
+     *
+     * @param array|null $parameters
+     * @param string|null $locale
+     * @return bool
+     */
     public function hasChangefreq(?array $parameters = null, ?string $locale = null)
     {
         return $this->getChangefreq($parameters, $locale) !== null;
     }
 
+    /**
+     * Get the changefreq value -
+     * either from this object,
+     * or via RoutePayload.
+     *
+     * @param array|null $parameters
+     * @param string|null $locale
+     * @return mixed|string
+     */
     public function getChangefreq(?array $parameters = null, ?string $locale = null)
     {
         return $this->changefreq ?? $this->routeNode->payload->get('changefreq', $parameters, $locale);
     }
 
+    /**
+     * Set the priority of this URL relative to other URLs on your site.
+     * Valid values range from 0.0 to 1.0.
+     *
+     * @param float $value
+     * @return $this
+     * @throws InvalidPriorityValueException
+     */
     public function priority(float $value)
     {
         if ($value > 1.0 || $value < 0.0) {
@@ -111,11 +181,27 @@ class SitemapUrl
         return $this;
     }
 
+    /**
+     * Is a priority set?
+     *
+     * @param array|null $parameters
+     * @param string|null $locale
+     * @return bool
+     */
     public function hasPriority(?array $parameters = null, ?string $locale = null)
     {
         return $this->getPriority($parameters, $locale) !== null;
     }
 
+    /**
+     * Get the priority value -
+     * either from this object,
+     * or via RoutePayload.
+     *
+     * @param array|null $parameters
+     * @param string|null $locale
+     * @return float|mixed|string
+     */
     public function getPriority(?array $parameters = null, ?string $locale = null)
     {
         $priority = $this->priority ?? $this->routeNode->payload->get('priority', $parameters, $locale);
@@ -125,6 +211,13 @@ class SitemapUrl
         return $priority;
     }
 
+    /**
+     * Is this RouteNode excluded -
+     * either directly or
+     * indirectly via its parents.
+     *
+     * @return bool
+     */
     public function isExcluded()
     {
         if (is_bool($this->isExcluded)) {
@@ -138,6 +231,13 @@ class SitemapUrl
         return false;
     }
 
+    /**
+     * Exclude this RouteNode
+     * (and all it's children)
+     * from sitemap.
+     *
+     * @param bool $exclude
+     */
     public function exclude(bool $exclude = true)
     {
         $this->isExcluded = $exclude;

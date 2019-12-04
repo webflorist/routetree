@@ -9,8 +9,6 @@ use Webflorist\RouteTree\Console\Commands\RouteCacheCommand;
 use Webflorist\RouteTree\Console\Commands\RouteClearCommand;
 use Webflorist\RouteTree\Http\Controllers\Api\RoutesController;
 use Webflorist\RouteTree\Http\Middleware\RouteTreeMiddleware;
-use Webflorist\RouteTree\Http\Middleware\SetLocalFromSession;
-use Webflorist\RouteTree\Listeners\CommandListener;
 
 class RouteTreeServiceProvider extends ServiceProvider
 {

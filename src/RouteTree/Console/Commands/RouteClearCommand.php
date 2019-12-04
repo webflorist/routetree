@@ -19,7 +19,7 @@ class RouteClearCommand extends \Illuminate\Foundation\Console\RouteClearCommand
      *
      * @var string
      */
-    protected $description = "Remove the route and routetree cache files";
+    protected $description = "Remove the route and RouteTree cache files";
 
     /**
      * Execute the console command.

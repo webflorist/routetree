@@ -2,8 +2,8 @@
 
 namespace Webflorist\RouteTree\Domain;
 
+use Closure;
 use Illuminate\Routing\Route;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Webflorist\RouteTree\Domain\Traits\CanHaveParameterRegex;
 use Webflorist\RouteTree\Domain\Traits\CanHaveSegments;
@@ -12,20 +12,32 @@ use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
 use Webflorist\RouteTree\RouteTree;
 use Webflorist\RouteTree\Services\RouteUrlBuilder;
 
+/**
+ * Class RouteAction
+ *
+ * A RouteAction is responsible of generating
+ * Laravel-Routes for a specific action
+ * (e.g. index|create|show|get etc.).
+ *
+ * @package Webflorist\RouteTree\Domain
+ */
 class RouteAction
 {
 
     use CanHaveSegments, CanHaveParameterRegex;
 
     /**
-     * The route-node this action belongs to.
+     * The RouteNode this RouteAction belongs to.
      *
      * @var RouteNode
      */
     protected $routeNode = null;
 
     /**
-     * Name of the action (e.g. index|create|show|get etc.)
+     * Name of the action (e.g. index|create|show|get etc.).
+     *
+     * Defaults to the HTTP-method.
+     * Can be overridden via name().
      *
      * @var string
      */
@@ -34,7 +46,7 @@ class RouteAction
     /**
      * The closure to be used for this action.
      *
-     * @var \Closure
+     * @var Closure
      */
     protected $closure = null;
 
@@ -60,27 +72,39 @@ class RouteAction
     private $method;
 
     /**
+     * The view to be used for this action.
+     *
      * @var string
      */
     private $view;
 
     /**
+     * Any view-data to be used for this action.
+     *
      * @var array
      */
     private $viewData;
 
     /**
+     * The redirect-target to be used for this action.
+     *
      * @var string
      */
     private $redirect;
 
     /**
+     * The redirect-status to be used for this action.
+     *
+     * Defaults to 302.
+     *
      * @var int
      */
     private $redirectStatus;
 
     /**
      * Array of middleware, this action should be registered with.
+     * (in addition to the middleware inherited from it's RouteNode
+     * and the RouteNode's parents).
      *
      * @var array
      */
@@ -94,6 +118,10 @@ class RouteAction
     protected $skipMiddleware = [];
 
     /**
+     * Any action-specific RoutePayload.
+     *
+     * Can be used to override the RouteNode's payload.
+     *
      * @var RoutePayload
      */
     public $payload;
@@ -122,6 +150,7 @@ class RouteAction
      * Set the name of this action.
      *
      * @param string $name
+     * @return RouteAction
      */
     public function name(string $name)
     {
@@ -183,19 +212,18 @@ class RouteAction
      * Set the action (controller-method, view, redirect, closure, etc.)
      * this RouteAction should use.
      *
-     * @param \Closure|array|string|callable|null $name
+     * @param Closure|array|string|callable|null $name
      * @return RouteAction
      */
     public function setAction($name)
     {
-        // TODO: add support for various types of $action;
         if (is_string($name) && strpos($name, '@') > 0) {
             $this->setUses($name);
         } else if (is_array($name) && (count($name) === 2) && isset($name['view']) && isset($name['data'])) {
             $this->setView($name['view'], $name['data']);
         } else if (is_array($name) && (count($name) === 2) && isset($name['redirect']) && isset($name['status'])) {
             $this->setRedirect($name['redirect'], $name['status']);
-        } else if ($name instanceof \Closure) {
+        } else if ($name instanceof Closure) {
             $this->setClosure($name);
         }
         return $this;
@@ -279,10 +307,10 @@ class RouteAction
     /**
      * Set the closure this action should call.
      *
-     * @param \Closure $closure
+     * @param Closure $closure
      * @return RouteAction
      */
-    public function setClosure($closure)
+    private function setClosure($closure)
     {
         $this->closure = $closure;
         return $this;
@@ -333,10 +361,10 @@ class RouteAction
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
      * @param string $locale The language this url should be generated for (default=current locale).
      * @param bool $absolute Create absolute paths instead of relative paths (default=true/configurable).
-     * @return mixed
+     * @return RouteUrlBuilder
      * @throws NodeNotFoundException
      */
-    public function getUrl($parameters = null, $locale = null, $absolute = null)
+    public function getUrl($parameters = null, $locale = null, $absolute = null): RouteUrlBuilder
     {
         return new RouteUrlBuilder($this->routeNode, $this->getName(), $parameters, $locale, $absolute);
     }
@@ -368,9 +396,6 @@ class RouteAction
 
     /**
      * Generate routes in each language for this action.
-     *
-     * @throws Exceptions\RouteNameAlreadyRegisteredException
-     * @throws Exceptions\NodeNotFoundException
      */
     public function generateRoutes()
     {
@@ -399,7 +424,7 @@ class RouteAction
                 $parameterRegex
             );
 
-            // And register the generated route with the RouteTree service about this registered route,
+            // And register the generated route with the RouteTree service,
             // so it can manage a static list.
             route_tree()->registerRoute($route, $this, $locale);
 
@@ -439,7 +464,6 @@ class RouteAction
 
         return $compiledMiddleware;
     }
-
 
     /**
      * Generates the compiled array of parameter-regexes (wheres)
@@ -507,9 +531,10 @@ class RouteAction
     }
 
     /**
+     * Generates a Laravel Route in the specified language.
+     *
      * @param string $locale
      * @return Route
-     * @throws Exceptions\NodeNotFoundException
      */
     private function createRoute(string $locale): Route
     {
@@ -547,6 +572,9 @@ class RouteAction
     }
 
     /**
+     * Generates the full Uri to this action
+     * for a specified language.
+     *
      * @param string $locale
      * @return string
      */
@@ -576,51 +604,67 @@ class RouteAction
         return $this->routeNode->getLocales();
     }
 
+    /**
+     * Is this RouteAction a redirect?
+     *
+     * @return bool
+     */
     public function isRedirect()
     {
         return !is_null($this->redirect);
     }
 
+    /**
+     * Does this action have any parameters in it's path.
+     *
+     * @return bool
+     */
     public function hasParameters()
     {
         return count($this->getPathParameters()) > 0;
     }
 
-    public function hasMiddleware(string $middleware)
+    /**
+     * Check if this action uses the specified middleware.
+     *
+     * @param string $middleware
+     * @return bool
+     */
+    public function hasMiddleware(string $middleware): bool
     {
         return array_search($middleware, $this->compileMiddleware()) !== false;
     }
 
-    public function hasParameterValues(string $locale)
+    /**
+     * Are all route-parameters resolvable into their possible values?
+     *
+     * @param string $locale
+     * @return bool
+     */
+    public function canResolveAllRouteKeys(string $locale): bool
     {
         $rootLineParameters = $this->routeNode->getRootLineParameters();
         foreach ($this->getPathParameters($locale) as $pathParameter) {
             if (!isset($rootLineParameters[$pathParameter])) {
                 return false;
             }
-            if (!$rootLineParameters[$pathParameter]->hasRouteKeys($locale)) {
+            if (!$rootLineParameters[$pathParameter]->canResolveRouteKeyList($locale)) {
                 return false;
             }
         }
         return true;
     }
 
+    /**
+     * Returns array of RouteParameter-objects
+     * for all parameters present in the
+     * path to this action.
+     *
+     * @return array
+     */
     public function getRootLineParameters()
     {
         return Arr::only($this->routeNode->getRootLineParameters(), $this->getPathParameters());
-    }
-
-    public function registerRoutes()
-    {
-        /** @var Router $router */
-        $router = app('router');
-        foreach ($this->routeNode->getLocales() as $locale) {
-            route_tree()->registerRoute(
-                $router->getRoutes()->getByName($this->getRouteName($locale)),
-                $this,
-                $locale
-            );
-        }
     }
 
     /**

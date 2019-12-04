@@ -11,6 +11,19 @@ use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
 use Webflorist\RouteTree\RouteTree;
 use Webflorist\RouteTree\Services\RouteUrlBuilder;
 
+/**
+ * Class RouteNode
+ *
+ * A RouteNode is a single node in the RouteTree.
+ * Each RouteNode (except the root node) has one parent
+ * and can have one or more child-nodes.
+ *
+ * A RouteNode serves basically as a group for
+ * all it's RouteActions and inherits data to
+ * it's child-nodes.
+ *
+ * @package Webflorist\RouteTree\Domain
+ */
 class RouteNode
 {
 
@@ -82,7 +95,9 @@ class RouteNode
     protected $actions = [];
 
     /**
-     * The language-file-key to be used for auto-translation of normal page-content.
+     * The language-file-key to be used for
+     * auto-translation of normal page-content
+     * using the helper trans_by_route().
      *
      * Gets determined automatically.
      *
@@ -98,14 +113,17 @@ class RouteNode
      */
     public $parameter = null;
 
-    public $isResourceChild = false;
-
     /**
-     * Array of custom-data.
+     * Is this node the child of a resource?
      *
-     * @var \Callable[]|array[]|null
+     * Gets set automatically to inherit
+     * the path of the parent's show-action.
+     *
+     * (e.g. /parent-which-is-resource/{resource}/resource-child)
+     *
+     * @var bool
      */
-    protected $data = [];
+    public $isResourceChild = false;
 
     /**
      * Array of middleware, actions of this node should be registered with.
@@ -136,15 +154,28 @@ class RouteNode
     public $noLocalePrefix = false;
 
     /**
-     * @var RouteResource
+     * The RouteResource object containing
+     * resource-related functionality,
+     * if this node is a resource.
+     *
+     * @var RouteResource|null
      */
     public $resource;
 
     /**
+     * The RoutePayload object used to manage
+     * any custom data for this node.
+     *
      * @var RoutePayload
      */
     public $payload;
 
+    /**
+     * Array of locales this node
+     * should be registered with.
+     *
+     * @var array
+     */
     private $locales;
 
     /**
@@ -156,6 +187,7 @@ class RouteNode
 
     /**
      * RouteNode constructor.
+     *
      * @param string $name
      * @param RouteNode $parentNode
      * @param null $segment
@@ -176,8 +208,9 @@ class RouteNode
 
         $this->locales = RouteTree::getLocales();
 
-        // Sets the language-files location.
-        $this->setLangFiles();
+        // Sets the language-file location for translation
+        // of page-content using trans_by_route().
+        $this->setContentLangFile();
 
         // Set the path-segment(s).
         $this->segment($segment);
@@ -311,17 +344,37 @@ class RouteNode
         }
     }
 
+    /**
+     * Makes this node resourceful.
+     *
+     * (see https://laravel.com/docs/master/controllers#resource-controllers)
+     *
+     * @param string $name
+     * @param string $controller
+     * @return RouteResource
+     */
     public function resource(string $name, string $controller): RouteResource
     {
         $this->resource = new RouteResource($name, $controller, $this);
         return $this->resource;
     }
 
+    /**
+     * Is this node resourceful?
+     *
+     * @return bool
+     */
     public function isResource(): bool
     {
         return $this->resource instanceof RouteResource;
     }
 
+    /**
+     * State languages this node should NOT be generated for.
+     *
+     * @param array $exceptLocales
+     * @return $this
+     */
     public function exceptLocales(array $exceptLocales)
     {
         foreach ($exceptLocales as $locale) {
@@ -333,6 +386,12 @@ class RouteNode
         return $this;
     }
 
+    /**
+     * State languages this node should be ONLY generated for.
+     *
+     * @param array $onlyLocales
+     * @return $this
+     */
     public function onlyLocales(array $onlyLocales)
     {
         foreach ($this->locales as $localeKey => $locale) {
@@ -346,11 +405,10 @@ class RouteNode
     /**
      * Does this node have a parent node?
      *
-     * @return RouteNode[]
+     * @return bool
      */
-    public function hasParentNode()
+    public function hasParentNode() : bool
     {
-
         return is_a($this->parentNode, RouteNode::class);
     }
 
@@ -361,7 +419,6 @@ class RouteNode
      */
     public function getParentNode()
     {
-
         return $this->parentNode;
     }
 
@@ -482,7 +539,12 @@ class RouteNode
     }
 
     /**
+     * Makes this node a parameter-node,
+     * setting it's segment to {$parameter} (if $setSegment === true),
+     * and adding and returning a RouteParameter object.
+     *
      * @param string $parameter
+     * @param bool $setSegment
      * @return RouteParameter
      */
     public function parameter(string $parameter, bool $setSegment = true): RouteParameter
@@ -495,20 +557,12 @@ class RouteNode
     }
 
     /**
-     * Set the language files of this node,
-     * representing the hierarchical structure of it's parents as a folder-structure.
-     */
-    protected function setLangFiles()
-    {
-        $this->setContentLangFile();
-    }
-
-    /**
-     * Set the location of the language-file to be used for the translation of page-content.
+     * Set the location of the language-file
+     * to be used for the translation of page-content
+     * using the trans_by_route() helper function.
      */
     protected function setContentLangFile()
     {
-
         // Set the base-folder for localization-files as stated in the config.
         $this->contentLangFile = config('routetree.localization.base_folder') . '/';
 
@@ -592,11 +646,12 @@ class RouteNode
      * Register a new OPTIONS action with this RouteNode.
      *
      * @param string|callable $action
+     * @param string|null $name Name of the action (defaults to method-name).
      * @return RouteAction
      */
     public function options($action, string $name = null)
     {
-        return $this->addAction('options', $action);
+        return $this->addAction('options', $action, $name);
     }
 
     /**
@@ -625,9 +680,9 @@ class RouteNode
         ]);
     }
 
-
     /**
-     * Create a redirect from one URI to another.
+     * Register a new GET action for a Redirect Route
+     * with this RouteNode.
      *
      * @param string $destination
      * @param int $status
@@ -642,7 +697,8 @@ class RouteNode
     }
 
     /**
-     * Create a permanent redirect from one URI to another.
+     * Register a new GET action for a Redirect Route
+     * with this RouteNode using the status code 301.
      *
      * @param string $destination
      * @return RouteAction
@@ -659,7 +715,6 @@ class RouteNode
      * @param Closure $callback
      * @return RouteNode
      * @throws NodeNotFoundException
-     * @throws Exceptions\NodeAlreadyHasChildWithSameNameException
      * @throws NodeAlreadyHasChildWithSameNameException
      */
     public function child(string $name, Closure $callback)
@@ -693,7 +748,8 @@ class RouteNode
     /**
      * Is this RouteNode registered in the stated language?
      *
-     * @return array
+     * @param string $locale
+     * @return bool
      */
     public function hasLocale(string $locale): bool
     {
@@ -727,7 +783,6 @@ class RouteNode
         return false;
     }
 
-
     /**
      * Get array of all child-nodes.
      *
@@ -737,7 +792,6 @@ class RouteNode
     {
         return $this->childNodes;
     }
-
 
     /**
      * Gets a specific child-node.
@@ -749,9 +803,9 @@ class RouteNode
     {
         if ($this->hasChildNode($nodeName)) {
             return $this->childNodes[$nodeName];
-        } else {
-            return false;
         }
+
+        return null;
     }
 
     /**
@@ -760,7 +814,7 @@ class RouteNode
      * @param string $nodeName
      * @return bool
      */
-    public function hasChildNode($nodeName = '')
+    public function hasChildNode($nodeName = ''): bool
     {
         if (isset($this->childNodes[$nodeName])) {
             return true;
@@ -873,7 +927,9 @@ class RouteNode
     }
 
     /**
-     * Checks, if the current node is active (optionally with the desired parameters).
+     * Checks, if the current node or
+     * one of it's child-nodes is active
+     * (optionally with the desired parameters).
      *
      * @param null $parameters
      * @return string
@@ -897,43 +953,11 @@ class RouteNode
         return false;
     }
 
-
-    /**
-     * Get the possible parameter-values and their slugs, if this node is a parameter-node.
-     *
-     * @param string $language The language the values should be fetched for (default=current locale).
-     * @return array
-     */
-    public function getValues($language = null)
-    {
-        return $this->getData('values', null, $language);
-    }
-
-    /**
-     * Get the currently active raw (untranslated/unsluggified) parameter-value.
-     *
-     * @return string
-     */
-    public function getActiveValue()
-    {
-
-        if ($this->parameter->isActive()) {
-
-            // We get the currently active value for the parameter of this node.
-            $activeValue = \Route::current()->parameter($this->parameter->getName());
-
-            return $activeValue;
-
-        }
-
-        return false;
-    }
-
     /**
      * Adds a specific action to this node.
      *
      * @param string $method
-     * @param \Closure|array|string|callable|null $action
+     * @param Closure|array|string|callable|null $action
      * @param string|null $name
      * @return RouteAction
      */
@@ -947,7 +971,7 @@ class RouteNode
     /**
      * Gets a specific action from this node by it's name.
      *
-     * @param $action
+     * @param string $actionName
      * @return RouteAction
      * @throws ActionNotFoundException
      */
@@ -1005,7 +1029,7 @@ class RouteNode
     /**
      * Automatically sets all path-segments, that have not yet specifically set.
      * It checks for each-language, if an auto-translation is set,
-     * otherwise it uses the node-name as the path-segment.     *
+     * otherwise it uses the node-name as the path-segment.
      */
     protected function setAutoSegments()
     {
@@ -1032,7 +1056,6 @@ class RouteNode
             }
         }
     }
-
 
     /**
      * Generates the full paths to be used for this node in all languages.
@@ -1094,6 +1117,7 @@ class RouteNode
 
     /**
      * Returns the language-file to be used for the translation of page-content.
+     * (Used by the trans_by_route() helper.)
      *
      * @return string
      */
@@ -1103,6 +1127,8 @@ class RouteNode
     }
 
     /**
+     * Compiles this RouteNode's path for the specified langauge.
+     *
      * @param $locale
      * @return string
      */
@@ -1165,8 +1191,6 @@ class RouteNode
 
         // Get title payload.
         $title = $this->payload->get('title', $parameters, $locale);
-
-
         if (is_string($title)) {
             return $title;
         }

@@ -10,9 +10,11 @@ use Webflorist\RouteTree\Interfaces\TranslatesRouteKey;
 use Webflorist\RouteTree\RouteTree;
 
 /**
- * Parameter for RouteNodes.
- *
  * Class RouteParameter
+ *
+ * This class manages data for RouteNodes,
+ * that contain a route-parameter.
+ *
  * @package Webflorist\RouteTree
  *
  */
@@ -40,13 +42,16 @@ class RouteParameter
     private $model;
 
     /**
-     * Specific values for this RouteParameter.
+     * A complete list of route-keys for this RouteParameter.
      * (Either one-dimensional for all languages
      * or multi-dimensional per language).
      *
+     * Can be used to resolve all specific URLs for routes
+     * including a parameter. (e.g. for Sitemap-generation.)
+     *
      * @var array
      */
-    private $routeKeys;
+    private $routeKeyList;
 
     /**
      * RouteParameter constructor.
@@ -60,6 +65,13 @@ class RouteParameter
         $this->name = $parameter;
     }
 
+    /**
+     * State a model, that corresponds to this RouteParameter
+     * to use for various functionality.
+     *
+     * @param string $model
+     * @throws NoValidModelException
+     */
     public function model(string $model)
     {
         if (!is_subclass_of($model, Model::class)) {
@@ -68,22 +80,47 @@ class RouteParameter
         $this->model = $model;
     }
 
+    /**
+     * Add a complete list of route-keys for this RouteParameter.
+     * (Either one-dimensional for all languages
+     * or multi-dimensional per language).
+     *
+     * Can be used to resolve all specific URLs for routes
+     * including a parameter. (e.g. for Sitemap-generation.)
+     *
+     * @param array $routeKeys
+     */
     public function routeKeys(array $routeKeys)
     {
-        $this->routeKeys = $routeKeys;
+        $this->routeKeyList = $routeKeys;
     }
 
-    public function getRouteKeys(?string $locale = null, ?array $parameters = null)
+    /**
+     * Returns an array of all route-keys this parameter
+     * can have as values.
+     *
+     * This only works, if the route-keys were stated via routeKeys(),
+     * or if a model was stated via model(),
+     * that implements the interface ProvidesRouteKeyList.
+     *
+     * This is used by the sitemap generator and API to
+     * acquire a list of all URLs.
+     *
+     * @param string|null $locale
+     * @param array|null $parameters
+     * @return array|mixed
+     */
+    public function getRouteKeyList(?string $locale = null, ?array $parameters = null)
     {
         RouteTree::establishLocale($locale);
         RouteTree::establishRouteParameters($parameters);
 
-        if (!is_null($this->routeKeys)) {
+        if (!is_null($this->routeKeyList)) {
             // if $this->routeKeys is multidimensional, we assume it's localised
-            if (is_array(array_values($this->routeKeys)[0])) {
-                return $this->routeKeys[$locale];
+            if (is_array(array_values($this->routeKeyList)[0])) {
+                return $this->routeKeyList[$locale];
             }
-            return $this->routeKeys;
+            return $this->routeKeyList;
         }
 
         if ($this->hasRouteKeyListProvidingModel()) {
@@ -94,16 +131,34 @@ class RouteParameter
 
     }
 
-    public function hasRouteKeys(string $locale, array $parameters = null)
+    /**
+     * Can this RouteParameter resolve it's possible route keys?
+     *
+     * @param string $locale
+     * @param array|null $parameters
+     * @return bool
+     */
+    public function canResolveRouteKeyList(string $locale, array $parameters = null)
     {
-        return count($this->getRouteKeys($locale, $parameters)) > 0;
+        return count($this->getRouteKeyList($locale, $parameters)) > 0;
     }
 
+    /**
+     * Get the name of this RouteParameter.
+     *
+     * @return string
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * Is this parameter currently active
+     * (= present in the current path)?
+     *
+     * @return bool
+     */
     public function isActive()
     {
         if (is_null(\Route::current())) {
@@ -112,6 +167,13 @@ class RouteParameter
         return \Route::current()->hasParameter($this->name);
     }
 
+    /**
+     * Returns the current route-key/value of this RouteParameter,
+     * if present.
+     *
+     * @param string|null $locale
+     * @return mixed|null
+     */
     public function getActiveRouteKey(?string $locale = null)
     {
         if ($this->isActive()) {
@@ -131,12 +193,24 @@ class RouteParameter
         return null;
     }
 
+    /**
+     * Translates a route key from one language to another.
+     *
+     * This is used to achieve language-switching for parameter-routes.
+     * It only works, if a routeKeyList() was stated, or if a model()
+     * was stated, that implements TranslatesRouteKey.
+     *
+     * @param $routeKey
+     * @param string $toLocale
+     * @param string $fromLocale
+     * @return mixed
+     */
     private function translateRouteKey($routeKey, string $toLocale, string $fromLocale)
     {
-        if (!is_null($this->routeKeys) && is_array(array_values($this->routeKeys)[0])) {
-            $valueKey = array_search($routeKey, $this->routeKeys[$fromLocale]);
-            if (isset($this->routeKeys[$toLocale][$valueKey])) {
-                return $this->routeKeys[$toLocale][$valueKey];
+        if (!is_null($this->routeKeyList) && is_array(array_values($this->routeKeyList)[0])) {
+            $valueKey = array_search($routeKey, $this->routeKeyList[$fromLocale]);
+            if (isset($this->routeKeyList[$toLocale][$valueKey])) {
+                return $this->routeKeyList[$toLocale][$valueKey];
             }
         }
 
@@ -147,26 +221,59 @@ class RouteParameter
         return $routeKey;
     }
 
+    /**
+     * Is this RouteParameter associated
+     * with an Eloquent Model?
+     *
+     * @return bool
+     */
     public function hasModel()
     {
         return $this->model !== null;
     }
 
+    /**
+     * Is this RouteParameter associated
+     * with an Eloquent Model, that
+     * implements ProvidesRouteKeyList?
+     *
+     * @return bool
+     */
     public function hasRouteKeyListProvidingModel()
     {
         return $this->hasModel() && in_array(ProvidesRouteKeyList::class, class_implements($this->model));
     }
 
+    /**
+     * Is this RouteParameter associated
+     * with an Eloquent Model, that
+     * implements TranslatesRouteKey?
+     *
+     * @return bool
+     */
     public function hasRouteKeyTranslatingModel()
     {
         return $this->hasModel() && in_array(TranslatesRouteKey::class, class_implements($this->model));
     }
 
+    /**
+     * Is this RouteParameter associated
+     * with an Eloquent Model, that
+     * implements ProvidesRoutePayload?
+     *
+     * @return bool
+     */
     public function hasPayloadProvidingModel()
     {
         return $this->hasModel() && in_array(ProvidesRoutePayload::class, class_implements($this->model));
     }
 
+    /**
+     * Returns the Eloquent Model associated
+     * with this RouteParameter.
+     *
+     * @return string
+     */
     public function getModel()
     {
         return $this->model;
