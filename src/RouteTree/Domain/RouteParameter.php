@@ -54,6 +54,13 @@ class RouteParameter
     private $routeKeyList;
 
     /**
+     * Regular expression requirements of route parameters.
+     *
+     * @var array
+     */
+    public $regex = [];
+
+    /**
      * RouteParameter constructor.
      *
      * @param string $parameter
@@ -277,6 +284,57 @@ class RouteParameter
     public function getModel()
     {
         return $this->model;
+    }
+
+    /**
+     * Check if all current route parameters have the values
+     * stated in $routeKeys.
+     *
+     * @param array $routeKeys: As [routeParameter => routeKey] pairs (E.g. ['blog_category' => 'my-category', 'blog_article' => 'my-article']).
+     * @return bool
+     */
+    public static function currentRouteHasRouteKeys(array $routeKeys): bool
+    {
+        $currentParameters = \Route::current()->parameters();
+        $allParametersSet = true;
+        foreach ($routeKeys as $desiredParameterName => $desiredRouteKey) {
+            if (!isset($currentParameters[$desiredParameterName]) || ($currentParameters[$desiredParameterName] !== $desiredRouteKey)) {
+                $allParametersSet = false;
+            }
+        }
+        return $allParametersSet;
+    }
+
+    /**
+     * Set a regular expression requirement on this RouteParameter.
+     *
+     * @param string|null $expression
+     * @return $this
+     */
+    public function regex(string $expression)
+    {
+        $this->regex = $expression;
+        return $this;
+    }
+
+    /**
+     * Is a regular expression requirement set for this RouteParameter.
+     *
+     * @return bool
+     */
+    public function hasRegex()
+    {
+        return is_string($this->regex);
+    }
+
+    /**
+     * Get the expression requirement set for this RouteParameter.
+     *
+     * @return bool
+     */
+    public function getRegex()
+    {
+        return $this->regex;
     }
 
 }

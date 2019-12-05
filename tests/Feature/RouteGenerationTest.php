@@ -1485,17 +1485,13 @@ class RouteGenerationTest extends TestCase
     public function test_node_with_parameter_and_where()
     {
         $this->routeTree->node('my-node', function (RouteNode $node) {
-            $node->segment('{foobar}');
-            $node->where('foobar', '[0-9]+');
+            $node->parameter('foobar')->regex('[0-9]+');
             $node->get(function () {
                 return 'success';
             });
             $node->post(function () {
                 return 'success';
             });
-            $node->patch(function () {
-                return 'success';
-            })->where('foobar', '[5-9]+');
         });
 
         $this->routeTree->generateAllRoutes();
@@ -1504,9 +1500,6 @@ class RouteGenerationTest extends TestCase
         $this->get('de/abc')->assertStatus(404);
         $this->post('de/123')->assertStatus(200)->assertSee('success');
         $this->post('de/abc')->assertStatus(404);
-        $this->patch('de/123')->assertStatus(405);
-        $this->patch('de/567')->assertStatus(200)->assertSee('success');
-        $this->patch('de/abc')->assertStatus(404);
 
     }
 

@@ -5,7 +5,6 @@ namespace Webflorist\RouteTree\Domain;
 use Closure;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Arr;
-use Webflorist\RouteTree\Domain\Traits\CanHaveParameterRegex;
 use Webflorist\RouteTree\Domain\Traits\CanHaveSegments;
 use Webflorist\RouteTree\Exceptions\ActionNotFoundException;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
@@ -24,7 +23,7 @@ use Webflorist\RouteTree\Services\RouteUrlBuilder;
 class RouteAction
 {
 
-    use CanHaveSegments, CanHaveParameterRegex;
+    use CanHaveSegments;
 
     /**
      * The RouteNode this RouteAction belongs to.
@@ -473,7 +472,13 @@ class RouteAction
      */
     private function compileParameterRegex()
     {
-        return array_merge($this->routeNode->wheres, $this->wheres);
+        $parameterRegex = [];
+        foreach ($this->routeNode->getRootLineParameters() as $routeParameter) {
+            if ($routeParameter->hasRegex()) {
+                $parameterRegex[$routeParameter->getName()] = $routeParameter->getRegex();
+            }
+        }
+        return $parameterRegex;
     }
 
     /**
@@ -499,12 +504,14 @@ class RouteAction
     }
 
     /**
-     * Checks, if the current action is active (optionally with the desired parameters).
+     * Checks, if the current action is active.
      *
-     * @param null $parameters
+     * (Optionally with the desired [parameter => routeKey] pairs.)
+     *
+     * @param array|null $parameters
      * @return string
      */
-    public function isActive($parameters = null)
+    public function isActive(?array $parameters = null)
     {
 
         // Check, if the current action is identical to this node.
@@ -515,16 +522,10 @@ class RouteAction
                 return true;
             }
 
-            // If a set of parameters should also be checked, we get the current route-parameters,
-            // check if each one is indeed set, and return the boolean result.
-            $currentParameters = \Route::current()->parameters();
-            $allParametersSet = true;
-            foreach ($parameters as $desiredParameterName => $desiredParameterValue) {
-                if (!isset($currentParameters[$desiredParameterName]) || ($currentParameters[$desiredParameterName] !== $desiredParameterValue)) {
-                    $allParametersSet = false;
-                }
-            }
-            return $allParametersSet;
+            // If a set of parameters should also be checked,
+            // check, if the current route has them.
+            return RouteParameter::currentRouteHasRouteKeys($parameters);
+
         }
 
         return false;

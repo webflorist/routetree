@@ -3,7 +3,6 @@
 namespace Webflorist\RouteTree\Domain;
 
 use Closure;
-use Webflorist\RouteTree\Domain\Traits\CanHaveParameterRegex;
 use Webflorist\RouteTree\Domain\Traits\CanHaveSegments;
 use Webflorist\RouteTree\Exceptions\ActionNotFoundException;
 use Webflorist\RouteTree\Exceptions\NodeAlreadyHasChildWithSameNameException;
@@ -27,7 +26,7 @@ use Webflorist\RouteTree\Services\RouteUrlBuilder;
 class RouteNode
 {
 
-    use CanHaveSegments, CanHaveParameterRegex;
+    use CanHaveSegments;
 
     /**
      * Parent node of this node.
@@ -869,36 +868,18 @@ class RouteNode
             throw new ActionNotFoundException('Node with Id "' . $this->getId() . '" does not have any action to generate an URL to.');
         }
 
-        return $this->getUrlByAction($action, $parameters, $locale, $absolute);
+        return $this->getAction($action)->getUrl($parameters, $locale, $absolute);
     }
 
     /**
-     * Gets the url of a certain action of this node.
+     * Checks, if the current node is active.
      *
-     * @param string $action The action name (e.g. index|show|get|post|update,etc.)
-     * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
-     * @param string $locale The language this url should be generated for (default=current locale).
-     * @param bool $absolute Create absolute paths instead of relative paths (default=true/configurable).
-     * @return RouteUrlBuilder
-     * @throws ActionNotFoundException
-     * @throws NodeNotFoundException
-     */
-    public function getUrlByAction($action, $parameters = null, $locale = null, $absolute = null): RouteUrlBuilder
-    {
-        if ($this->hasAction($action)) {
-            return $this->getAction($action)->getUrl($parameters, $locale, $absolute);
-        }
-
-        throw new ActionNotFoundException('Node with Id "' . $this->getId() . '" does not have the action "' . $action . '""');
-    }
-
-    /**
-     * Checks, if the current node is active (optionally with the desired parameters).
+     * (Optionally with the desired [parameter => routeKey] pairs.)
      *
-     * @param null $parameters
+     * @param array|null $parameters
      * @return string
      */
-    public function isActive($parameters = null)
+    public function isActive(?array $parameters = null)
     {
 
         // Check, if the current node is identical to this node.
@@ -909,16 +890,9 @@ class RouteNode
                 return true;
             }
 
-            // If a set of parameters should also be checked, we get the current route-parameters,
-            // check if each one is indeed set, and return the boolean result.
-            $currentParameters = \Route::current()->parameters();
-            $allParametersSet = true;
-            foreach ($parameters as $desiredParameterName => $desiredParameterValue) {
-                if (!isset($currentParameters[$desiredParameterName]) || ($currentParameters[$desiredParameterName] !== $desiredParameterValue)) {
-                    $allParametersSet = false;
-                }
-            }
-            return $allParametersSet;
+            // If a set of parameters should also be checked,
+            // check, if the current route has them.
+            return RouteParameter::currentRouteHasRouteKeys($parameters);
         }
 
         return false;
