@@ -731,18 +731,16 @@ class RouteNode
     }
 
     /**
-     * Get all locales this RouteNode should be registered with.
+     * Get all locales this RouteNode should be/is registered with.
      *
      * @return array
      */
     public function getLocales()
     {
-        $locales = $this->locales;
-
-        if (config('routetree.no_locale_prefix') || $this->noLocalePrefix) {
+        if (config('routetree.locales') === null || $this->noLocalePrefix) {
             return [config('app.locale')];
         }
-        return $locales;
+        return $this->locales;
     }
 
     /**
@@ -1138,8 +1136,8 @@ class RouteNode
         // Paths always start with locale....
         $segments = [$locale];
 
-        // .... except no_locale_prefix is set via config or on this route.
-        if (config('routetree.no_locale_prefix') || $this->noLocalePrefix) {
+        // .... except for single language-pages.
+        if (config('routetree.locales') === null || $this->noLocalePrefix) {
             $segments = [];
         }
 

@@ -750,9 +750,7 @@ class RouteGenerationTest extends TestCase
 
     public function test_node_with_children_without_locale_in_path()
     {
-
-        $this->config->set('routetree.no_locale_prefix', true);
-        $this->config->set('routetree.locales', []);
+        $this->config->set('routetree.locales', null);
         $this->config->set('app.locale', 'de');
 
         $this->routeTree->root(function (RouteNode $node) {

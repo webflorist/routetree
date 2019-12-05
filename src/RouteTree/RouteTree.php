@@ -449,7 +449,7 @@ class RouteTree
     public static function getLocales()
     {
         $locales = config('routetree.locales');
-        if (count($locales) > 0) {
+        if (is_array($locales) && count($locales) > 0) {
             return $locales;
         }
 

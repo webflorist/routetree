@@ -7,26 +7,13 @@ return [
     | App locales
     |--------------------------------------------------------------------------
     |
-    | Set all locales to use in this app.
-    | e.g. ['en','de']
+    | Set all locales to use in this app (e.g. ['en','de']).
+    |
+    | Set to null for a single-language app (using config 'app.locale').
+    | This will result in paths not starting with locale (e.g. /en/).
     |
     */
     'locales' => [],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Do not prefix URI with locale?
-    |--------------------------------------------------------------------------
-    |
-    | Set to true, if you don't want paths starting with locale.
-    | This will result in a single-language-page (using config 'app.locale')
-    | with URIs not starting with e.g. /en/.
-    |
-    | You can also disable prefixing of path with locale
-    | for a single node and all child-nodes using 'noLocalePrefix()'.
-    |
-    */
-    'no_locale_prefix' => false,
 
     /*
     |--------------------------------------------------------------------------
