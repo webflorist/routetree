@@ -13,6 +13,21 @@ use Webflorist\RouteTree\Domain\RouteNode;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
 use Webflorist\RouteTree\Exceptions\RouteNameAlreadyRegisteredException;
 
+/**
+ * Class RouteTree
+ *
+ * The main class of this package.
+ *
+ * Serves as the main RouteTree service
+ * as a singleton.
+ *
+ * Is accessible via:
+ * - Helper-Function 'route_tree()'
+ * - Laravel-Facade 'RouteTree'
+ * - Laravel-Service 'app('Webflorist\RouteTree\RouteTree')'
+ *
+ * @package Webflorist\RouteTree
+ */
 class RouteTree
 {
 
@@ -430,7 +445,7 @@ class RouteTree
      * Is a current action set?
      *
      * E.g. In case of a 404, the RouteTreeMiddleware
-     * is not able to determine a current RouteAction.
+     * was not able to determine a current RouteAction.
      *
      * @return bool
      */
