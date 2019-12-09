@@ -1,6 +1,6 @@
 <?php
 
-namespace Webflorist\RouteTree\Domain;
+namespace Webflorist\RouteTree;
 
 use Illuminate\Routing\Route;
 use Illuminate\Support\Collection;
@@ -205,9 +205,6 @@ class RegisteredRoute
             /** @var RouteParameter[] $parameters */
             $this->fillRouteKeySets($this->routeAction->getRootLineParameters(), $routeKeySets);
             foreach ($routeKeySets as $routeKeySet) {
-                if ($this->hasMethod('get')) {
-                    //dump($this->routeName.':'.$this->path.':'. route($this->routeName, $routeKeySet, false));
-                }
                 $registeredRoutes->push(
                     (new RegisteredRoute($this->route))
                         ->routeKeys($routeKeySet)

@@ -2,8 +2,8 @@
 
 namespace Webflorist\RouteTree\Services;
 
-use Webflorist\RouteTree\Domain\RouteAction;
-use Webflorist\RouteTree\Domain\RouteNode;
+use Webflorist\RouteTree\RouteAction;
+use Webflorist\RouteTree\RouteNode;
 use Webflorist\RouteTree\Exceptions\ActionNotFoundException;
 use Webflorist\RouteTree\Exceptions\UrlParametersMissingException;
 use Webflorist\RouteTree\RouteTree;

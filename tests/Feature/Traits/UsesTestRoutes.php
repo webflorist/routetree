@@ -6,7 +6,8 @@ use Carbon\Carbon;
 use RouteTreeTests\Feature\Models\BlogArticle;
 use RouteTreeTests\Feature\Models\BlogCategory;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Webflorist\RouteTree\Domain\RouteNode;
+use Webflorist\RouteTree\LanguageMapping;
+use Webflorist\RouteTree\RouteNode;
 use Webflorist\RouteTree\RouteTree;
 
 trait UsesTestRoutes
@@ -83,14 +84,14 @@ trait UsesTestRoutes
             });
             $node->child('parameter-with-translated-values', function (RouteNode $node) {
                 $node->child('parameter-with-translated-values', function (RouteNode $node) {
-                    $node->parameter('parameter-with-translated-values')->routeKeys([
-                        'de' => [
+                    $node->parameter('parameter-with-translated-values')->routeKeys(LanguageMapping::create()
+                        ->set('de', [
                             'parameter-array-wert1', 'parameter-array-wert2'
-                        ],
-                        'en' => [
+                        ])
+                        ->set('en', [
                             'parameter-array-value1', 'parameter-array-value2'
-                        ]
-                    ]);
+                        ])
+                    );
                     $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
                 });
             });

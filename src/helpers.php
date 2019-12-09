@@ -1,6 +1,6 @@
 <?php
 
-use Webflorist\RouteTree\Domain\RouteNode;
+use Webflorist\RouteTree\RouteNode;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
 use Webflorist\RouteTree\RouteTree;
 use Webflorist\RouteTree\Services\RouteUrlBuilder;

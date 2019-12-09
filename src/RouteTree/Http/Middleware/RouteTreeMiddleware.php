@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Webflorist\RouteTree\Domain\RegisteredRoute;
-use Webflorist\RouteTree\Domain\RouteAction;
+use Webflorist\RouteTree\RegisteredRoute;
+use Webflorist\RouteTree\RouteAction;
 use Webflorist\RouteTree\RouteTree;
 
 class RouteTreeMiddleware

@@ -1,6 +1,6 @@
 <?php
 
-namespace Webflorist\RouteTree\Domain;
+namespace Webflorist\RouteTree;
 
 use Closure;
 use Illuminate\Support\Facades\Lang;
@@ -182,7 +182,7 @@ class RouteResource
      * @throws NodeNotFoundException
      * @throws NodeAlreadyHasChildWithSameNameException
      */
-    public function child(string $name, Closure $callback)
+    public function child(string $name, ?Closure $callback=null)
     {
         $child = $this->routeNode->child($name, $callback);
         $child->isResourceChild = true;

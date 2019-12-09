@@ -6,7 +6,8 @@ use RouteTreeTests\Feature\Models\TestModelTranslatable;
 use RouteTreeTests\Feature\Models\TestModelTranslates;
 use RouteTreeTests\Feature\Traits\UsesTestRoutes;
 use RouteTreeTests\TestCase;
-use Webflorist\RouteTree\Domain\RouteNode;
+use Webflorist\RouteTree\LanguageMapping;
+use Webflorist\RouteTree\RouteNode;
 
 class RouteNodeUrlTest extends TestCase
 {
@@ -18,7 +19,7 @@ class RouteNodeUrlTest extends TestCase
 
         $this->assertEquals(
             'http://localhost/de/page1',
-            route_node_url('page1')
+            route_node('page1')->getUrl()
         );
 
     }
@@ -29,7 +30,7 @@ class RouteNodeUrlTest extends TestCase
 
         $this->assertEquals(
             '/de/page1',
-            route_node_url('page1', null, null, null, false)
+            route_node('page1')->getUrl()->absolute(false)
         );
 
     }
@@ -41,7 +42,7 @@ class RouteNodeUrlTest extends TestCase
 
         $this->assertEquals(
             '/de/page1',
-            route_node_url('page1')
+            route_node('page1')->getUrl()
         );
 
     }
@@ -55,7 +56,7 @@ class RouteNodeUrlTest extends TestCase
 
         $this->assertEquals(
             'http://localhost/en/page/my-slug/edit',
-            route_node_url('page')
+            route_node('page')->getUrl()
                 ->locale('en')
                 ->action('edit')
                 ->absolute()
@@ -66,7 +67,7 @@ class RouteNodeUrlTest extends TestCase
 
         $this->assertEquals(
             'http://localhost/de/page/mein-slug/bearbeiten',
-            route_node_url('page')
+            route_node('page')->getUrl()
                 ->locale('de')
                 ->action('edit')
                 ->absolute()
@@ -139,7 +140,7 @@ class RouteNodeUrlTest extends TestCase
     {
         $this->routeTree->node('page', function (RouteNode $node) {
             $node->child('parameter1', function (RouteNode $node) {
-                $node->parameter('parameter_with_translated_values')->routeKeys([
+                $node->parameter('parameter_with_translated_values')->routeKeys(LanguageMapping::create([
                     'de' => [
                         'parameter1-wert1',
                         'parameter1-wert2'
@@ -148,7 +149,7 @@ class RouteNodeUrlTest extends TestCase
                         'parameter1-value1',
                         'parameter1-value2'
                     ]
-                ]);
+                ]));
                 $node->child('parameter2', function (RouteNode $node) {
                     $node->parameter('parameter_with_model')->model(TestModelTranslates::class);
                     $node->child('display-url', function (RouteNode $node) {

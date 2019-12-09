@@ -7,9 +7,9 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
-use Webflorist\RouteTree\Domain\RegisteredRoute;
-use Webflorist\RouteTree\Domain\RouteAction;
-use Webflorist\RouteTree\Domain\RouteNode;
+use Webflorist\RouteTree\RegisteredRoute;
+use Webflorist\RouteTree\RouteAction;
+use Webflorist\RouteTree\RouteNode;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
 use Webflorist\RouteTree\Exceptions\RouteNameAlreadyRegisteredException;
 
@@ -78,9 +78,14 @@ class RouteTree
      * @param Closure $callback
      * @return RouteNode
      */
-    public function root(Closure $callback)
+    public function root(?Closure $callback = null): RouteNode
     {
-        $this->rootNode = (new RouteNode(''))->setUp($callback);
+        $this->rootNode = (new RouteNode(''));
+
+        if (!is_null($callback)) {
+            $this->rootNode->setUp($callback);
+        }
+
         return $this->rootNode;
     }
 
@@ -89,17 +94,22 @@ class RouteTree
      *
      * @param string $name Name of the node.
      * @param Closure $callback Closure to setup the node.
-     * @param string|RouteNode $parentNode ID of the parent node.
+     * @param string|RouteNode $parentNode ID or object of the parent node.
      * @return RouteNode
      * @throws NodeNotFoundException
      * @throws Exceptions\NodeAlreadyHasChildWithSameNameException
      */
-    public function node(string $name, Closure $callback, $parentNode = '')
+    public function node(string $name, ?Closure $callback = null, $parentNode=''): RouteNode
     {
-        return (new RouteNode(
+        $node = (new RouteNode(
             $name,
             ($parentNode instanceof RouteNode) ? $parentNode : $this->getOrGenerateNode($parentNode)
-        ))->setUp($callback);
+        ));
+
+        if (!is_null($callback)) {
+            $node->setUp($callback);
+        }
+        return $node;
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Webflorist\RouteTree\Domain;
+namespace Webflorist\RouteTree;
 
 use Illuminate\Database\Eloquent\Model;
 use Webflorist\RouteTree\Exceptions\NoValidModelException;
@@ -43,13 +43,15 @@ class RouteParameter
 
     /**
      * A complete list of route-keys for this RouteParameter.
-     * (Either one-dimensional for all languages
-     * or multi-dimensional per language).
+     *
+     * Can either be a LanguageMapping object,
+     * or a string (to be used for all locales).
      *
      * Can be used to resolve all specific URLs for routes
-     * including a parameter. (e.g. for Sitemap-generation.)
+     * including a parameter (e.g. for Sitemap-generation.)
+     * or to provide route key translation.
      *
-     * @var array
+     * @var array|LanguageMapping
      */
     private $routeKeyList;
 
@@ -89,15 +91,17 @@ class RouteParameter
 
     /**
      * Add a complete list of route-keys for this RouteParameter.
-     * (Either one-dimensional for all languages
-     * or multi-dimensional per language).
+     *
+     * Can either be a LanguageMapping object with array as values,
+     * or an array (to be used for all locales).
      *
      * Can be used to resolve all specific URLs for routes
-     * including a parameter. (e.g. for Sitemap-generation.)
+     * including a parameter (e.g. for Sitemap-generation.)
+     * or to provide route key translation.
      *
-     * @param array $routeKeys
+     * @param array|LanguageMapping $routeKeys
      */
-    public function routeKeys(array $routeKeys)
+    public function routeKeys($routeKeys)
     {
         $this->routeKeyList = $routeKeys;
     }
@@ -123,10 +127,11 @@ class RouteParameter
         RouteTree::establishRouteParameters($parameters);
 
         if (!is_null($this->routeKeyList)) {
-            // if $this->routeKeys is multidimensional, we assume it's localised
-            if (is_array(array_values($this->routeKeyList)[0])) {
-                return $this->routeKeyList[$locale];
+
+            if ($this->routeKeyList instanceof LanguageMapping && $this->routeKeyList->has($locale)) {
+                return $this->routeKeyList->get($locale);
             }
+
             return $this->routeKeyList;
         }
 
@@ -204,8 +209,8 @@ class RouteParameter
      * Translates a route key from one language to another.
      *
      * This is used to achieve language-switching for parameter-routes.
-     * It only works, if a routeKeyList() was stated, or if a model()
-     * was stated, that implements TranslatesRouteKey.
+     * It only works, if a LanguageMapping object via routeKeyList(),
+     * or if an Eloquent model implementing TranslatesRouteKey was stated via model().
      *
      * @param $routeKey
      * @param string $toLocale
@@ -214,14 +219,16 @@ class RouteParameter
      */
     private function translateRouteKey($routeKey, string $toLocale, string $fromLocale)
     {
-        if (!is_null($this->routeKeyList) && is_array(array_values($this->routeKeyList)[0])) {
-            $valueKey = array_search($routeKey, $this->routeKeyList[$fromLocale]);
-            if (isset($this->routeKeyList[$toLocale][$valueKey])) {
-                return $this->routeKeyList[$toLocale][$valueKey];
+        if ($this->routeKeyList instanceof LanguageMapping && $this->routeKeyList->has($toLocale) && $this->routeKeyList->has($fromLocale)) {
+            $fromRouteKeys = $this->routeKeyList->get($fromLocale);
+            $toRouteKeys = $this->routeKeyList->get($toLocale);
+            $valueKey = array_search($routeKey, $fromRouteKeys);
+            if (isset($toRouteKeys[$valueKey])) {
+                return $toRouteKeys[$valueKey];
             }
         }
 
-        if ($this->hasRoutekeyTranslatingModel()) {
+        if ($this->hasRouteKeyTranslatingModel()) {
             return $this->model::translateRouteKey($routeKey, $toLocale, $fromLocale);
         }
 

@@ -4,8 +4,8 @@ namespace RouteTreeTests\Feature;
 
 use RouteTreeTests\Feature\Traits\UsesTestRoutes;
 use RouteTreeTests\TestCase;
-use Webflorist\RouteTree\Domain\LanguageMapping;
-use Webflorist\RouteTree\Domain\RouteNode;
+use Webflorist\RouteTree\LanguageMapping;
+use Webflorist\RouteTree\RouteNode;
 
 class RouteGenerationTest extends TestCase
 {
@@ -327,9 +327,7 @@ class RouteGenerationTest extends TestCase
 
     public function test_root_node_with_redirect()
     {
-        $this->routeTree->root(function (RouteNode $rootNode) {
-            $rootNode->redirect('destination');
-        });
+        $this->routeTree->root()->redirect('destination');
 
         $this->routeTree->node('destination', function (RouteNode $rootNode) {
             $rootNode->view('test');

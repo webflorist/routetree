@@ -1,6 +1,6 @@
 <?php
 
-namespace Webflorist\RouteTree\Domain;
+namespace Webflorist\RouteTree;
 
 use Carbon\Carbon;
 use Webflorist\RouteTree\Exceptions\InvalidChangefreqValueException;

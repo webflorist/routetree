@@ -1,8 +1,8 @@
 <?php
 
-namespace Webflorist\RouteTree\Domain\Traits;
+namespace Webflorist\RouteTree\Traits;
 
-use Webflorist\RouteTree\Domain\LanguageMapping;
+use Webflorist\RouteTree\LanguageMapping;
 
 /**
  * Trait CanHaveParameterRegex
@@ -25,7 +25,7 @@ trait CanHaveSegments
 
     /**
      * Sets the path-segment(s) to be used for this node.
-     * Can either be an array of [locale => string] pairs,
+     * Can either be a LanguageMapping object,
      * or a string (to be used for all locales).
      *
      * @param LanguageMapping|string $segment

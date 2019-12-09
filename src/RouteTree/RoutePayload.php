@@ -1,7 +1,8 @@
 <?php
 
-namespace Webflorist\RouteTree\Domain;
+namespace Webflorist\RouteTree;
 
+use Closure;
 use Webflorist\RouteTree\Interfaces\ProvidesRoutePayload;
 use Webflorist\RouteTree\RouteTree;
 
@@ -16,8 +17,8 @@ use Webflorist\RouteTree\RouteTree;
  *
  * Default properties:
  * ===================
- * @property string $title              Page's Meta-Title.
- * @property string $navTitle           Page's Nav-Title.
+ * @property string|LanguageMapping|Closure $title              Page's Meta-Title.
+ * @property string|LanguageMapping|Closure $navTitle           Page's Nav-Title.
  *
  * Setters for default properties:
  * ===============================

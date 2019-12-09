@@ -3,7 +3,7 @@
 namespace RouteTreeTests\Feature;
 
 use RouteTreeTests\TestCase;
-use Webflorist\RouteTree\Domain\RouteNode;
+use Webflorist\RouteTree\RouteNode;
 
 class ResourceTest extends TestCase
 {

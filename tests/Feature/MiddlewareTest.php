@@ -3,8 +3,8 @@
 namespace RouteTreeTests\Feature;
 
 use RouteTreeTests\TestCase;
-use Webflorist\RouteTree\Domain\LanguageMapping;
-use Webflorist\RouteTree\Domain\RouteNode;
+use Webflorist\RouteTree\LanguageMapping;
+use Webflorist\RouteTree\RouteNode;
 
 class MiddlewareTest extends TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Webflorist\RouteTree\Domain;
+namespace Webflorist\RouteTree;
 
 /**
  * Class LanguageMapping

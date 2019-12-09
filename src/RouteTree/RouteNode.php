@@ -1,13 +1,12 @@
 <?php
 
-namespace Webflorist\RouteTree\Domain;
+namespace Webflorist\RouteTree;
 
 use Closure;
-use Webflorist\RouteTree\Domain\Traits\CanHaveSegments;
+use Webflorist\RouteTree\Traits\CanHaveSegments;
 use Webflorist\RouteTree\Exceptions\ActionNotFoundException;
 use Webflorist\RouteTree\Exceptions\NodeAlreadyHasChildWithSameNameException;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
-use Webflorist\RouteTree\RouteTree;
 use Webflorist\RouteTree\Services\RouteUrlBuilder;
 
 /**
@@ -21,7 +20,7 @@ use Webflorist\RouteTree\Services\RouteUrlBuilder;
  * all it's RouteActions and inherits data to
  * it's child-nodes.
  *
- * @package Webflorist\RouteTree\Domain
+ * @package Webflorist\RouteTree
  */
 class RouteNode
 {
@@ -716,7 +715,7 @@ class RouteNode
      * @throws NodeNotFoundException
      * @throws NodeAlreadyHasChildWithSameNameException
      */
-    public function child(string $name, Closure $callback)
+    public function child(string $name, ?Closure $callback=null) : RouteNode
     {
         return route_tree()->node($name, $callback, $this);
     }

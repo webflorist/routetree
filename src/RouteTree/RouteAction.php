@@ -1,11 +1,11 @@
 <?php
 
-namespace Webflorist\RouteTree\Domain;
+namespace Webflorist\RouteTree;
 
 use Closure;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Arr;
-use Webflorist\RouteTree\Domain\Traits\CanHaveSegments;
+use Webflorist\RouteTree\Traits\CanHaveSegments;
 use Webflorist\RouteTree\Exceptions\ActionNotFoundException;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
 use Webflorist\RouteTree\RouteTree;
@@ -18,7 +18,7 @@ use Webflorist\RouteTree\Services\RouteUrlBuilder;
  * Laravel-Routes for a specific action
  * (e.g. index|create|show|get etc.).
  *
- * @package Webflorist\RouteTree\Domain
+ * @package Webflorist\RouteTree
  */
 class RouteAction
 {

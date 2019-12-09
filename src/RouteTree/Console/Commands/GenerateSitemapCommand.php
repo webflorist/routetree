@@ -4,7 +4,7 @@ namespace Webflorist\RouteTree\Console\Commands;
 
 use Illuminate\Console\Command;
 use Throwable;
-use Webflorist\RouteTree\Domain\RegisteredRoute;
+use Webflorist\RouteTree\RegisteredRoute;
 
 class GenerateSitemapCommand extends Command
 {
