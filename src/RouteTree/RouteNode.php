@@ -846,7 +846,12 @@ class RouteNode
 
     /**
      * Get url to the most suitable action of this node,
-     * using the following order: 'index' -> 'get' -> the first element of the action-array.
+     * using the following order:
+     *
+     * 1. currently active action (if node is currently active)
+     * 2. the 'index' action (if node is resource node)
+     * 3. the 'get' action
+     * 4. the first element of the action-array.
      *
      * @param array $parameters An associative array of [parameterName => parameterValue] pairs to be used for any route-parameters in the url (default=current route-parameters).
      * @param string $locale The language this url should be generated for (default=current locale).
@@ -857,11 +862,20 @@ class RouteNode
      */
     public function getUrl($parameters = null, $locale = null, $absolute = null): RouteUrlBuilder
     {
+        $action = null;
 
-        $action = $this->hasAction('index') ? 'index' :
-            ($this->hasAction('get') ? 'get' :
-                (count($this->actions) > 0 ? $this->actions[0]->getName() : null)
-            );
+        // For active nodes, we use the currently active action.
+        if ($this->isActive() && (route_tree()->getCurrentAction() !== null)) {
+            $action = route_tree()->getCurrentAction()->getName();
+        }
+
+        // Otherwise fall back to 'index', 'get' and first element of actin array.
+        if ($action=== null) {
+            $action = $this->hasAction('index') ? 'index' :
+                ($this->hasAction('get') ? 'get' :
+                    (count($this->actions) > 0 ? $this->actions[0]->getName() : null)
+                );
+        }
 
         if ($action === null) {
             throw new ActionNotFoundException('Node with Id "' . $this->getId() . '" does not have any action to generate an URL to.');
