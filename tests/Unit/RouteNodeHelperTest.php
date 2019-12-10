@@ -22,7 +22,7 @@ class RouteNodeHelperTest extends TestCase
 
     public function test_route_node_with_fallback_to_root()
     {
-        $this->config->set('routetree.route_node_fallback', '');
+        $this->config->set('routetree.fallback_node', '');
         $this->generateSimpleTestRoutes('/de/page1');
         $this->assertEquals(
             '',

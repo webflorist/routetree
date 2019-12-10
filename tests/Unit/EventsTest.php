@@ -51,7 +51,7 @@ class EventsTest extends TestCase
 
         $this->generateComplexTestRoutes($this->routeTree);
 
-        $this->config->set('routetree.route_node_fallback', '');
+        $this->config->set('routetree.fallback_node', '');
 
         route_node('i-do-not-exist');
 

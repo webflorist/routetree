@@ -7,6 +7,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
+use Webflorist\RouteTree\Events\NodeNotFound;
 use Webflorist\RouteTree\RegisteredRoute;
 use Webflorist\RouteTree\RouteAction;
 use Webflorist\RouteTree\RouteNode;
@@ -134,7 +135,7 @@ class RouteTree
             return $this->currentAction->getRouteNode();
         }
 
-        throw new NodeNotFoundException("No current node could not be determined.");
+        return $this->handleNodeNotFound(null);
     }
 
     /**
@@ -198,7 +199,7 @@ class RouteTree
     public function doesNodeExist($nodeId)
     {
         try {
-            $this->getNode($nodeId);
+            $this->getNode($nodeId, false);
         } catch (NodeNotFoundException $exception) {
             return false;
         }
@@ -206,13 +207,14 @@ class RouteTree
     }
 
     /**
-     * Get's the RouteNode via it's ID.
+     * Get's a RouteNode via it's ID.
      *
      * @param string $nodeId
+     * @param bool $autoFallback: Set to false to disable fallback.
      * @return RouteNode
      * @throws NodeNotFoundException
      */
-    public function getNode($nodeId)
+    public function getNode(string $nodeId, bool $autoFallback=true)
     {
 
         // If path is an empty string or null, we return the root-node.
@@ -237,8 +239,7 @@ class RouteTree
             } else {
 
                 // If it was not found, it is clear, that no node exists for $path.
-                // So we return false.
-                throw new NodeNotFoundException("Node with ID '" . $nodeId . "' could not be found.");
+                return $this->handleNodeNotFound($nodeId, $autoFallback);
             }
         }
 
@@ -559,6 +560,37 @@ class RouteTree
                 $this->registerRoutesFromNode($childNode);
             }
         }
+    }
+
+    /**
+     * Handles the behaviour, if a getNode() or getCurrentNode() call could not find a node:
+     *
+     * - Throws NodeNotFound event.
+     * - If config 'routetree.fallback_node' is not null and $fallback is true:
+     *   Falls back to node ID configured in 'routetree.fallback_node'.
+     * - Otherwise throws a NodeNotFoundException.
+     *
+     * @param string|null $calledNodeId
+     * @param bool $fallback: Set to false to disable fallback and always throw a NodeNotFoundException.
+     * @return \Webflorist\RouteTree\RouteNode
+     * @throws NodeNotFoundException
+     */
+    protected function handleNodeNotFound(?string $calledNodeId, bool $fallback=true): \Webflorist\RouteTree\RouteNode
+    {
+        event(new NodeNotFound($calledNodeId));
+
+        if ($fallback) {
+            $fallbackNodeId = config('routetree.fallback_node');
+            if (!is_null($fallbackNodeId) && $fallbackNodeId !== $calledNodeId) {
+                return route_node($fallbackNodeId);
+            }
+        }
+
+        throw new NodeNotFoundException(
+            is_null($calledNodeId) ?
+                "No current node could be determined." :
+                "Node with ID '" . $calledNodeId . "' could not be found."
+        );
     }
 
 }

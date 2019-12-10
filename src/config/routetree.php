@@ -31,9 +31,11 @@ return [
     | Fallback node
     |--------------------------------------------------------------------------
     |
-    | This fallback node will be used by the route_node() helper if:
-    | - the current node could not be determined (e.g. in case of a 404),
-    | - a specific node-ID does not exist (e.g. after deletion or moving a node).
+    | This fallback node will be used by RouteTree if:
+    | - the current node was requested but could not be determined
+    |   (e.g. in case of a 404),
+    | - a specific node-ID was requested but does not exist
+    |   (e.g. after deletion or moving a node).
     |
     | Setting this to null will throw an exception, if a node could not be found,
     | which is the recommended value for development or testing environments,
@@ -44,7 +46,7 @@ return [
     | You can also set any other fallback node (e.g. a dedicated '404' node).
     |
     */
-    'route_node_fallback' => env('APP_ENV') === 'production' ? '' : null,
+    'fallback_node' => env('APP_ENV') === 'production' ? '' : null,
 
     /*
     |--------------------------------------------------------------------------

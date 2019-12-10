@@ -356,10 +356,12 @@ The above code will additionally generate the following routes:
 ## Retrieving Nodes from the RouteTree
 
 Now that we have defined the RouteTree, it's RouteNodes can be accessed anywhere in your application using the `route_node()` helper:
-- `route_node()` will return the currently active RouteNode.
-- `route_node('company.team.contact')` will return the RouteNode with ID `company.team.contact`
+- `route_node()`  
+is a shortcut for `route_tree()->getCurrentNode()` and will return the currently active RouteNode.
+- `route_node('company.team.contact')`  
+is a shortcut for `route_tree()->getNode('company.team.contact')` and will return the RouteNode with ID `company.team.contact`
 
-If `route_node()` fails to find the current/specified node, it will throw a `NodeNotFoundException`, except a fallback node is set in the config `routetree.route_node_fallback`. The default config sets the fallback node to the root node, since you will probably want to inhibit `NodeNotFoundExceptions` in a production environment.
+If RouteTree fails to find the current/specified node, it will throw a `NodeNotFoundException`, except a fallback node is set in the config `routetree.fallback_node`. The default config sets the fallback node to the root node, since you will probably want to inhibit `NodeNotFoundExceptions` in a production environment.
 
 ## Generating URLs
 
