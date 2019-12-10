@@ -36,8 +36,8 @@ return [
     | - a specific node-ID does not exist (e.g. after deletion or moving a node).
     |
     | Setting this to null will throw an exception, if a node could not be found,
-    | which is the recommended value for development environments, since you
-    | immediately realize an error (e.g. a mis-typed RouteNode-ID).
+    | which is the recommended value for development or testing environments,
+    | since it catches errors (e.g. a mis-typed RouteNode-ID).
     |
     | In production environments, the default-value sets this to the
     | root-node-ID (= empty string = '') to circumvent NodeNotFoundExceptions.

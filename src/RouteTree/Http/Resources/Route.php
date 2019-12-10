@@ -43,6 +43,10 @@ class Route extends JsonResource
                 'navTitle' => $this->resource->routeAction->getNavTitle(
                     $this->resource->routeKeys,
                     $this->resource->locale
+                ),
+                'payload' => $this->resource->routeAction->payload->toArray(
+                    $this->resource->routeKeys,
+                    $this->resource->locale
                 )
             ]
 

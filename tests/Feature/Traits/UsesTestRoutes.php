@@ -45,10 +45,17 @@ trait UsesTestRoutes
     {
         $routeTree->root(function (RouteNode $node) {
             $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+
+            $node->payload->translatedPayload = LanguageMapping::create()
+                ->set('en', 'Translated Payload')
+                ->set('de', 'Übersetzter Payload');
+            $node->payload->set('booleanPayload', true);
+
             $node->sitemap
                 ->lastmod(Carbon::parse('2019-11-16T17:46:30.45+01:00'))
                 ->changefreq('monthly')
                 ->priority(1.0);
+
             $node->child('excluded', function (RouteNode $node) {
                 $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
                 $node->sitemap
@@ -62,18 +69,22 @@ trait UsesTestRoutes
                         ->exclude(false);
                 });
             });
+
             $node->child('redirect', function (RouteNode $node) {
                 $node->redirect('excluded');
             });
+
             $node->child('permanent-redirect', function (RouteNode $node) {
                 $node->permanentRedirect('excluded');
             });
+
             $node->child('parameter', function (RouteNode $node) {
                 $node->child('parameter', function (RouteNode $node) {
                     $node->segment('{parameter}');
                     $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
                 });
             });
+
             $node->child('parameter-with-values', function (RouteNode $node) {
                 $node->child('parameter-with-values', function (RouteNode $node) {
                     $node->parameter('parameter-with-values')->routeKeys([
@@ -82,6 +93,7 @@ trait UsesTestRoutes
                     $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
                 });
             });
+
             $node->child('parameter-with-translated-values', function (RouteNode $node) {
                 $node->child('parameter-with-translated-values', function (RouteNode $node) {
                     $node->parameter('parameter-with-translated-values')->routeKeys(LanguageMapping::create()
@@ -95,6 +107,7 @@ trait UsesTestRoutes
                     $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
                 });
             });
+
             $node->child('blog-using-parameters', function (RouteNode $node) {
                 $node->child('category', function (RouteNode $node) {
                     $node->parameter('category')->model(BlogCategory::class);
@@ -105,9 +118,11 @@ trait UsesTestRoutes
                     });
                 });
             });
+
             $node->child('resource', function (RouteNode $node) {
                 $node->resource('resource', '\RouteTreeTests\Feature\Controllers\TestController');
             });
+
             $node->child('blog-using-resources', function (RouteNode $node) {
                 $node->resource('category', '\RouteTreeTests\Feature\Controllers\TestController')
                     ->only(['index', 'show'])
@@ -121,6 +136,7 @@ trait UsesTestRoutes
                             });
                     });;
             });
+
             $node->child('auth', function (RouteNode $node) {
                 $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
                 $node->middleware('auth');
@@ -128,6 +144,7 @@ trait UsesTestRoutes
                     $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
                 });
             });
+
         });
 
         $routeTree->generateAllRoutes();
@@ -1083,6 +1100,10 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Startseite',
                             'navTitle' => 'Startseite',
+                            'payload' => Array(
+                                'translatedPayload' => 'Übersetzter Payload',
+                                'booleanPayload' => true
+                            ),
                         ),
                 ),
             1 =>
@@ -1102,6 +1123,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Auth',
                             'navTitle' => 'Auth',
+                            'payload' => Array(),
                         ),
                 ),
             2 =>
@@ -1121,6 +1143,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Auth-child',
                             'navTitle' => 'Auth-child',
+                            'payload' => Array(),
                         ),
                 ),
             3 =>
@@ -1140,6 +1163,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Artikel über Blumen',
                             'navTitle' => 'Artikel über Blumen',
+                            'payload' => Array(),
                         ),
                 ),
             4 =>
@@ -1159,6 +1183,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Artikel über Bäume',
                             'navTitle' => 'Artikel über Bäume',
+                            'payload' => Array(),
                         ),
                 ),
             5 =>
@@ -1178,6 +1203,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Die Rose - Blume im Wandel der Zeit',
                             'navTitle' => 'Die Rose - Blume im Wandel der Zeit',
+                            'payload' => Array(),
                         ),
                 ),
             6 =>
@@ -1197,6 +1223,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Dit Tulpe im weltgeschichtlichen Finanzsystem',
                             'navTitle' => 'Dit Tulpe im weltgeschichtlichen Finanzsystem',
+                            'payload' => Array(),
                         ),
                 ),
             7 =>
@@ -1216,6 +1243,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Sehet die Lilien!',
                             'navTitle' => 'Sehet die Lilien!',
+                            'payload' => Array(),
                         ),
                 ),
             8 =>
@@ -1235,6 +1263,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Und jetzt... Die Lärche',
                             'navTitle' => 'Und jetzt... Die Lärche',
+                            'payload' => Array(),
                         ),
                 ),
             9 =>
@@ -1254,6 +1283,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Und jetzt... Die Lärche',
                             'navTitle' => 'Und jetzt... Die Lärche',
+                            'payload' => Array(),
                         ),
                 ),
             10 =>
@@ -1273,6 +1303,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Und jetzt... Der Kastanienbaum',
                             'navTitle' => 'Und jetzt... Der Kastanienbaum',
+                            'payload' => Array(),
                         ),
                 ),
             11 =>
@@ -1292,6 +1323,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Blog-using-resources',
                             'navTitle' => 'Blog-using-resources',
+                            'payload' => Array(),
                         ),
                 ),
             12 =>
@@ -1311,6 +1343,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Artikel über Blumen',
                             'navTitle' => 'Artikel über Blumen',
+                            'payload' => Array(),
                         ),
                 ),
             13 =>
@@ -1330,6 +1363,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Artikel über Bäume',
                             'navTitle' => 'Artikel über Bäume',
+                            'payload' => Array(),
                         ),
                 ),
             14 =>
@@ -1349,6 +1383,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Articles',
                             'navTitle' => 'Articles',
+                            'payload' => Array(),
                         ),
                 ),
             15 =>
@@ -1368,6 +1403,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Articles',
                             'navTitle' => 'Articles',
+                            'payload' => Array(),
                         ),
                 ),
             16 =>
@@ -1387,6 +1423,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Die Rose - Blume im Wandel der Zeit',
                             'navTitle' => 'Die Rose - Blume im Wandel der Zeit',
+                            'payload' => Array(),
                         ),
                 ),
             17 =>
@@ -1406,6 +1443,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Dit Tulpe im weltgeschichtlichen Finanzsystem',
                             'navTitle' => 'Dit Tulpe im weltgeschichtlichen Finanzsystem',
+                            'payload' => Array(),
                         ),
                 ),
             18 =>
@@ -1425,6 +1463,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Sehet die Lilien!',
                             'navTitle' => 'Sehet die Lilien!',
+                            'payload' => Array(),
                         ),
                 ),
             19 =>
@@ -1444,6 +1483,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Und jetzt... Die Lärche',
                             'navTitle' => 'Und jetzt... Die Lärche',
+                            'payload' => Array(),
                         ),
                 ),
             20 =>
@@ -1463,6 +1503,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Und jetzt... Die Lärche',
                             'navTitle' => 'Und jetzt... Die Lärche',
+                            'payload' => Array(),
                         ),
                 ),
             21 =>
@@ -1482,6 +1523,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Und jetzt... Der Kastanienbaum',
                             'navTitle' => 'Und jetzt... Der Kastanienbaum',
+                            'payload' => Array(),
                         ),
                 ),
             22 =>
@@ -1501,6 +1543,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Excluded',
                             'navTitle' => 'Excluded',
+                            'payload' => Array(),
                         ),
                 ),
             23 =>
@@ -1520,6 +1563,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Excluded-child',
                             'navTitle' => 'Excluded-child',
+                            'payload' => Array(),
                         ),
                 ),
             24 =>
@@ -1539,6 +1583,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Non-excluded-child',
                             'navTitle' => 'Non-excluded-child',
+                            'payload' => Array(),
                         ),
                 ),
             25 =>
@@ -1558,6 +1603,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Parameter-with-translated-values',
                             'navTitle' => 'Parameter-with-translated-values',
+                            'payload' => Array(),
                         ),
                 ),
             26 =>
@@ -1577,6 +1623,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Parameter-with-translated-values',
                             'navTitle' => 'Parameter-with-translated-values',
+                            'payload' => Array(),
                         ),
                 ),
             27 =>
@@ -1596,6 +1643,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Parameter-with-values',
                             'navTitle' => 'Parameter-with-values',
+                            'payload' => Array(),
                         ),
                 ),
             28 =>
@@ -1615,6 +1663,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Parameter-with-values',
                             'navTitle' => 'Parameter-with-values',
+                            'payload' => Array(),
                         ),
                 ),
             29 =>
@@ -1639,6 +1688,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Permanent-redirect',
                             'navTitle' => 'Permanent-redirect',
+                            'payload' => Array(),
                         ),
                 ),
             30 =>
@@ -1663,6 +1713,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Redirect',
                             'navTitle' => 'Redirect',
+                            'payload' => Array(),
                         ),
                 ),
             31 =>
@@ -1682,6 +1733,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Resource',
                             'navTitle' => 'Resource',
+                            'payload' => Array(),
                         ),
                 ),
             32 =>
@@ -1700,6 +1752,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Resource',
                             'navTitle' => 'Resource',
+                            'payload' => Array(),
                         ),
                 ),
             33 =>
@@ -1719,6 +1772,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Resource erstellen',
                             'navTitle' => 'Erstellen',
+                            'payload' => Array(),
                         ),
                 ),
             34 =>
@@ -1738,6 +1792,10 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Startpage',
                             'navTitle' => 'Startpage',
+                            'payload' => Array(
+                                'translatedPayload' => 'Translated Payload',
+                                'booleanPayload' => true
+                            ),
                         ),
                 ),
             35 =>
@@ -1757,6 +1815,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Auth',
                             'navTitle' => 'Auth',
+                            'payload' => Array(),
                         ),
                 ),
             36 =>
@@ -1776,6 +1835,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Auth-child',
                             'navTitle' => 'Auth-child',
+                            'payload' => Array(),
                         ),
                 ),
             37 =>
@@ -1795,6 +1855,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Articles about flowers',
                             'navTitle' => 'Articles about flowers',
+                            'payload' => Array(),
                         ),
                 ),
             38 =>
@@ -1814,6 +1875,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Articles about trees',
                             'navTitle' => 'Articles about trees',
+                            'payload' => Array(),
                         ),
                 ),
             39 =>
@@ -1833,6 +1895,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Article',
                             'navTitle' => 'Article',
+                            'payload' => Array(),
                         ),
                 ),
             40 =>
@@ -1852,6 +1915,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Article',
                             'navTitle' => 'Article',
+                            'payload' => Array(),
                         ),
                 ),
             41 =>
@@ -1871,6 +1935,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Article',
                             'navTitle' => 'Article',
+                            'payload' => Array(),
                         ),
                 ),
             42 =>
@@ -1890,6 +1955,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Article',
                             'navTitle' => 'Article',
+                            'payload' => Array(),
                         ),
                 ),
             43 =>
@@ -1909,6 +1975,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Article',
                             'navTitle' => 'Article',
+                            'payload' => Array(),
                         ),
                 ),
             44 =>
@@ -1928,6 +1995,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Article',
                             'navTitle' => 'Article',
+                            'payload' => Array(),
                         ),
                 ),
             45 =>
@@ -1947,6 +2015,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Blog-using-resources',
                             'navTitle' => 'Blog-using-resources',
+                            'payload' => Array(),
                         ),
                 ),
             46 =>
@@ -1966,6 +2035,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Articles about flowers',
                             'navTitle' => 'Articles about flowers',
+                            'payload' => Array(),
                         ),
                 ),
             47 =>
@@ -1985,6 +2055,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Articles about trees',
                             'navTitle' => 'Articles about trees',
+                            'payload' => Array(),
                         ),
                 ),
             48 =>
@@ -2004,6 +2075,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Articles',
                             'navTitle' => 'Articles',
+                            'payload' => Array(),
                         ),
                 ),
             49 =>
@@ -2023,6 +2095,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Articles',
                             'navTitle' => 'Articles',
+                            'payload' => Array(),
                         ),
                 ),
             50 =>
@@ -2042,6 +2115,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Articles: the-rose',
                             'navTitle' => 'the-rose',
+                            'payload' => Array(),
                         ),
                 ),
             51 =>
@@ -2061,6 +2135,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Articles: the-tulip',
                             'navTitle' => 'the-tulip',
+                            'payload' => Array(),
                         ),
                 ),
             52 =>
@@ -2080,6 +2155,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Articles: the-lily',
                             'navTitle' => 'the-lily',
+                            'payload' => Array(),
                         ),
                 ),
             53 =>
@@ -2099,6 +2175,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Articles: the-larch',
                             'navTitle' => 'the-larch',
+                            'payload' => Array(),
                         ),
                 ),
             54 =>
@@ -2118,6 +2195,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Articles: the-larch',
                             'navTitle' => 'the-larch',
+                            'payload' => Array(),
                         ),
                 ),
             55 =>
@@ -2137,6 +2215,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Articles: the-chestnut',
                             'navTitle' => 'the-chestnut',
+                            'payload' => Array(),
                         ),
                 ),
             56 =>
@@ -2156,6 +2235,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Excluded',
                             'navTitle' => 'Excluded',
+                            'payload' => Array(),
                         ),
                 ),
             57 =>
@@ -2175,6 +2255,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Excluded-child',
                             'navTitle' => 'Excluded-child',
+                            'payload' => Array(),
                         ),
                 ),
             58 =>
@@ -2194,6 +2275,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Non-excluded-child',
                             'navTitle' => 'Non-excluded-child',
+                            'payload' => Array(),
                         ),
                 ),
             59 =>
@@ -2213,6 +2295,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Parameter-with-translated-values',
                             'navTitle' => 'Parameter-with-translated-values',
+                            'payload' => Array(),
                         ),
                 ),
             60 =>
@@ -2232,6 +2315,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Parameter-with-translated-values',
                             'navTitle' => 'Parameter-with-translated-values',
+                            'payload' => Array(),
                         ),
                 ),
             61 =>
@@ -2251,6 +2335,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Parameter-with-values',
                             'navTitle' => 'Parameter-with-values',
+                            'payload' => Array(),
                         ),
                 ),
             62 =>
@@ -2270,6 +2355,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Parameter-with-values',
                             'navTitle' => 'Parameter-with-values',
+                            'payload' => Array(),
                         ),
                 ),
             63 =>
@@ -2294,6 +2380,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Permanent-redirect',
                             'navTitle' => 'Permanent-redirect',
+                            'payload' => Array(),
                         ),
                 ),
             64 =>
@@ -2318,6 +2405,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Redirect',
                             'navTitle' => 'Redirect',
+                            'payload' => Array(),
                         ),
                 ),
             65 =>
@@ -2337,6 +2425,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Resource',
                             'navTitle' => 'Resource',
+                            'payload' => Array(),
                         ),
                 ),
             66 =>
@@ -2355,6 +2444,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Resource',
                             'navTitle' => 'Resource',
+                            'payload' => Array(),
                         ),
                 ),
             67 =>
@@ -2374,6 +2464,7 @@ trait UsesTestRoutes
                                 ),
                             'title' => 'Create Resource',
                             'navTitle' => 'Create',
+                            'payload' => Array(),
                         ),
                 ),
         ));

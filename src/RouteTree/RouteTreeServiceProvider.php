@@ -91,7 +91,7 @@ class RouteTreeServiceProvider extends ServiceProvider
         $router = $this->app['router'];
         if (config('routetree.api.enabled')) {
             $router->group(['prefix' => config('routetree.api.base_path'), 'middleware' => 'api'], function (Router $router) {
-                $router->resource('paths', RoutesController::class)->only('index');
+                $router->resource('routes', RoutesController::class)->only(['index', 'show']);
             });
         }
     }

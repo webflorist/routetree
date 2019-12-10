@@ -8,9 +8,9 @@ use Illuminate\Support\Collection;
 /**
  * Class RegisteredRoute
  *
- * A Route registered with RouteTree
+ * A container object registered with RouteTree
  * containing all relevant related
- * objects and information.
+ * objects and information about a Route.
  *
  * @package Webflorist\RouteTree
  */

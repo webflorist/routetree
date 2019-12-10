@@ -284,4 +284,23 @@ class RoutePayload
         return $payload;
     }
 
+    public function toArray(?array $parameters = null, ?string $locale = null) : array
+    {
+
+        $return = [];
+
+        if ($this->routeAction !== null) {
+            $return = $this->routeNode->payload->toArray($parameters, $locale);
+        }
+
+        $publicProperties = (new \ReflectionObject($this))->getProperties(\ReflectionProperty::IS_PUBLIC);
+
+        foreach ($publicProperties as $property) {
+            $propertyName = $property->getName();
+            $return[$propertyName] = $this->get($propertyName, $parameters, $locale);
+        }
+
+        return $return;
+    }
+
 }
