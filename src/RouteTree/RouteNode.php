@@ -896,7 +896,7 @@ class RouteNode
     {
 
         // Check, if the current node is identical to this node.
-        if (route_tree()->getCurrentNode() === $this) {
+        if (route_tree()->hasCurrentAction() && route_tree()->getCurrentNode() === $this) {
 
             // If no parameters are specifically requested, we immediately return true.
             if (is_null($parameters)) {

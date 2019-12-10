@@ -21,30 +21,26 @@ if (!function_exists('route_node')) {
     /**
      * Retrieves (current or specific) RouteNode.
      *
-     * If no RouteNode was found,
-     * falls back to $fallbackId
-     * (default is root node).
+     * Will throw a NodeNotFoundException
      *
      * @param string|null $id Leave null go get current RoutNode
-     * @param string $fallbackId Default is to always fall back to the root node.
      * @return RouteNode
+     * @throws NodeNotFoundException
      */
-    function route_node(?string $id=null, string $fallbackId='') : RouteNode
+    function route_node(?string $id=null) : RouteNode
     {
-        if (is_string($id)) {
-            try {
+        $fallbackNodeId = config('routetree.route_node_fallback');
+        try {
+            if (is_string($id)) {
                 return route_tree()->getNode($id);
-            } catch (NodeNotFoundException $e) {
-                return route_node($fallbackId);
             }
-        }
-
-        if (route_tree()->hasCurrentAction()) {
             return route_tree()->getCurrentNode();
-        }
 
-        if (!is_null($fallbackId)) {
-            return route_node($fallbackId);
+        } catch (NodeNotFoundException $e) {
+            if (!is_null($fallbackNodeId) && $fallbackNodeId !== $id) {
+                return route_node($fallbackNodeId);
+            }
+            throw $e;
         }
     }
 }

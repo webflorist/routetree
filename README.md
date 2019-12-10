@@ -359,7 +359,7 @@ Now that we have defined the RouteTree, it's RouteNodes can be accessed anywhere
 - `route_node()` will return the currently active RouteNode.
 - `route_node('company.team.contact')` will return the RouteNode with ID `company.team.contact`
 
-If `route_node()` fails to find the current/specified node, it will fall back to the root node. You can specify another fallback-node using the method's second parameter.
+If `route_node()` fails to find the current/specified node, it will throw a `NodeNotFoundException`, except a fallback node is set in the config `routetree.route_node_fallback`. The default config sets the fallback node to the root node, since you will probably want to inhibit `NodeNotFoundExceptions` in a production environment.
 
 ## Generating URLs
 

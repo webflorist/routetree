@@ -125,17 +125,16 @@ class RouteTree
     /**
      * Get the currently active node.
      *
-     * Falls back to the root node,
-     * if no RouteNode is currently active.
-     *
      * @return RouteNode|null
+     * @throws NodeNotFoundException
      */
     public function getCurrentNode()
     {
         if ($this->hasCurrentAction()) {
             return $this->currentAction->getRouteNode();
         }
-        return $this->rootNode;
+
+        throw new NodeNotFoundException("No current node could not be determined.");
     }
 
     /**

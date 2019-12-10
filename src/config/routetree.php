@@ -28,6 +28,26 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Fallback node
+    |--------------------------------------------------------------------------
+    |
+    | This fallback node will be used by the route_node() helper if:
+    | - the current node could not be determined (e.g. in case of a 404),
+    | - a specific node-ID does not exist (e.g. after deletion or moving a node).
+    |
+    | Setting this to null will throw an exception, if a node could not be found,
+    | which is the recommended value for development environments, since you
+    | immediately realize an error (e.g. a mis-typed RouteNode-ID).
+    |
+    | In production environments, the default-value sets this to the
+    | root-node-ID (= empty string = '') to circumvent NodeNotFoundExceptions.
+    | You can also set any other fallback node (e.g. a dedicated '404' node).
+    |
+    */
+    'route_node_fallback' => env('APP_ENV') === 'production' ? '' : null,
+
+    /*
+    |--------------------------------------------------------------------------
     | Translation Settings
     |--------------------------------------------------------------------------
     |
