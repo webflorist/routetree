@@ -40,6 +40,22 @@ Here is a complete feature overview:
 * **Cacheable** (in combination with Laravel's route caching).
 * **REST-API** to retrieve list of routes or various information or `Payload` from specific routes.
 
+## Table of Contents
+- [Installation](#installation)
+- [Usage](#usage)
+- [Accessing the RouteTree-service](#accessing-the-routetree-service)
+- [Defining the RouteTree](#defining-the-routetree)
+- [Retrieving Nodes from the RouteTree](#retrieving-nodes-from-the-routetree)
+- [Generating URLs](#generating-urls)
+- [Route Payload](#route-payload)
+- [Automatic Translation](#automatic-translation)
+- [Caching](#caching)
+- [Sitemap Generation](#sitemap-generation)
+- [API](#api)
+- [Important RouteTree-methods](#important-routetree-methods)
+- [Important RouteNode-methods](#important-routenode-methods)
+- [Helper functions](#helper-functions)
+
 ## Installation
 1. Require the package via composer:  
 `php composer require webflorist/routetree`
@@ -51,9 +67,7 @@ E.g.: `'locales' => ['en','de']`.
 
 Note that this package is configured for automatic discovery for Laravel. Thus the package's Service Provider `Webflorist\RouteTree\RouteTreeServiceProvider` as well as the `RouteTree` alias will be automatically registered with Laravel.
 
-## Usage
-
-### Accessing the RouteTree-service
+## Accessing the RouteTree-service
 There are several ways to access the RouteTree service:
  * via helper function:  `route_tree()`
  * via Laravel facade: `\RouteTree`
@@ -61,13 +75,13 @@ There are several ways to access the RouteTree service:
 
 The following code examples will use the helper-function `route_tree()`.
 
-### Defining the RouteTree
+## Defining the RouteTree
 
 Just like with Laravel's own routing, your can define the RouteTree in your `routes/web.php`.
 
-For better comparability of syntaxes, wherethe following examples will correspond to the ones presented in Laravel's documentation (https://laravel.com/docs/master/routing) where possible. They will also assume 2 configured languages (`'en','de'`) - if not otherwise stated.
+For better comparability of syntaxes, wherethe following examples will correspond to the ones presented in [Laravel's Routing documentation](https://laravel.com/docs/master/routing) where possible. They will also assume 2 configured languages (`'en','de'`) - if not otherwise stated.
 
-#### Basic Routing
+### Basic Routing
 ```php
 route_tree()->node('foo', function (RouteNode $node) {
     $node->get(function() {
@@ -101,7 +115,7 @@ In the above example, the RouteNode's setup closure is skipped and instead the `
 
 Both syntax variants will be used in the following examples.
 
-#### Available RouteActions
+### Available RouteActions
 RouteNodes provide public methods to register RouteActions that respond to any HTTP verb:
 
 ```php
@@ -115,7 +129,7 @@ route_tree()->node('foo', function (RouteNode $node) {
 });
 ```
 
-#### Redirect Actions
+### Redirect Actions
 You can also define redirecting nodes and state the target nodes by their ID:
 ```php
 route_tree()->node('here')->redirect('there');
@@ -134,21 +148,21 @@ You can customize the status code using the optional second parameter:
 
 You can also use `$node->permanentRedirect()` to return a 301 status code.
 
-#### View Actions
+### View Actions
 If a RouteNode should only return a view, you can use the `view` method:
 ```php
 route_tree()->node('welcome')->view('welcome');
 ```
 You can pass data to the view via the second parameter of the `view` method.
 
-#### Configuring the Root Node
+### Configuring the Root Node
 The `route_tree()->node()` method used in the above examples automatically creates nodes with the root node as parent. You can configure the root node itself using the `root` method instead:
 ```php
 route_tree()->root()->view('welcome');
 ```
 You cannot state a name for the root node. It's name and ID will always be an empty string (`''`).
 
-#### Adding Child Nodes
+### Adding Child Nodes
 There are several ways to create a node as a child of another node:
 - by calling `$node->child($childName, $childCallback)` within the parent's setup-callback.
 - by stating the parent RouteNode's ID as the third parameter of the `node` method: `route_tree()->node($childName, $childCallback, $parentId);`
@@ -164,7 +178,7 @@ You can disable inheriting the segment to it's descendants by calling `$node->in
 
 As with Laravel's Route groups, middleware and (controller-)namespaces will be also inherited by default.
 
-#### Path Segments
+### Path Segments
 
 By default a RouteNode's name will also be it's path segment. But you can also state a different segment for a node by calling the RouteNode's `segment` method:
 ```php
@@ -191,9 +205,9 @@ This will register the following routes:
 - Route with name `de.company.get` and path `de/our-great-company`
 - Route with name `en.company.get` and path `en/unsere-tolle-firma`
 
-You can also handle segment-translations via your language-files using the `Automatic translation` functionality (see below).
+You can also handle segment-translations via your language-files using the [Automatic Translation](#automatic-translation) functionality.
 
-#### Middleware
+### Middleware
 
 You can assign middleware to RouteNodes using:
 ```php
@@ -226,7 +240,7 @@ This will register the following routes:
 - `POST` Routes with the `auth` middleware.
 - `DELETE` Routes with both the `auth` and `admin` middleware.
 
-#### Controller Namespaces
+### Controller Namespaces
 
 By default all `Controller@method` callback definitions will use `App\Http\Controllers` as the namespace.
 
@@ -245,7 +259,7 @@ route_tree()->node('account', function (RouteNode $node) {
 });
 ```
 
-#### Route Parameters
+### Route Parameters
 The following code will result in the creation of the routes `en/user/{id}` and `de/user/{id}`.
 ```php
 route_tree()->node('user', function (RouteNode $node) {
@@ -292,7 +306,7 @@ public static function translateRouteKey(string $value, string $toLocale, string
 }
 ```
 
-#### Resourceful RouteNodes
+### Resourceful RouteNodes
 
 Akin to Laravel's [`Route::resource()` method](https://laravel.com/docs/master/controllers#restful-resource-controllers), RouteTree can also register resourceful routes:
 ```php 
@@ -339,7 +353,7 @@ The above code will additionally generate the following routes:
 - Route `en.photos.featured.get` with the URI `en/photos/{photo}/featured`.
 - Route `de.photos.featured.get` with the URI `de/photos/{photo}/featured`.
 
-### Retrieving Nodes from the RouteTree
+## Retrieving Nodes from the RouteTree
 
 Now that we have defined the RouteTree, it's RouteNodes can be accessed anywhere in your application using the `route_node()` helper:
 - `route_node()` will return the currently active RouteNode.
@@ -347,7 +361,7 @@ Now that we have defined the RouteTree, it's RouteNodes can be accessed anywhere
 
 If `route_node()` fails to find the current/specified node, it will fall back to the root node. You can specify another fallback-node using the method's second parameter.
 
-### Generating URLs
+## Generating URLs
 
 One of RouteTree's central use cases is to create language-agnostic links. Both RouteNodes and RouteActions have a `getUrl()` method, that returns a `RouteUrlBuilder` object, which will generate the corresponding URL when cast to a string.
 
@@ -362,16 +376,16 @@ The returned `RouteUrlBuilder` object has several fluent setters to modify the g
 `(string) route_node('company')->getUrl()->absolute(false)` will return a relative path instead of an absolute URL inkl. the domain (default can be configured in `routetree.absolute_urls`)
 
 * ->**action** ( string $locale ) : RouteUrlBuilder  
-`(string) route_node('photos')->action('create')` will return the URL of the `resource` action `create` (effectively appending `'/create'` to the URL by default in `en` locale). See the table at [#Resourceful RouteNodes] for details. By default the `index` or the first `GET` action will be used. Note that with the actions `show`, `edit`, `update` and `destroy` you will also have to state the route keys to set for the url `parameter(s)` (see just below).  
+`(string) route_node('photos')->action('create')` will return the URL of the `resource` action `create` (effectively appending `'/create'` to the URL by default in `en` locale). See the table at [Resourceful RouteNodes](#resourceful-routenodes) for details. By default the `index` or the first `GET` action will be used. Note that with the actions `show`, `edit`, `update` and `destroy` you will also have to state the route keys to set for the url `parameter(s)` (see just below).  
 
-* ->**parameters** ( array $rout ) : RouteUrlBuilder  
+* ->**parameters** ( array $parameters ) : RouteUrlBuilder  
 `(string) route_node('photos')->action('edit')->parameters(['photo' => 'my-slug'])` would result in the URL `/en/photos/my-slug/edit` using the locale `en`. Any URL to a Route containing one or more parameters will need values to fill in for those parameters, and thus a key within the handed array. E.g. `photo/{photo_id}/comments/{comment_id}` would require ``['photo_id' => $photoId, 'comment_id' => $commentId]`` to be passed. Any missing route keys (aka parameter-values aka slugs) are taken from the currently active Laravel `Request` - if possible.
 
-### Route Payload
+## Route Payload
 
 You can define an access any information you want to a RouteNode using it's associated `RoutePayload` object, which is publicly accessible via a node's `payload` property.
 
-#### Defining Payload
+### Defining Payload
 
 You can set a payload item directly in the `RoutePayload` object using the following syntax-options:
 - by calling a `RoutePayload`'s `set` method:  
@@ -393,7 +407,7 @@ $node->payload->title = LanguageMapping::create()
 );
 ```
 
-You can also handle payload translations via your language-files using the `Automatic translation` functionality (see below).
+You can also handle payload translations via your language-files using the [Automatic Translation](#automatic-translation) functionality.
 
 If you want to have different values of a payload depending on an action, you can override a RouteNode's payload using a RouteAction's payload. Here is an example:
 ```php
@@ -415,7 +429,7 @@ public static function getRoutePayload(string $payloadKey, array $parameters, st
 }
 ```
 
-#### Retrieving Payload
+### Retrieving Payload
 
 Payload can be retrieved anywhere in your app.  using the `get` method of a `RoutePayload`. Example using the current RouteNode and RouteAction:
 
@@ -427,7 +441,7 @@ This will look for the `title` payload using the following order:
 1. Payload set directly in this class.
 2. Payload set in the RouteNode's RoutePayload (only if this RoutePayload is RouteAction-specific.)
 3. Payload returned from an Eloquent Model (only if RouteNode has a RouteParameter associated with an Eloquent Model, that implements ProvidesRoutePayload)
-4. Using Auto-Translation by searching for payload at a translation-key relative to the RouteNode's ID (see [#Automatic translation]).
+4. Using Auto-Translation by searching for payload at a translation-key relative to the RouteNode's ID (see [Automatic Translation](#automatic_translation)).
 
 There are multiple use-cases, where this payload functionality can be useful
 This is very useful to e.g.:
@@ -436,7 +450,7 @@ This is very useful to e.g.:
 * Set a language-specific abstract for each page, displayed on a sitemap.
 * and much much more...
 
-#### Special `title` and `navTitle` payloads
+### Special `title` and `navTitle` payloads
 
 Page titles (for meta tags, canonical tags, title attributes of links, navigation menus, breadcrumbs, h1-tags, etc.) are probably one of the most used applications for payloads. Also quite often you might want to have a special (shorter) title for pages in navigation menus. To simplify handing of this, RouteNodes and RouteActions have special `getTitle()` and `getNavTitle()` methods, that add some additional fallback magic:
 - Not set `navTitle` falls back to `title`.
@@ -445,7 +459,7 @@ Page titles (for meta tags, canonical tags, title attributes of links, navigatio
 
 To utilize this magic, always use e.g. `route_node()->getTitle()` instead of `route_node()->payload->get('title')` and `route_node()->getNavTitle()` instead of `route_node()->payload->get('navTitle')`.
 
-### Auto-translation
+## Automatic Translation
 
 RouteTree also includes some magic regarding automatic translation. The basic concept is to map the hierarchy of the RouteTree to a folder-structure within the localization-folder.
 
@@ -455,7 +469,7 @@ There are 2 seperate auto-translation-functionalities:
 1. Auto-translation of a node's path-segment and payload (e.g. title, navTitle, description, etc.)
 2. Auto-translation of regular page-content.
 
-#### Auto-translation of a node's path-segment and payload
+### Auto-translation of a node's path-segment and payload
 
 This provides an easy and intuitive way of configuring multi-language variants of the path-segment, page-title, or any other custom information for routes through Laravel's localization-files.
  
@@ -569,19 +583,19 @@ return [
 ];
 ```
 
-#### Auto-translation of regular page-content
+### Auto-translation of regular page-content
 
 With most websites you will want to translate page-content in your views. RouteTree includes a handy helper-function called `trans_by_route()`, that will use the same folder-structure but with the language-file named as the last RouteNode.
 
 Using the example above the location of this file for the `office` page would be : `./company/team/office.php`
 
-### Caching
+## Caching
 If you are using Laravels route caching, RouteTree must cache it's own data too. So instead of `'artisan route:cache'` use RouteTree's caching-command, which will also take care of caching Laravel's routes:
 ```
 php artisan routetree:route-cache
 ```
 
-### Sitemap Generation
+## Sitemap Generation
 Having an up-to-date `sitemap.xml` file is an important criteria for a modern search engine optimized website. RouteTree includes an artisan command, that will create such a file:
 ```
 php artisan routetree:generate-sitemap
@@ -620,11 +634,11 @@ $node->sitemap
 ```
 Furthermore you can also use payload translation (either via an `Eloquent` model or via language files) to automatically retrieve these values.
 
-### API
+## API
 
 ---------TODO-----------
 
-### Important RouteTree-methods
+## Important RouteTree-methods
 
 For the already mentioned and explained methods `root()`, `node()` please see the corresponding sections above.
 
@@ -652,7 +666,7 @@ Here are some other useful methods of the RouteNode-class:
 * **isActive**: Checks, if the current node is currently active (optionally with the desired parameters) (e.g. useful to apply a CSS-class to an active link).
 * **nodeOrChildIsActive**: Checks, if the current node or one of it's children is currently active (optionally with the desired parameters) (e.g. useful to apply a CSS-class to an active link).
 
-### Helper functions
+## Helper functions
 
 Several helper-functions are included with this package:
 
