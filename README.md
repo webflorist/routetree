@@ -636,7 +636,26 @@ Furthermore you can also use payload translation (either via an `Eloquent` model
 
 ## API
 
----------TODO-----------
+RouteTree also includes an API, that allows fetching information about routes registered with RouteTree. The API must be enabled via config `routetree.api.enabled` and has the default base-url `api/routetree/` (also configurable).
+
+At the moment there are 2 endpoints:
+- `GET api/routetree/routes`:  
+Returns collection of routes registered with Routetree.
+- `GET api/routetree/routes/{route_name}`:  
+Returns information about a route registered with Routetree.
+
+## Events
+
+RouteTree dispatches events in various cases:
+
+- `\Webflorist\RouteTree\Events\LocaleChanged`  
+Is dispatched, when the locale saved in session by the `RouteTreeMiddleware` is changed. The old locale is available via the `$oldLocale` property of the event, and the new locale via `$newLocale`.
+
+- `\Webflorist\RouteTree\Events\NodeNotFound`  
+Is dispatched, when `route_node()` is called and the current or specified node could not be found. The specified RouteNode ID is available via the `$nodeId` property of the event, and is `null` in case no current node was found.
+
+- `\Webflorist\RouteTree\Events\Redirected`  
+Is dispatched, when the `RouteTreeMiddleware` performs an automatic redirect. The destination URI is available via the `$toUri` property of the event, and the source URI via `$fromUri`.
 
 ## Important RouteTree-methods
 

@@ -1,5 +1,6 @@
 <?php
 
+use Webflorist\RouteTree\Events\NodeNotFound;
 use Webflorist\RouteTree\RouteNode;
 use Webflorist\RouteTree\Exceptions\NodeNotFoundException;
 use Webflorist\RouteTree\RouteTree;
@@ -37,6 +38,7 @@ if (!function_exists('route_node')) {
             return route_tree()->getCurrentNode();
 
         } catch (NodeNotFoundException $e) {
+            event(new NodeNotFound($id));
             if (!is_null($fallbackNodeId) && $fallbackNodeId !== $id) {
                 return route_node($fallbackNodeId);
             }

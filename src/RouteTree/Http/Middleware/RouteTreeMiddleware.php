@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Webflorist\RouteTree\Events\LocaleChanged;
+use Webflorist\RouteTree\Events\Redirected;
 use Webflorist\RouteTree\RegisteredRoute;
 use Webflorist\RouteTree\RouteAction;
 use Webflorist\RouteTree\RouteTree;
@@ -73,6 +75,7 @@ class RouteTreeMiddleware
         if (is_null($currentRoute)) {
             $redirectLocation = $this->determineRedirect($request);
             if (!is_null($redirectLocation)) {
+                event(new Redirected($request->getPathInfo(), $redirectLocation));
                 return redirect()->to($redirectLocation);
             }
         }
@@ -203,8 +206,13 @@ class RouteTreeMiddleware
      */
     private function setLocale(Request $request, ?Route $currentRoute)
     {
+        $oldLocale = session()->get('locale');
         $locale = $this->determineLocale($request, $currentRoute);
         app()->setLocale($locale);
         session()->put('locale', $locale);
+
+        if ($oldLocale !== $locale) {
+            event(new LocaleChanged($locale, $oldLocale));
+        }
     }
 }
