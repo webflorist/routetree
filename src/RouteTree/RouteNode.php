@@ -1213,4 +1213,17 @@ class RouteNode
         return $this->getTitle($parameters, $locale, $useCurrentAction);
     }
 
+    /**
+     * Returns the name of this RouteNode's RouteParameter.
+     * Returns null, if current RouteNode does not have a parameter.
+     *
+     * @return string|null
+     */
+    public function getParameter() {
+        if ($this->parameter instanceof RouteParameter) {
+            return $this->parameter->getName();
+        }
+        return null;
+    }
+
 }
