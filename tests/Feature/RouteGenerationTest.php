@@ -14,7 +14,7 @@ class RouteGenerationTest extends TestCase
     public function test_root_node_with_closure()
     {
         $this->routeTree->root(function (RouteNode $rootNode) {
-
+            $rootNode->middleware('web');
             $rootNode->get(function () {
                 return TestCase::getRouteTestData();
             });
@@ -28,7 +28,7 @@ class RouteGenerationTest extends TestCase
                 "method" => "GET",
                 "uri" => "de",
                 "action" => "Closure",
-                "middleware" => [],
+                "middleware" => ['web' => 'web'],
                 "content" => [
                     'id' => '',
                     'method' => 'GET',
@@ -43,7 +43,7 @@ class RouteGenerationTest extends TestCase
                 "method" => "GET",
                 "uri" => "en",
                 "action" => "Closure",
-                "middleware" => [],
+                "middleware" => ['web' => 'web'],
                 "content" => [
                     'id' => '',
                     'method' => 'GET',

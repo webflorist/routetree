@@ -44,6 +44,7 @@ trait UsesTestRoutes
     public static function generateComplexTestRoutes(RouteTree $routeTree): void
     {
         $routeTree->root(function (RouteNode $node) {
+            $node->middleware('web');
             $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
 
             $node->payload->translatedPayload = LanguageMapping::create()
@@ -158,10 +159,10 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de/auth/auth-child',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(
-                            'auth' => 'auth',
-                        ),
+                    'middleware' => array(
+                        'auth' => 'auth',
+                        'web' => 'web'
+                    ),
                     'statusCode' => 500,
                 ),
             'de.auth.get' =>
@@ -169,10 +170,10 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de/auth',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(
-                            'auth' => 'auth',
-                        ),
+                    'middleware' => array(
+                        'auth' => 'auth',
+                        'web' => 'web'
+                    ),
                     'statusCode' => 500,
                 ),
             'de.blog-using-parameters.category.article.show' =>
@@ -180,8 +181,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de/blog-using-parameters/{category}/{article}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'blog-using-parameters.category.article',
@@ -200,8 +202,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de/blog-using-parameters/{category}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'blog-using-parameters.category',
@@ -220,8 +223,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de/blog-using-resources/{category}/articles',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@index',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'blog-using-resources.articles',
@@ -240,8 +244,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de/blog-using-resources/articles/{article}/print',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@print',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'blog-using-resources.articles.print',
@@ -260,8 +265,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de/blog-using-resources/{category}/articles/{article}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@show',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'blog-using-resources.articles',
@@ -280,8 +286,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de/blog-using-resources',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@index',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'blog-using-resources',
@@ -300,8 +307,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de/blog-using-resources/{category}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@show',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'blog-using-resources',
@@ -320,8 +328,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de/excluded/excluded-child',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'excluded.excluded-child',
@@ -340,8 +349,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de/excluded',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'excluded',
@@ -360,8 +370,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de/excluded/non-excluded-child',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'excluded.non-excluded-child',
@@ -380,8 +391,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => '',
@@ -400,8 +412,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de/parameter-with-translated-values/{parameter-with-translated-values}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'parameter-with-translated-values.parameter-with-translated-values',
@@ -420,8 +433,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de/parameter-with-values/{parameter-with-values}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'parameter-with-values.parameter-with-values',
@@ -440,8 +454,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de/parameter/{parameter}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'parameter.parameter',
@@ -460,8 +475,9 @@ trait UsesTestRoutes
                     'method' => 'GET|POST|PUT|PATCH|DELETE|OPTIONS',
                     'uri' => 'de/permanent-redirect',
                     'action' => '\\Illuminate\\Routing\\RedirectController',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'redirectTarget' => '/de/excluded',
                     'statusCode' => 301,
                 ),
@@ -470,8 +486,9 @@ trait UsesTestRoutes
                     'method' => 'GET|POST|PUT|PATCH|DELETE|OPTIONS',
                     'uri' => 'de/redirect',
                     'action' => '\\Illuminate\\Routing\\RedirectController',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'redirectTarget' => '/de/excluded',
                     'statusCode' => 302,
                 ),
@@ -480,8 +497,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de/resource/erstellen',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@create',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'resource',
@@ -500,8 +518,9 @@ trait UsesTestRoutes
                     'method' => 'DELETE',
                     'uri' => 'de/resource/{resource}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@destroy',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'resource',
@@ -520,8 +539,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de/resource/{resource}/bearbeiten',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@edit',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'resource',
@@ -540,8 +560,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de/resource',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@index',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'resource',
@@ -560,8 +581,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'de/resource/{resource}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@show',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'resource',
@@ -580,8 +602,9 @@ trait UsesTestRoutes
                     'method' => 'POST',
                     'uri' => 'de/resource',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@store',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'resource',
@@ -600,8 +623,9 @@ trait UsesTestRoutes
                     'method' => 'PUT',
                     'uri' => 'de/resource/{resource}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@update',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'resource',
@@ -620,10 +644,10 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en/auth/auth-child',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(
-                            'auth' => 'auth',
-                        ),
+                    'middleware' => array(
+                        'auth' => 'auth',
+                        'web' => 'web'
+                    ),
                     'statusCode' => 500,
                 ),
             'en.auth.get' =>
@@ -631,10 +655,10 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en/auth',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(
-                            'auth' => 'auth',
-                        ),
+                    'middleware' => array(
+                        'auth' => 'auth',
+                        'web' => 'web'
+                    ),
                     'statusCode' => 500,
                 ),
             'en.blog-using-parameters.category.article.show' =>
@@ -642,8 +666,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en/blog-using-parameters/{category}/{article}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'blog-using-parameters.category.article',
@@ -662,8 +687,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en/blog-using-parameters/{category}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'blog-using-parameters.category',
@@ -682,8 +708,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en/blog-using-resources/{category}/articles',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@index',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'blog-using-resources.articles',
@@ -702,8 +729,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en/blog-using-resources/articles/{article}/print',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@print',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'blog-using-resources.articles.print',
@@ -722,8 +750,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en/blog-using-resources/{category}/articles/{article}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@show',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'blog-using-resources.articles',
@@ -742,8 +771,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en/blog-using-resources',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@index',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'blog-using-resources',
@@ -762,8 +792,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en/blog-using-resources/{category}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@show',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'blog-using-resources',
@@ -782,8 +813,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en/excluded/excluded-child',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'excluded.excluded-child',
@@ -802,8 +834,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en/excluded',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'excluded',
@@ -822,8 +855,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en/excluded/non-excluded-child',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'excluded.non-excluded-child',
@@ -842,8 +876,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => '',
@@ -862,8 +897,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en/parameter-with-translated-values/{parameter-with-translated-values}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'parameter-with-translated-values.parameter-with-translated-values',
@@ -882,8 +918,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en/parameter-with-values/{parameter-with-values}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'parameter-with-values.parameter-with-values',
@@ -902,8 +939,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en/parameter/{parameter}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@get',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'parameter.parameter',
@@ -922,8 +960,9 @@ trait UsesTestRoutes
                     'method' => 'GET|POST|PUT|PATCH|DELETE|OPTIONS',
                     'uri' => 'en/permanent-redirect',
                     'action' => '\\Illuminate\\Routing\\RedirectController',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'redirectTarget' => '/en/excluded',
                     'statusCode' => 301,
                 ),
@@ -932,8 +971,9 @@ trait UsesTestRoutes
                     'method' => 'GET|POST|PUT|PATCH|DELETE|OPTIONS',
                     'uri' => 'en/redirect',
                     'action' => '\\Illuminate\\Routing\\RedirectController',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'redirectTarget' => '/en/excluded',
                     'statusCode' => 302,
                 ),
@@ -942,8 +982,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en/resource/create',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@create',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'resource',
@@ -962,8 +1003,9 @@ trait UsesTestRoutes
                     'method' => 'DELETE',
                     'uri' => 'en/resource/{resource}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@destroy',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'resource',
@@ -982,8 +1024,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en/resource/{resource}/edit',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@edit',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'resource',
@@ -1002,8 +1045,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en/resource',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@index',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'resource',
@@ -1022,8 +1066,9 @@ trait UsesTestRoutes
                     'method' => 'GET',
                     'uri' => 'en/resource/{resource}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@show',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'resource',
@@ -1042,8 +1087,9 @@ trait UsesTestRoutes
                     'method' => 'POST',
                     'uri' => 'en/resource',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@store',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'resource',
@@ -1062,8 +1108,9 @@ trait UsesTestRoutes
                     'method' => 'PUT',
                     'uri' => 'en/resource/{resource}',
                     'action' => '\\RouteTreeTests\\Feature\\Controllers\\TestController@update',
-                    'middleware' =>
-                        array(),
+                    'middleware' => array(
+                        'web' => 'web'
+                    ),
                     'content' =>
                         array(
                             'id' => 'resource',

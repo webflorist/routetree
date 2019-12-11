@@ -7,14 +7,15 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Webflorist\RouteTree\Events\LocaleChanged;
 use Webflorist\RouteTree\Events\Redirected;
+use Webflorist\RouteTree\Http\Middleware\Traits\DeterminesLocale;
 use Webflorist\RouteTree\RegisteredRoute;
 use Webflorist\RouteTree\RouteAction;
 use Webflorist\RouteTree\RouteTree;
 
 class RouteTreeMiddleware
 {
+    use DeterminesLocale;
 
     /**
      * The RouteTree instance.
@@ -66,14 +67,14 @@ class RouteTreeMiddleware
         // Find out and set the currently active action.
         $this->setCurrentAction($currentRoute);
 
-        // Set an appropriate locale.
-        $this->setLocale($request, $currentRoute);
+        // Determine and set current locale
+        app()->setLocale($this->determineLocale($request, $currentRoute));
 
         // If no route could be matched,
         // we might be able to redirect the user to
         // a corresponding resource.
         if (is_null($currentRoute)) {
-            $redirectLocation = $this->determineRedirect($request);
+            $redirectLocation = $this->determineRedirect($request, $currentRoute);
             if (!is_null($redirectLocation)) {
                 event(new Redirected($request->getPathInfo(), $redirectLocation));
                 return redirect()->to($redirectLocation);
@@ -114,66 +115,15 @@ class RouteTreeMiddleware
         }
     }
 
-    /**
-     * Check if $locale is a valid locale.
-     *
-     * @param string $locale
-     * @return bool
-     */
-    private function isValidLocale(string $locale)
-    {
-        return array_search($locale, RouteTree::getLocales()) !== false;
-    }
-
-    /**
-     * Determines locale using the following fallback:
-     *
-     * 1. From the first name-segment of a RouteTree generated Route. (e.g. "en.company.news.get").
-     * 2. From a (previously saved) session value.
-     * 3. From a HTTP_ACCEPT_LANGUAGE header sent by the client.
-     * 4. From config('app.locale').
-     *
-     * @param Request $request
-     * @param Route|null $currentRoute
-     * @return \Illuminate\Config\Repository|mixed
-     */
-    private function determineLocale(Request $request, ?Route $currentRoute)
-    {
-        // First try getting locale from first part of the current route name,
-        // if a currentRoute was determined.
-        if (!is_null($currentRoute)) {
-            $firstRouteNameSegment = explode('.', $currentRoute->getName())[0];
-            if ($this->isValidLocale($firstRouteNameSegment)) {
-                return $firstRouteNameSegment;
-            }
-        }
-
-        // Try getting locale from session next.
-        if (session()->has('locale')) {
-            return session()->get('locale');
-        }
-
-        // If a HTTP_ACCEPT_LANGUAGE header was sent by the client,
-        // we use that.
-        if (!is_null($acceptLanguage = $request->header('accept-language'))) {
-            foreach (explode(',', $acceptLanguage) as $acceptedLocale) {
-                if ($this->isValidLocale($acceptedLocale)) {
-                    return $acceptedLocale;
-                }
-            }
-        }
-
-        return config('app.locale');
-
-    }
 
     /**
      * Determine, if a redirect should take place.
      *
      * @param Request $request
+     * @param Route|null $currentRoute
      * @return string|null
      */
-    private function determineRedirect(Request $request)
+    private function determineRedirect(Request $request, ?Route $currentRoute)
     {
         // We only do redirects for GET requests.
         if ($request->method() !== 'GET') {
@@ -196,23 +146,5 @@ class RouteTreeMiddleware
             }
         });
         return $foundPath;
-    }
-
-    /**
-     * Sets locale in app() and session().
-     *
-     * @param Request $request
-     * @param Route|null $currentRoute
-     */
-    private function setLocale(Request $request, ?Route $currentRoute)
-    {
-        $oldLocale = session()->get('locale');
-        $locale = $this->determineLocale($request, $currentRoute);
-        app()->setLocale($locale);
-        session()->put('locale', $locale);
-
-        if ($oldLocale !== $locale) {
-            event(new LocaleChanged($locale, $oldLocale));
-        }
     }
 }

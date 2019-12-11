@@ -35,7 +35,7 @@ class EventsTest extends TestCase
 
         $this->generateComplexTestRoutes($this->routeTree);
 
-        $this->get('/');
+        $this->get('de');
 
         Event::assertDispatched(LocaleChanged::class, function (LocaleChanged $event) {
             $this->assertEquals(null, $event->oldLocale);

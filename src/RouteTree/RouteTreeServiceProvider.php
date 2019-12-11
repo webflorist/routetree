@@ -2,6 +2,7 @@
 
 namespace Webflorist\RouteTree;
 
+use Illuminate\Foundation\Http\Kernel;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Webflorist\RouteTree\Console\Commands\GenerateSitemapCommand;
@@ -9,6 +10,7 @@ use Webflorist\RouteTree\Console\Commands\RouteCacheCommand;
 use Webflorist\RouteTree\Console\Commands\RouteClearCommand;
 use Webflorist\RouteTree\Http\Controllers\Api\RoutesController;
 use Webflorist\RouteTree\Http\Middleware\RouteTreeMiddleware;
+use Webflorist\RouteTree\Http\Middleware\SessionLocaleMiddleware;
 
 class RouteTreeServiceProvider extends ServiceProvider
 {
@@ -34,7 +36,7 @@ class RouteTreeServiceProvider extends ServiceProvider
         $this->publishConfig();
         $this->registerArtisanCommands();
         $this->loadTranslations();
-        $this->addGlobalMiddleware(RouteTreeMiddleware::class);
+        $this->addMiddleware();
         $this->loadViews();
         $this->addRoutes();
 
@@ -80,9 +82,18 @@ class RouteTreeServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'webflorist-routetree');
     }
 
-    private function addGlobalMiddleware(string $middleware)
+    private function addMiddleware()
     {
-        $this->app['Illuminate\Contracts\Http\Kernel']->pushMiddleware($middleware);
+        /** @var Kernel $kernel */
+        $kernel = $this->app['Illuminate\Contracts\Http\Kernel'];
+        $kernel->pushMiddleware(RouteTreeMiddleware::class);
+
+
+        /** @var Router $router */
+        $router = $this->app['router'];
+        if($router->hasMiddlewareGroup('web')) {
+            $router->pushMiddlewareToGroup('web', SessionLocaleMiddleware::class);
+        }
     }
 
     private function addRoutes()
