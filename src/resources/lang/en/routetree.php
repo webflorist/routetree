@@ -2,10 +2,10 @@
 
 return [
 
-    'editTitle' => 'Edit: :item',
+    'editTitle' => 'Edit :resource: :item',
     'editNavTitle' => 'Edit',
     'editPathSegment' => 'edit',
-    'createTitle' => 'Create: :resource',
+    'createTitle' => 'Create :resource',
     'createNavTitle' => 'Create',
     'createPathSegment' => 'create',
 

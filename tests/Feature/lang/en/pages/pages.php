@@ -14,14 +14,8 @@ return [
         'parameter' => [
             'value1' => 'Value 1',
             'value2' => 'Value 2'
-        ]
+        ],
+        'photos' => 'Photos',
     ],
-
-    'values' => [
-        'parameter' => [
-            'value1' => 'value_1',
-            'value2' => 'value_2'
-        ]
-    ]
 
 ];

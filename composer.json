@@ -8,15 +8,15 @@
         }
     ],
     "require": {
-		"laravel/framework": "~5.5"
+        "laravel/framework": "~5.5"
     },
     "require-dev": {
         "orchestra/testbench": "~3.5"
     },
     "autoload": {
         "psr-4": {
-            "Webflorist\\RouteTree\\": "src/",
-	        "RouteTreeTests\\": "tests/"
+            "Webflorist\\RouteTree\\": "src/RouteTree/",
+            "RouteTreeTests\\": "tests/"
         },
         "files": [
             "src/helpers.php"
@@ -26,7 +26,10 @@
         "laravel": {
             "providers": [
                 "Webflorist\\RouteTree\\RouteTreeServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "RouteTree": "Webflorist\\RouteTree\\Facades\\RouteTree"
+            }
         }
     }
 }

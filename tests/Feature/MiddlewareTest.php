@@ -3,193 +3,184 @@
 namespace RouteTreeTests\Feature;
 
 use RouteTreeTests\TestCase;
+use Webflorist\RouteTree\LanguageMapping;
+use Webflorist\RouteTree\RouteNode;
 
 class MiddlewareTest extends TestCase
 {
 
-    protected $standardClosure = null;
-    /**
-     * Constructs a test case with the given name.
-     *
-     * @param string $name
-     * @param array  $data
-     * @param string $dataName
-     */
-    public function __construct($name = null, array $data = array(), $dataName = '')
+    protected function getDefaultAction()
     {
-        // Set standard closure.
-        $this->standardClosure = function () {
+        return function () {
             return json_encode([
                 'id' => route_tree()->getCurrentNode()->getId(),
-                'path' => trim(\Request::getPathInfo(),'/'),
+                'path' => trim(\Request::getPathInfo(), '/'),
                 'language' => \App::getLocale(),
             ]);
         };
+    }
 
-        // Set root-node.
-        $this->rootNode = [
-            'index' => ['closure' => $this->standardClosure]
-        ];
+    public function test_default_language()
+    {
+        $this->config->set('app.locale', 'de');
 
-        // Set expected default result.
-        $this->expectedResult = [
+        $this->routeTree->root(function (RouteNode $node) {
+            $node->get($this->getDefaultAction());
+        });
+        $this->assertJsonResponse('/', [
             "id" => "",
             "path" => "de",
             "language" => "de",
-        ];
-
-        parent::__construct($name, $data, $dataName);
+        ], true);
     }
 
 
-    public function testDefaultLanguage()
+    public function test_language_de()
     {
-        $this->performSingleUriTest();
+        $this->routeTree->root(function (RouteNode $node) {
+            $node->get($this->getDefaultAction());
+        });
+        $this->assertJsonResponse('/de', [
+            "id" => "",
+            "path" => "de",
+            "language" => "de",
+        ]);
     }
 
 
-    public function testLanguageDe()
+    public function test_language_en()
     {
-        $this->performSingleUriTest('/de');
+
+        $this->routeTree->root(function (RouteNode $node) {
+            $node->get($this->getDefaultAction());
+        });
+        $this->assertJsonResponse('/en', [
+            "id" => "",
+            "path" => "en",
+            "language" => "en",
+        ]);
     }
 
-
-    public function testLanguageEn()
+    public function test_404()
     {
-
-        $this->expectedResult["language"] = 'en';
-        $this->expectedResult["path"] = 'en';
-
-        $this->performSingleUriTest('/en');
+        $this->get('/foobar')->assertStatus(404);
     }
 
-    /**
-     * @expectedException           \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
-     */
-    public function test404()
+    public function test_auto_redirect_parent_german()
     {
+        $this->routeTree->node('parent', function (RouteNode $node) {
+            $node->get($this->getDefaultAction());
+            $node->segment(LanguageMapping::create()
+                ->set('de', 'eltern')
+                ->set('en', 'parent'));
+            $node->child('child', function (RouteNode $node) {
+                $node->get($this->getDefaultAction());
+            });
+        });
 
-        $this->performSingleUriTest('/foobar');
-    }
-
-    public function testAutoRedirectParentGerman()
-    {
-
-        $this->nodeTree = [
-            'parent' => [
-                'index' => ['closure' => $this->standardClosure],
-                'segment' => [
-                    'de' => 'eltern',
-                    'en' => 'parent'
-                ],
-                'children' => [
-                    'child' => [
-                        'index' => ['closure' => $this->standardClosure],
-                    ]
-                ]
-
-            ]
-        ];
-
-        $this->expectedResult = [
+        $this->assertJsonResponse('/eltern', [
             "id" => "parent",
             "path" => "de/eltern",
             "language" => "de",
-        ];
-
-        $this->performSingleUriTest('/eltern');
+        ], true);
     }
 
-    public function testAutoRedirectParentEnglish()
+    public function test_auto_redirect_parent_english()
     {
+        $this->routeTree->node('parent', function (RouteNode $node) {
+            $node->get($this->getDefaultAction());
+            $node->segment(LanguageMapping::create()
+                ->set('de', 'eltern')
+                ->set('en', 'parent'));
+            $node->child('child', function (RouteNode $node) {
+                $node->get($this->getDefaultAction());
+            });
+        });
 
-        $this->nodeTree = [
-            'parent' => [
-                'index' => ['closure' => $this->standardClosure],
-                'segment' => [
-                    'de' => 'eltern',
-                    'en' => 'parent'
-                ],
-                'children' => [
-                    'child' => [
-                        'index' => ['closure' => $this->standardClosure],
-                    ]
-                ]
-
-            ]
-        ];
-
-        $this->expectedResult = [
+        $this->assertJsonResponse('/parent', [
             "id" => "parent",
             "path" => "en/parent",
             "language" => "en",
-        ];
+        ], true);
 
-        $this->performSingleUriTest('/parent');
     }
 
-    public function testAutoRedirectChildGerman()
+    public function test_auto_redirect_child_german()
     {
+        $this->routeTree->node('parent', function (RouteNode $node) {
+            $node->get($this->getDefaultAction());
+            $node->segment(LanguageMapping::create()
+                ->set('de', 'eltern')
+                ->set('en', 'parent'));
+            $node->child('child', function (RouteNode $node) {
+                $node->get($this->getDefaultAction());
+                $node->segment(LanguageMapping::create()
+                    ->set('de', 'kind')
+                    ->set('en', 'child'));
+            });
+        });
 
-        $this->nodeTree = [
-            'parent' => [
-                'index' => ['closure' => $this->standardClosure],
-                'segment' => [
-                    'de' => 'eltern',
-                    'en' => 'parent'
-                ],
-                'children' => [
-                    'child' => [
-                        'index' => ['closure' => $this->standardClosure],
-                        'segment' => [
-                            'de' => 'kind',
-                            'en' => 'child'
-                        ],
-                    ]
-                ]
-
-            ]
-        ];
-
-        $this->expectedResult = [
+        $this->assertJsonResponse('/eltern/kind', [
             "id" => "parent.child",
             "path" => "de/eltern/kind",
             "language" => "de",
-        ];
+        ], true);
 
-        $this->performSingleUriTest('/eltern/kind');
     }
 
-    public function testAutoRedirectChildEnglish()
+    public function test_auto_redirect_child_english()
     {
+        $this->routeTree->node('parent', function (RouteNode $node) {
+            $node->get($this->getDefaultAction());
+            $node->segment(LanguageMapping::create()
+                ->set('de', 'eltern')
+                ->set('en', 'parent'));
+            $node->child('child', function (RouteNode $node) {
+                $node->get($this->getDefaultAction());
+                $node->segment(LanguageMapping::create()
+                    ->set('de', 'kind')
+                    ->set('en', 'child'));
+            });
+        });
 
-        $this->nodeTree = [
-            'parent' => [
-                'index' => ['closure' => $this->standardClosure],
-                'segment' => [
-                    'de' => 'eltern',
-                    'en' => 'parent'
-                ],
-                'children' => [
-                    'child' => [
-                        'index' => ['closure' => $this->standardClosure],
-                        'segment' => [
-                            'de' => 'kind',
-                            'en' => 'child'
-                        ],
-                    ]
-                ]
-
-            ]
-        ];
-
-        $this->expectedResult = [
+        $this->assertJsonResponse('/parent/child', [
             "id" => "parent.child",
             "path" => "en/parent/child",
             "language" => "en",
-        ];
+        ], true);
 
-        $this->performSingleUriTest('/parent/child');
+    }
+
+    public function test_auto_redirect_using_accept_language_header()
+    {
+        $this->routeTree->root(function (RouteNode $node) {
+            $node->middleware('web');
+            $node->get($this->getDefaultAction());
+        });
+
+        $this->assertJsonResponse(
+            '',
+            [
+                "id" => "",
+                "path" => "en",
+                "language" => "en",
+            ],
+            true,
+            ['HTTP_ACCEPT_LANGUAGE' => 'es,en']
+        );
+
+        // Once session is set, accept-language-header should have no effect anymore.
+        $this->assertJsonResponse(
+            '',
+            [
+                "id" => "",
+                "path" => "en",
+                "language" => "en",
+            ],
+            true,
+            ['HTTP_ACCEPT_LANGUAGE' => 'de']
+        );
+
     }
 
 

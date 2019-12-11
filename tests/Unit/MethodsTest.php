@@ -2,14 +2,16 @@
 
 namespace RouteTreeTests\Feature;
 
+use RouteTreeTests\Feature\Traits\UsesTestRoutes;
 use RouteTreeTests\TestCase;
 
 class MethodsTest extends TestCase
 {
+    use UsesTestRoutes;
 
     public function testGetCurrentNode()
     {
-        $this->generateTestRoutes('/de/page1');
+        $this->generateSimpleTestRoutes('/de/page1');
 
         $this->assertEquals(
             'page1',
@@ -20,18 +22,18 @@ class MethodsTest extends TestCase
 
     public function testGetCurrentAction()
     {
-        $this->generateTestRoutes('/de/page1');
+        $this->generateSimpleTestRoutes('/de/page1');
 
         $this->assertEquals(
-            'page1.index',
-            route_tree()->getCurrentAction()->getRouteNode()->getId().'.'.route_tree()->getCurrentAction()->getAction()
+            'page1.get',
+            route_tree()->getCurrentAction()->getRouteNode()->getId() . '.' . route_tree()->getCurrentAction()->getName()
         );
 
     }
 
     public function testDoesNodeExist()
     {
-        $this->generateTestRoutes('/de/page1');
+        $this->generateSimpleTestRoutes('/de/page1');
 
         $this->assertEquals(
             true,
@@ -42,7 +44,7 @@ class MethodsTest extends TestCase
 
     public function testDoesNodeNotExist()
     {
-        $this->generateTestRoutes('/de/page1');
+        $this->generateSimpleTestRoutes('/de/page1');
 
         $this->assertEquals(
             false,
@@ -53,27 +55,25 @@ class MethodsTest extends TestCase
 
     public function testGetNodeByRouteName()
     {
-        $this->generateTestRoutes('/de/page1');
+        $this->generateSimpleTestRoutes('/de/page1');
 
         $this->assertEquals(
             'page1.page1-1',
-            route_tree()->getNodeByRouteName('de.page1.page1-1.index')->getId()
+            route_tree()->getNodeByRouteName('de.page1.page1-1.get')->getId()
         );
 
     }
 
     public function testGetActionByRoute()
     {
-        $this->generateTestRoutes('/de/page1');
+        $this->generateSimpleTestRoutes('/de/page1');
 
         $this->assertEquals(
-            'index',
-            route_tree()->getActionByRoute(\Route::current())->getAction()
+            'get',
+            route_tree()->getActionByRoute(\Route::current())->getName()
         );
 
     }
-
-
 
 
 }

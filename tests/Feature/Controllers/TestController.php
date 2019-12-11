@@ -1,11 +1,12 @@
 <?php
 
 namespace RouteTreeTests\Feature\Controllers;
+
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use RouteTreeTests\TestCase;
 
 class TestController extends Controller
 {
@@ -13,13 +14,9 @@ class TestController extends Controller
 
     public function __call($name, $arguments)
     {
-        return json_encode([
-            'id' => route_tree()->getCurrentNode()->getId(),
+        return TestCase::getRouteTestData([
             'controller' => 'test',
             'function' => $name,
-            'method' => \Request::getMethod(),
-            'path' => trim(\Request::getPathInfo(),'/'),
-            'title' => route_tree()->getCurrentNode()->getTitle()
         ]);
     }
 

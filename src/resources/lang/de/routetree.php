@@ -2,10 +2,10 @@
 
 return [
 
-    'editTitle' => 'Bearbeiten: :item',
+    'editTitle' => ':resource bearbeiten: :item',
     'editNavTitle' => 'Bearbeiten',
     'editPathSegment' => 'bearbeiten',
-    'createTitle' => 'Erstellen: :resource',
+    'createTitle' => ':resource erstellen',
     'createNavTitle' => 'Erstellen',
     'createPathSegment' => 'erstellen',
 

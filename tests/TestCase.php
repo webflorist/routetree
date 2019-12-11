@@ -2,177 +2,97 @@
 
 namespace RouteTreeTests;
 
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Routing\Route;
-use Webflorist\RouteTree\RouteTreeServiceProvider;
+use Illuminate\Routing\Router;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use RouteTreeTests\Feature\Middleware\Test1Middleware;
 use RouteTreeTests\Feature\Middleware\Test2Middleware;
 use RouteTreeTests\Feature\Middleware\Test3Middleware;
 use RouteTreeTests\Feature\Middleware\Test4Middleware;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Webflorist\RouteTree\Http\Resources\RouteCollection;
+use Webflorist\RouteTree\RouteTree;
+use Webflorist\RouteTree\RouteTreeServiceProvider;
 
-abstract class TestCase extends BaseTestCase
+/**
+ * Class TestCase
+ * @package PackageBlueprintTests
+ */
+class TestCase extends BaseTestCase
 {
+    /**
+     * @var Repository
+     */
+    protected $config;
 
-    protected $rootNode = [];
+    /**
+     * @var RouteTree
+     */
+    protected $routeTree;
 
-    protected $nodeTree = [];
-
-    protected $expectedResult = [];
-
-    protected $appConfig = [
-
-        'locale' => 'de',
-        'locales' => ['de' => 'Deutsch', 'en' => 'English'],
-    ];
-
-    protected $routeTreeConfig = [
-
-        /*
-        |--------------------------------------------------------------------------
-        | Start Paths with locale?
-        |--------------------------------------------------------------------------
-        |
-        | Set to false, if you don't want paths starting with locale.
-        |
-        */
-        'start_paths_with_locale' => true,
-
-        /*
-        |--------------------------------------------------------------------------
-        | Create absolute paths instead of relative paths by default?
-        |--------------------------------------------------------------------------
-        |
-        | Can still be overridden with function-parameters.
-        |
-        */
-        'absolute_urls' => true,
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Translation Settings
-        |--------------------------------------------------------------------------
-        |
-        | Here you may configure the settings for the auto-translation
-        | functionality of the RouteTree package.
-        |
-        */
-        'localization' => [
-
-            /*
-             * The base-folder for translations (optionally including any namespace)
-             */
-            'base_folder'  => 'RouteTreeTests::pages',
-
-            /*
-             * The name of the file, in which auto-translations reside.
-             */
-            'file_name' => 'pages',
-
-        ],
-
-    ];
+    /**
+     * @var Router
+     */
+    protected $router;
 
     protected function getPackageProviders($app)
     {
-        return [RouteTreeServiceProvider::class];
+        return [
+            RouteTreeServiceProvider::class
+        ];
     }
 
     protected function getPackageAliases($app)
     {
-        return [];
+        return [
+            'RouteTree' => \Webflorist\RouteTree\Facades\RouteTree::class,
+        ];
     }
 
-    /**
-     * Setup the test environment.
-     */
-    public function setUp() :void
-    {
-        parent::setUp();
-
-        // Load Session
-        $this->app['request']->setLaravelSession($this->app['session']->driver('array'));
-
-        // Add Translations
-        $this->app['translator']->addNamespace('RouteTreeTests', __DIR__ . "/Feature/lang");
-
-        // Otherwise, register test-middlewares'.
-        $this->app['router']->aliasMiddleware('test1', Test1Middleware::class);
-        $this->app['router']->aliasMiddleware('test2', Test2Middleware::class);
-        $this->app['router']->aliasMiddleware('test3', Test3Middleware::class);
-        $this->app['router']->aliasMiddleware('test4', Test4Middleware::class);
-
-    }
-
-    /**
-     * Define environment setup.
-     *
-     * @param  \Illuminate\Foundation\Application  $app
-     * @return void
-     */
     protected function getEnvironmentSetUp($app)
     {
-
-        // Set app config
-        $app['config']->set('app', $this->appConfig);
-
-        // Set routetree config
-        $app['config']->set('routetree', $this->routeTreeConfig);
+        $this->router = $app[Router::class];
+        $this->routeTree = $app[RouteTree::class];
+        $this->config = $app['config'];
 
         // Set view config
-        $app['config']->set('view.paths', [
-            dirname(__FILE__).'/Feature/Views'
+        $this->config->set('view.paths', [
+            dirname(__FILE__) . '/Feature/Views'
         ]);
 
-        // Set Test-Route
-        //$app['router']->get($this->testRoute, ['uses' => TestController::class.'@test']);
+        $this->setConfig();
 
+        // Register test-middleware.
+        $this->router->aliasMiddleware('test1', Test1Middleware::class);
+        $this->router->aliasMiddleware('test2', Test2Middleware::class);
+        $this->router->aliasMiddleware('test3', Test3Middleware::class);
+        $this->router->aliasMiddleware('test4', Test4Middleware::class);
+
+        // Add Translations
+        $app['translator']->addNamespace('RouteTreeTests', __DIR__ . "/Feature/lang");
     }
 
-    /**
-     * Performs a test against a single uri.
-     * @param string $uri
-     */
-    protected function performSingleUriTest($uri = '')
+    protected function setUp(): void
     {
-
-        // Set root-node.
-        route_tree()->setRootNode($this->rootNode);
-
-        // Set nodes.
-        route_tree()->addNodes($this->nodeTree);
-
-        // Visit the uri.
-        try {
-            $result = json_decode($this->get($uri)->baseResponse->getContent(), true);
-        }
-        catch(NotFoundHttpException $exception) {
-            throw $exception;
-        }
-
-        // Sort expected and actual result
-        ksort($result);
-        ksort($this->expectedResult);
-
-        // Assert, that expected and actual routes-array are equal.
-        $this->assertEquals(
-            $this->expectedResult,
-            $result
-        );
+        $this->deleteCacheFiles();
+        parent::setUp();
     }
+
+    protected function tearDown(): void
+    {
+        $this->app->forgetInstance(RouteTree::class);
+        parent::tearDown();
+        $this->deleteCacheFiles();
+    }
+
 
     /**
      * Performs a test against all generated routes.
+     *
+     * @param array $expectedResult
      */
-    protected function performFullRoutesTest()
+    protected function assertRouteTree(array $expectedResult)
     {
-
-        // Set root-node
-        route_tree()->setRootNode($this->rootNode);
-
-        // Set nodes
-        route_tree()->addNodes($this->nodeTree);
 
         // Visit the root
         $this->get('');
@@ -181,80 +101,106 @@ abstract class TestCase extends BaseTestCase
         $routes = [];
         foreach (\Route::getRoutes() as $route) {
             /** @var Route $route */
-            $method = str_replace('|HEAD', '', implode('|', $route->methods()));
-            $uri = $route->uri();
-            $routes[$route->getName()] = [
-                'method' => $method,
-                'uri' => $uri,
+            $routeData = [
+                'method' => str_replace('|HEAD', '', implode('|', $route->methods())),
+                'uri' => $route->uri(),
                 'action' => $route->getActionName(),
-                'middleware' => $route->middleware(),
-                'content' => json_decode($this->call($method, $uri)->baseResponse->getContent(), true)
+                'middleware' => $route->middleware()
             ];
+
+            $response = $this->call($route->methods()[0], $route->uri());
+
+            if ($response->isRedirection()) {
+                $routeData['redirectTarget'] = $response->headers->get('Location');
+                $routeData['statusCode'] = $response->getStatusCode();
+            } else if ($response->getStatusCode() == 500) {
+                $routeData['statusCode'] = $response->getStatusCode();
+            } else {
+                $content = $response->baseResponse->getContent();
+                if ($this->isJson()->evaluate($content, '', true)) {
+                    $content = json_decode($content, true);
+                }
+                $routeData['content'] = $content;
+            }
+
+            $routes[$route->getName()] = $routeData;
         }
 
         // Sort expected and actual routes-array by key
         ksort($routes);
-        ksort($this->expectedResult);
+        ksort($expectedResult);
 
-        // Assert, that expected and actual routes-array are qequal.
+        //file_put_contents('test.txt', var_export($routes, true));
+
+        // Assert, that expected and actual routes-array are equal.
         $this->assertEquals(
-            $this->expectedResult,
+            $expectedResult,
             $routes
         );
     }
 
-    /**
-     * Override 'call' to follow redirects and throw exceptions.
-     *
-     * @param string $method
-     * @param string $uri
-     * @param array $parameters
-     * @param array $cookies
-     * @param array $files
-     * @param array $server
-     * @param null $content
-     * @return \Illuminate\Foundation\Testing\TestResponse
-     */
-    public function call($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
+    protected function setConfig()
     {
-        $response = parent::call($method, $uri, $parameters, $cookies, $files, $server, $content);
-        if ($response->isRedirection()) {
-            $response = $this->call($method, $response->baseResponse->headers->get('Location'), $parameters, $cookies, $files, $server, $content);
-        }
+        $this->config->set('app.locale', 'de');
+        $this->config->set('routetree.locales', ['en', 'de']);
+        $this->config->set('routetree.localization.base_folder', 'RouteTreeTests::pages');
+    }
 
-        if (!is_null($response->exception)) {
-            throw $response->exception;
+    protected function assertRegisteredRoutes(array $expectedRoutes)
+    {
+        //file_put_contents('test.txt',var_export(json_decode((new RouteCollection(route_tree()->getRegisteredRoutes(true)))->collection->toJson(),true),true));
+        $this->assertEquals(
+            $expectedRoutes,
+            json_decode((new RouteCollection(route_tree()->getRegisteredRoutes(true)))->collection->toJson(), true)
+        );
+    }
+
+    protected function assertJsonResponse(string $uri, array $expected, bool $followRedirects = false, array $headers = [])
+    {
+        $response = $this->get($uri, $headers);
+        if ($followRedirects) {
+            $response = $this->followRedirects($response);
         }
-        return $response;
+        $this->assertEquals(
+            $expected,
+            json_decode($response->baseResponse->getContent(), true)
+        );
+
+    }
+
+    protected function deleteCacheFiles(): void
+    {
+        $cacheFiles = [
+            __DIR__ . '/../vendor/orchestra/testbench-core/laravel/bootstrap/cache/routes.php',
+            __DIR__ . '/../vendor/orchestra/testbench-core/laravel/bootstrap/cache/routetree.php'
+        ];
+        foreach ($cacheFiles as $cacheFile) {
+            if (file_exists($cacheFile)) {
+                unlink($cacheFile);
+            }
+        }
     }
 
 
-
-    protected function generateTestRoutes($visitUri='') {
-
-        route_tree()->setRootNode([
-            'namespace' => 'RouteTreeTests\Feature\Controllers',
-            'index' => ['uses' => 'TestController@get'],
-            'children' => [
-                'page1' => [
-                    'index' => ['uses' => 'TestController@get'],
-                    'children' => [
-                        'page1-1' => [
-                            'index' => ['uses' => 'TestController@get'],
-                        ]
-                    ]
-                ]
-            ]
-        ]);
-
-        // Visit the uri.
-        try {
-            json_decode($this->get($visitUri)->baseResponse->getContent(), true);
+    public static function getRouteTestData(array $additionalData = []): string
+    {
+        if (route_tree()->getCurrentAction()->getName() === 'create') {
+            //dd(route_tree()->getCurrentNode()->getTitle());
         }
-        catch(NotFoundHttpException $exception) {
-            throw $exception;
-        }
-
+        return json_encode(
+            array_merge(
+                [
+                    'id' => route_tree()->getCurrentNode()->getId(),
+                    'method' => \Request::getMethod(),
+                    'path' => trim(\Request::getPathInfo(), '/'),
+                    'locale' => app()->getLocale(),
+                    'title' => route_tree()->getCurrentAction()->getTitle(),
+                    'navTitle' => route_tree()->getCurrentAction()->getNavTitle(),
+                    'h1Title' => route_tree()->getCurrentAction()->payload->get('h1Title') ?? route_tree()->getCurrentNode()->payload->get('h1Title') ?? route_tree()->getCurrentNode()->getTitle()
+                ],
+                $additionalData
+            )
+        );
     }
 
 
