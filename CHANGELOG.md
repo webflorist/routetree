@@ -1,5 +1,9 @@
 # Release Notes
 
+## [v2.0.1 (2019-12-31)](https://github.com/webflorist/routetree/compare/v2.0.0...v2.0.1)
+### Fixed
+- Fix url of root page of single language sites ending with // in Sitemap.
+
 ## [v2.0.0 (2019-12-11)](https://github.com/webflorist/routetree/compare/v1.1.0...v2.0.0)
 ### Added
 - Add sitemap-generator
