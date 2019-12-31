@@ -63,6 +63,54 @@ class GenerateSitemapTest extends TestCase
         //$this->assertXmlFileEqualsXmlFile();
     }
 
+
+    public function test_single_language_sitemap()
+    {
+        $this->config->set('routetree.locales', null);
+        $this->config->set('app.locale', 'de');
+
+        $this->routeTree->root(function (RouteNode $node) {
+            $node->namespace('\RouteTreeTests\Feature\Controllers');
+            $node->get('TestController@get');
+            $node->child('parent', function (RouteNode $node) {
+                $node->get('TestController@get');
+                $node->child('child1', function (RouteNode $node) {
+                    $node->get('TestController@get');
+                });
+
+                $node->child('child2', function (RouteNode $node) {
+                    $node->get('TestController@get');
+                });
+            });
+        });
+
+        $this->routeTree->generateAllRoutes();
+
+        $this->artisan('routetree:generate-sitemap')->assertExitCode('0');
+        $this->assertFileExists($this->getSitemapOutputFile());
+        $this->assertXmlStringEqualsXmlFile($this->getSitemapOutputFile(), '<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
+        xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <url>
+        <loc>http://localhost/</loc>
+    </url>
+    <url>
+        <loc>http://localhost/parent</loc>
+    </url>
+    <url>
+        <loc>http://localhost/parent/child1</loc>
+    </url>
+    <url>
+        <loc>http://localhost/parent/child2</loc>
+    </url>
+
+
+</urlset>');
+        //$this->assertXmlFileEqualsXmlFile();
+    }
+
     public function test_complex_sitemap()
     {
         $this->generateComplexTestRoutes($this->routeTree);

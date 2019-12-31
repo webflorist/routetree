@@ -121,10 +121,20 @@ class GenerateSitemapCommand extends Command
     function addRegisteredRouteToUrlset(RegisteredRoute $registeredRoute): void
     {
         $baseUrl = config('routetree.sitemap.base_url');
+
+        // Make sure $baseUrl ends with a slash.
         if (substr($baseUrl, -1) !== '/') {
             $baseUrl .= '/';
         }
-        $urlData = ['loc' => $baseUrl . $registeredRoute->path];
+
+        $path = $registeredRoute->path;
+
+        // Make sure $path does not start with a slash.
+        if (substr($path,0,1) === '/') {
+            $path = substr($path,1);
+        }
+
+        $urlData = ['loc' => $baseUrl . $path];
         if ($registeredRoute->routeNode->sitemap->hasLastmod()) {
             $urlData['lastmod'] = $registeredRoute->routeNode->sitemap->getLastmod();
         }
