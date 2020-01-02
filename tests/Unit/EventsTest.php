@@ -19,7 +19,7 @@ class EventsTest extends TestCase
 
         $this->generateComplexTestRoutes($this->routeTree);
 
-        $this->get('/');
+        $this->get('/', ['HTTP_ACCEPT_LANGUAGE' => 'de']);
 
         Event::assertDispatched(Redirected::class, function (Redirected $event) {
             $this->assertEquals('/', $event->fromUri);

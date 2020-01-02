@@ -27,11 +27,16 @@ class MiddlewareTest extends TestCase
         $this->routeTree->root(function (RouteNode $node) {
             $node->get($this->getDefaultAction());
         });
-        $this->assertJsonResponse('/', [
-            "id" => "",
-            "path" => "de",
-            "language" => "de",
-        ], true);
+        $this->assertJsonResponse(
+            '/',
+            [
+                "id" => "",
+                "path" => "de",
+                "language" => "de",
+            ],
+            true,
+            ['HTTP_ACCEPT_LANGUAGE' => '']
+        );
     }
 
 
