@@ -39,10 +39,10 @@ trait DeterminesLocale
 
         // If a HTTP_ACCEPT_LANGUAGE header was sent by the client,
         // we use that.
-        if (!is_null($acceptLanguage = $request->header('accept-language'))) {
-            foreach (explode(',', $acceptLanguage) as $acceptedLocale) {
-                if ($this->isValidLocale($acceptedLocale)) {
-                    return $acceptedLocale;
+        if (!is_null($request->header('accept-language'))) {
+            foreach ($request->getLanguages() as $preferredLocale) {
+                if ($this->isValidLocale($preferredLocale)) {
+                    return $preferredLocale;
                 }
             }
         }

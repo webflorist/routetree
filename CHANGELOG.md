@@ -1,5 +1,9 @@
 # Release Notes
 
+## [v2.0.2 (2020-01-02)](https://github.com/webflorist/routetree/compare/v2.0.1...v2.0.2)
+### Fixed
+- Fix language-detection via HTTP_ACCEPT_LANGUAGE header.
+
 ## [v2.0.1 (2019-12-31)](https://github.com/webflorist/routetree/compare/v2.0.0...v2.0.1)
 ### Fixed
 - Fix url of root page of single language sites ending with // in Sitemap.
