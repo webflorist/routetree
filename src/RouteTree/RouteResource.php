@@ -97,6 +97,10 @@ class RouteResource
      */
     private function getCreateActionSegments()
     {
+        if (config('routetree.localization.translate_resource_suffixes') === false) {
+            return 'create';
+        }
+
         $segments = LanguageMapping::create();
         foreach ($this->routeNode->getLocales() as $locale) {
             $translationKey = 'Webflorist-RouteTree::routetree.createPathSegment';
@@ -115,6 +119,11 @@ class RouteResource
     private function getEditActionSegments()
     {
         $paramSegment = '{' . $this->name . '}';
+
+        if (config('routetree.localization.translate_resource_suffixes') === false) {
+            return $paramSegment . '/edit';
+        }
+
         $segments = LanguageMapping::create();
         foreach ($this->routeNode->getLocales() as $locale) {
             $translationKey = 'Webflorist-RouteTree::routetree.editPathSegment';
