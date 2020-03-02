@@ -1,4 +1,9 @@
 # Release Notes
+
+## [v2.1.0 (2020-03-02)](https://github.com/webflorist/routetree/compare/v2.0.3...v2.1.0)
+### Added
+- Add config `localization.translate_resource_suffixes` to disable auto-translation of resource-related path suffixes (/create and /edit).
+
 ## [v2.0.3 (2020-01-29)](https://github.com/webflorist/routetree/compare/v2.0.2...v2.0.3)
 ### Changed
 - Require laravel/framework >=5.5 and orchestra/testbench >=3.5.

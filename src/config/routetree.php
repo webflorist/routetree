@@ -69,6 +69,12 @@ return [
          */
         'file_name' => 'pages',
 
+        /*
+         * Automatically translate resource path-suffixes
+         * (/create and /edit).
+         */
+        'translate_resource_suffixes' => true,
+
     ],
 
     /*
