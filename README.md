@@ -20,11 +20,11 @@ Here is a complete feature overview:
     * **Localized `Payload`** (page-titles and any other custom information) - also for parameter- or resource-routes using the corresponding Eloquent Models.
     * You can also utilize this structure for page-content using the included `trans_by_route()` helper.)
 * **Unique language-agnostic route IDs** (e.g. `company.team.contact`) to be used for various purposes anywhere in your app. Examples using the `route_node()` helper function:
-    * Link in current language: `route_node('company.team.contact')->getUrl()`.
-    * Link in specific language: `route_node('company.team.contact')->getUrl()->locale('de')`.
-    * Access hierarchical parents/siblings/children: e.g. `route_node('company.team')->getChildNodes()`        
-    * Access the page title using: `route_node('company.team')->getTitle()` (falling back to upper cased route name - e.g. `Team`).
-    * Access any other kind of custom information (via a `Payload`): `route_node('company.team')->payload->get('icon/description/keywords/author/layout/last_update/whatever')`.
+    * Link in current language:<br/>`route_node('company.team.contact')->getUrl()`.
+    * Link in specific language:<br/>`route_node('company.team.contact')->getUrl()->locale('de')`.
+    * Access hierarchical parents/siblings/children:<br/>`route_node('company.team')->getChildNodes()`        
+    * Access the page title using:<br/>`route_node('company.team')->getTitle()`<br/>(falling back to upper cased route name - e.g. `Team`).
+    * Access any other kind of custom information (via a `Payload`):<br/>`route_node('company.team')->payload->get('icon/description/keywords/author/layout/last_update/whatever')`.
 * **Automatic locale setting**:
     * From the first segment of the current route name (e.g. `en.company.news.get`).
     * From a (automatically saved) session value.
@@ -443,7 +443,7 @@ This will look for the `title` payload using the following order:
 1. Payload set directly in this class.
 2. Payload set in the RouteNode's RoutePayload (only if this RoutePayload is RouteAction-specific.)
 3. Payload returned from an Eloquent Model (only if RouteNode has a RouteParameter associated with an Eloquent Model, that implements ProvidesRoutePayload)
-4. Using Auto-Translation by searching for payload at a translation-key relative to the RouteNode's ID (see [Automatic Translation](#automatic_translation)).
+4. Using Auto-Translation by searching for payload at a translation-key relative to the RouteNode's ID (see [Automatic Translation](#automatic-translation)).
 
 There are multiple use-cases, where this payload functionality can be useful
 This is very useful to e.g.:
@@ -611,7 +611,9 @@ Per default all routes created with RouteTree will be present in the sitemap. Th
 - Only `GET` routes will be included.
 - Routes using the `auth` middleware will be automatically excluded.
 - Redirect routes will be automatically excluded.
-- Routes with `parameters` will only be included, if it's possible route keys are stated using the `routeKeys()` method or by stating an `Eloquent` model implementing the interface `Webflorist\RouteTree\Interfaces\ProvidesRouteKeyList` and thus the method `getRouteKeyList()`. A (single-language) default implementation is included in the trait `Webflorist\RouteTree\Interfaces\Traits\ProvidesRouteKeyListDefault`:
+- Routes with `parameters` can only be included, if RouteTree can retrieve all possible values for these parameters. There are two ways to achieve this:
+    - using the `routeKeys()` method (see [Route Parameters](#route-parameters))
+    - by stating an `Eloquent` model implementing the interface `Webflorist\RouteTree\Interfaces\ProvidesRouteKeyList` and thus the method `getRouteKeyList()`. A (single-language) default implementation is included in the trait `Webflorist\RouteTree\Interfaces\Traits\ProvidesRouteKeyListDefault`:
 
 ```php
     public static function getRouteKeyList(string $locale = null, ?array $parameters = null): array
