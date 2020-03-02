@@ -698,5 +698,7 @@ Several helper-functions are included with this package:
 * **route_node**:
     - If called with no parameter: get the currently active RouteNode.
     - If called with a parameter: `route_node('company.team.contact')` will return the RouteNode with ID `'company.team.contact'`.
+    
+* **route_node_url**: Shortcut for `route_node()->getUrl()`.
 
 * **trans_by_route**: Translates page-content using the current node's content-language-file (see section `Auto-translation of regular page-content` above).
