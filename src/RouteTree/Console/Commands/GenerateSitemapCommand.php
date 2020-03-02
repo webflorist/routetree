@@ -135,14 +135,14 @@ class GenerateSitemapCommand extends Command
         }
 
         $urlData = ['loc' => $baseUrl . $path];
-        if ($registeredRoute->routeNode->sitemap->hasLastmod()) {
-            $urlData['lastmod'] = $registeredRoute->routeNode->sitemap->getLastmod();
+        if ($registeredRoute->routeNode->sitemap->hasLastmod($registeredRoute->routeKeys, $registeredRoute->locale)) {
+            $urlData['lastmod'] = $registeredRoute->routeNode->sitemap->getLastmod($registeredRoute->routeKeys, $registeredRoute->locale);
         }
-        if ($registeredRoute->routeNode->sitemap->hasChangefreq()) {
-            $urlData['changefreq'] = $registeredRoute->routeNode->sitemap->getChangefreq();
+        if ($registeredRoute->routeNode->sitemap->hasChangefreq($registeredRoute->routeKeys, $registeredRoute->locale)) {
+            $urlData['changefreq'] = $registeredRoute->routeNode->sitemap->getChangefreq($registeredRoute->routeKeys, $registeredRoute->locale);
         }
-        if ($registeredRoute->routeNode->sitemap->hasPriority()) {
-            $urlData['priority'] = $registeredRoute->routeNode->sitemap->getPriority();
+        if ($registeredRoute->routeNode->sitemap->hasPriority($registeredRoute->routeKeys, $registeredRoute->locale)) {
+            $urlData['priority'] = $registeredRoute->routeNode->sitemap->getPriority($registeredRoute->routeKeys, $registeredRoute->locale);
         }
         $this->urlset[] = $urlData;
         $this->info($urlData['loc'] . " INCLUDED.");
