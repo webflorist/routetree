@@ -1,12 +1,12 @@
 # Release Notes
 
-## [v2.1.1 (2020-03-02)](https://github.com/webflorist/routetree/compare/v2.1.0...v2.1.1)
-### Fixed
-- Fix lastmod, changefreq and priority fetching from model on sitemap generation.
-
 ## [v2.1.0 (2020-03-02)](https://github.com/webflorist/routetree/compare/v2.0.3...v2.1.0)
 ### Added
 - Add config `localization.translate_resource_suffixes` to disable auto-translation of resource-related path suffixes (/create and /edit).
+### Fixed
+- Fix lastmod, changefreq and priority fetching from model on sitemap generation.
+### Changed
+- De-deprecate helper function route_node_url()
 
 ## [v2.0.3 (2020-01-29)](https://github.com/webflorist/routetree/compare/v2.0.2...v2.0.3)
 ### Changed

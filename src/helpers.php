@@ -47,7 +47,6 @@ if (!function_exists('route_node_url()')) {
      * @param bool $absolute Create absolute paths instead of relative paths (default=true/configurable).
      * @return RouteUrlBuilder
      * @throws NodeNotFoundException
-     * @deprecated Use route_node()->getUrl() instead
      */
     function route_node_url($nodeId = null, $action = null, $parameters = null, $locale = null, $absolute = null): RouteUrlBuilder
     {
