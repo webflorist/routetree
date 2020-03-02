@@ -70,10 +70,10 @@ Note that this package is configured for automatic discovery for Laravel. Thus t
 ## Accessing the RouteTree-service
 There are several ways to access the RouteTree service:
  * via helper function:  `route_tree()`
- * via Laravel facade: `\RouteTree`
+ * via Laravel facade: `\RouteTree::`
  * via Laravel container:  `app('Webflorist\RouteTree\RouteTree')` or `app()['Webflorist\RouteTree\RouteTree']`
 
-The following code examples will use the helper-function `route_tree()`.
+The following code examples will use the helper-function `RouteTree::`.
 
 ## Defining the RouteTree
 
@@ -83,7 +83,7 @@ For better comparability of syntaxes, wherethe following examples will correspon
 
 ### Basic Routing
 ```php
-route_tree()->node('foo', function (RouteNode $node) {
+RouteTree::node('foo', function (RouteNode $node) {
     $node->get(function() {
         if (\App::getLocale() === 'de') {
             return 'Hallo Welt';
@@ -108,7 +108,7 @@ The above code will register the following routes:
  As with Laravel's syntax you can also state the action's callback using `Controller@method`:
 
 ```php
-route_tree()->node('foo')->get('Controller@method');
+RouteTree::node('foo')->get('Controller@method');
 ```
 
 In the above example, the RouteNode's setup closure is skipped and instead the `get` call is directly chained to the `node` call. This is an alternative way to setup (which returns a RouteNode and thus allows chaining of various fluent methods), resulting in a more readable one-liner. Once a RouteNode becomes a little more complex and has several child-nodes, using a setup-closure is recommended instead. Also be wary, that action-creating methods (such as `get`, `post`, `redirect`, `view`, etc.) return the RouteAction object instead of the RouteNode.
@@ -119,7 +119,7 @@ Both syntax variants will be used in the following examples.
 RouteNodes provide public methods to register RouteActions that respond to any HTTP verb:
 
 ```php
-route_tree()->node('foo', function (RouteNode $node) {
+RouteTree::node('foo', function (RouteNode $node) {
     $node->get($callback);
     $node->post($callback);
     $node->put($callback);
@@ -132,9 +132,9 @@ route_tree()->node('foo', function (RouteNode $node) {
 ### Redirect Actions
 You can also define redirecting nodes and state the target nodes by their ID:
 ```php
-route_tree()->node('here')->redirect('there');
+RouteTree::node('here')->redirect('there');
 
-route_tree()->node('there', function (RouteNode $node) {
+RouteTree::node('there', function (RouteNode $node) {
     $node->get(function() {
         return 'You are now there';
     });
@@ -151,22 +151,22 @@ You can also use `$node->permanentRedirect()` to return a 301 status code.
 ### View Actions
 If a RouteNode should only return a view, you can use the `view` method:
 ```php
-route_tree()->node('welcome')->view('welcome');
+RouteTree::node('welcome')->view('welcome');
 ```
 You can pass data to the view via the second parameter of the `view` method.
 
 ### Configuring the Root Node
-The `route_tree()->node()` method used in the above examples automatically creates nodes with the root node as parent. You can configure the root node itself using the `root` method instead:
+The `RouteTree::node()` method used in the above examples automatically creates nodes with the root node as parent. You can configure the root node itself using the `root` method instead:
 ```php
-route_tree()->root()->view('welcome');
+RouteTree::root()->view('welcome');
 ```
 You cannot state a name for the root node. It's name and ID will always be an empty string (`''`).
 
 ### Adding Child Nodes
 There are several ways to create a node as a child of another node:
 - by calling `$node->child($childName, $childCallback)` within the parent's setup-callback.
-- by stating the parent RouteNode's ID as the third parameter of the `node` method: `route_tree()->node($childName, $childCallback, $parentId);`
-- by using `route_tree()->getRoute('parent')->child('child', $childCallback)`
+- by stating the parent RouteNode's ID as the third parameter of the `node` method: `RouteTree::node($childName, $childCallback, $parentId);`
+- by using `RouteTree::getRoute('parent')->child('child', $childCallback)`
 
 The first variant will be used in any further examples. It builds the RouteTree using nested closures, which has the benefit of representing the hierarchical RouteTree within the defining code indentation.
 
@@ -182,7 +182,7 @@ As with Laravel's Route groups, middleware and (controller-)namespaces will be a
 
 By default a RouteNode's name will also be it's path segment. But you can also state a different segment for a node by calling the RouteNode's `segment` method:
 ```php
-route_tree()->node('company', function (RouteNode $node) {    
+RouteTree::node('company', function (RouteNode $node) {    
     $node->segment('our-great-company');
     $node->get($callback);
 });
@@ -227,7 +227,7 @@ $node->skipMiddleware('auth');
 
 There might also be situations, where you want a specific action of a RouteNode to have additional middleware or skip a middleware defined on the RouteNode. You can achieve this by chaining the `middleware` call to the action-call. Here is an example:
 ```php
-route_tree()->node('user', function (RouteNode $node) {
+RouteTree::node('user', function (RouteNode $node) {
     $node->middleware('auth');
     $node->get($callback)->skipMiddleware('auth');
     $node->post($callback);
@@ -246,7 +246,7 @@ By default all `Controller@method` callback definitions will use `App\Http\Contr
 
 Using a RouteNode's `namespace` method will append a segment to that namespace and inherit it to it's descendants. Inheritance can be overruled by simply prefixing the namespace with a backslash.
 ```php
-route_tree()->node('account', function (RouteNode $node) {
+RouteTree::node('account', function (RouteNode $node) {
     $node->namespace('Account');
     $node->child('address' function (RouteNode $node) {
         $node->get('AddressController@get');
@@ -262,7 +262,7 @@ route_tree()->node('account', function (RouteNode $node) {
 ### Route Parameters
 The following code will result in the creation of the routes `en/user/{id}` and `de/user/{id}`.
 ```php
-route_tree()->node('user', function (RouteNode $node) {
+RouteTree::node('user', function (RouteNode $node) {
     $node->child('id', function (RouteNode $node) {        
         $node->parameter('id');
         $node->get('id', function ($id) {
@@ -310,7 +310,7 @@ public static function translateRouteKey(string $value, string $toLocale, string
 
 Akin to Laravel's [`Route::resource()` method](https://laravel.com/docs/master/controllers#restful-resource-controllers), RouteTree can also register resourceful routes:
 ```php 
-route_tree()->node('photos')->resource('photo', 'PhotoController');
+RouteTree::node('photos')->resource('photo', 'PhotoController');
 ```
 
 This will generate a full set of resourceful routes in all languages:
@@ -341,7 +341,7 @@ $node->resource('photo', 'PhotoController')->except(['create', 'store', 'update'
 
 Resource nodes can also have child-nodes. In this case call the `child` method on `$node->resource` instead of `$node`:
 ```php 
-route_tree()->node('photos', function (RouteNode $node) {
+RouteTree::node('photos', function (RouteNode $node) {
     $node->resource('photo', 'PhotoController')
     $node->resource->child('featured', function (RouteNode $node) {
         $node->get('PhotoController@featured');
@@ -357,9 +357,9 @@ The above code will additionally generate the following routes:
 
 Now that we have defined the RouteTree, it's RouteNodes can be accessed anywhere in your application using the `route_node()` helper:
 - `route_node()`  
-is a shortcut for `route_tree()->getCurrentNode()` and will return the currently active RouteNode.
+is a shortcut for `RouteTree::getCurrentNode()` and will return the currently active RouteNode.
 - `route_node('company.team.contact')`  
-is a shortcut for `route_tree()->getNode('company.team.contact')` and will return the RouteNode with ID `company.team.contact`
+is a shortcut for `RouteTree::getNode('company.team.contact')` and will return the RouteNode with ID `company.team.contact`
 
 If RouteTree fails to find the current/specified node, it will throw a `NodeNotFoundException`, except a fallback node is set in the config `routetree.fallback_node`. The default config sets the fallback node to the root node, since you will probably want to inhibit `NodeNotFoundExceptions` in a production environment.
 
@@ -480,14 +480,14 @@ Each RouteNode is represented as a folder, and within the folder for a node resi
 **Example:**
 Let's assume, you have defined the following RouteNodes (any actions or other options are missing for simplicity's sake):
 ```php
-    route_tree()->node('company', function (RouteNode $node) {
+    RouteTree::node('company', function (RouteNode $node) {
         $node->child('history', ...);
         $node->child('team', function (RouteNode $node) {
             $node->child('office', ...);
             $node->child('service', ...);
         });
     });
-    route_tree()->node('contact', ...);
+    RouteTree::node('contact', ...);
 ```
 
 Please note, that no path-segment, page-titles or custom information is defined on any node. We will use auto-translation for this.
@@ -670,8 +670,8 @@ Here are some other useful methods of the RouteTree-class:
 * **getRootNode**: Get the root-node which is also the whole RouteTree.
 * **getCurrentNode**: Get the currently active RouteNode. (use `route_node()` as shortcut)
 * **getCurrentAction**: Get the currently active action.
-* **doesNodeExist**: Checks, if a node within the RouteTree. It takes one parameter, which is the node-id to be checked. (e.g.: `route_tree()->doesNodeExist('company.team.office')`)
-* **getNode**: Get's and returns the RouteNode via it's Id. (e.g.: `route_tree()->getNode('company.team.office')`; use `route_node('company.team.office')` as shortcut)
+* **doesNodeExist**: Checks, if a node within the RouteTree. It takes one parameter, which is the node-id to be checked. (e.g.: `RouteTree::doesNodeExist('company.team.office')`)
+* **getNode**: Get's and returns the RouteNode via it's Id. (e.g.: `RouteTree::getNode('company.team.office')`; use `route_node('company.team.office')` as shortcut)
 
 ### Important RouteNode-methods
 
