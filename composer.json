@@ -1,6 +1,6 @@
 {
     "name": "webflorist/routetree",
-    "description": "Advanded route management for Laravel 5.5 and later",
+    "description": "RouteTree: Advanced Route Management for Laravel (v5.5+ and v6)",
     "authors": [
         {
             "name": "Gerald Buttinger",
@@ -8,7 +8,7 @@
         }
     ],
     "require": {
-        "laravel/framework": ">=5.5"
+        "laravel/framework": ">=5.5 <7.0.0"
     },
     "require-dev": {
         "orchestra/testbench": ">=3.5"
