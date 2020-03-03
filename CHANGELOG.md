@@ -1,5 +1,9 @@
 # Release Notes
 
+## [v2.2.0 (2020-03-03)](https://github.com/webflorist/routetree/compare/v2.1.0...v2.2.0)
+### Added
+- Add config `sitemap.excluded_middleware`. Routes using these middleware will be automatically excluded from the sitemap (default is 'auth').
+
 ## [v2.1.0 (2020-03-02)](https://github.com/webflorist/routetree/compare/v2.0.3...v2.1.0)
 ### Added
 - Add config `localization.translate_resource_suffixes` to disable auto-translation of resource-related path suffixes (/create and /edit).

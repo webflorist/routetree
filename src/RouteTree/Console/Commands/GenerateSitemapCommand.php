@@ -108,9 +108,7 @@ class GenerateSitemapCommand extends Command
      */
     private function getExcludedMiddleware()
     {
-        return [
-            'auth'
-        ];
+        return config('routetree.sitemap.excluded_middleware');
     }
 
     /**
