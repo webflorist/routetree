@@ -8,8 +8,9 @@
 - Change `laravel/framework` version dependency to `>=5.5 <7.0.0` as RouteTree is not compatible with Laravel 7 at the moment.
 - Add php 7.4 to .travis.yml (thanks@msnwalt!).
 - Modify .travis.yml to test Laravel v6.* as well as v5.6.*.
+- Add licence (MIT) and keywords to composer.json. 
 ### Fixed
-- Fix problem with path-generation, when a redirect-node is defined before the target-node. Also adding regression test.
+- Fix problem with path-generation, when a redirect-node is defined before it's targeted node. Also adding regression test.
 
 ## [v2.1.0 (2020-03-02)](https://github.com/webflorist/routetree/compare/v2.0.3...v2.1.0)
 ### Added

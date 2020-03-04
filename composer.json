@@ -1,6 +1,9 @@
 {
     "name": "webflorist/routetree",
     "description": "RouteTree: Advanced Route Management for Laravel (v5.5+ and v6)",
+    "keywords": ["laravel", "php", "route", "localization", "multi-language"],
+    "homepage": "https://github.com/webflorist/routetree",
+    "license": "MIT",
     "authors": [
         {
             "name": "Gerald Buttinger",
