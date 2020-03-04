@@ -19,7 +19,7 @@ trait UsesCachedRoutes
     protected function setUp(): void
     {
         parent::setUp();
-        $this->artisan('routetree:route-cache')->assertExitCode('0');
+        $this->callArtisan('routetree:route-cache');
         $this->refreshApplication();
     }
 
