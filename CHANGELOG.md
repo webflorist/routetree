@@ -3,10 +3,11 @@
 ## [v2.2.0 (2020-03-04)](https://github.com/webflorist/routetree/compare/v2.1.0...v2.2.0)
 ### Added
 - Add config `sitemap.excluded_middleware`. Routes using these middleware will be automatically excluded from the sitemap (default is 'auth').
-- Add Travis-CI build status image (thanks@msnwalt!).
+- Add Travis-CI build status image to readme (thanks@msnwalt!).
 ### Changed
 - Change `laravel/framework` version dependency to `>=5.5 <7.0.0` as RouteTree is not compatible with Laravel 7 at the moment.
 - Add php 7.4 to .travis.yml (thanks@msnwalt!).
+- Modify .travis.yml to test Laravel v6.* as well as v5.6.*.
 ### Fixed
 - Fix problem with path-generation, when a redirect-node is defined before the target-node. Also adding regression test.
 

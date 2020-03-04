@@ -44,7 +44,7 @@ class GenerateSitemapTest extends TestCase
 
         $this->routeTree->generateAllRoutes();
 
-        $this->artisan('routetree:generate-sitemap')->assertExitCode('0');
+        $this->artisan('routetree:generate-sitemap');
         $this->assertFileExists($this->getSitemapOutputFile());
         $this->assertXmlStringEqualsXmlFile($this->getSitemapOutputFile(), '<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -86,7 +86,7 @@ class GenerateSitemapTest extends TestCase
 
         $this->routeTree->generateAllRoutes();
 
-        $this->artisan('routetree:generate-sitemap')->assertExitCode('0');
+        $this->callArtisan('routetree:generate-sitemap');
         $this->assertFileExists($this->getSitemapOutputFile());
         $this->assertXmlStringEqualsXmlFile($this->getSitemapOutputFile(), '<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -115,9 +115,7 @@ class GenerateSitemapTest extends TestCase
     {
         $this->generateComplexTestRoutes($this->routeTree);
 
-        $this->artisan('routetree:generate-sitemap')
-            //->expectsOutput('test')
-            ->assertExitCode('0');
+        $this->callArtisan('routetree:generate-sitemap');
         $this->assertFileExists($this->getSitemapOutputFile());
         $this->assertXmlStringEqualsXmlString('<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -324,7 +322,7 @@ class GenerateSitemapTest extends TestCase
 
         $this->routeTree->generateAllRoutes();
 
-        $this->artisan('routetree:generate-sitemap')->assertExitCode('0');
+        $this->callArtisan('routetree:generate-sitemap');
         $this->assertFileExists($this->getSitemapOutputFile());
         $this->assertXmlStringEqualsXmlFile($this->getSitemapOutputFile(), '<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

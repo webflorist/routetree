@@ -38,7 +38,7 @@ Here is a complete feature overview:
     * Resolving of all possible route keys for parameter/resource routes.
     * Setting of optional tags (lastmod, changefreq, priority) via fluent setters, or by accessing an Eloquent Model (for parameter/resource routes).
 * **Cacheable** (in combination with Laravel's route caching).
-* **REST-API** to retrieve list of routes or various information or `Payload` from specific routes.
+* **REST-API** to retrieve list of routes or various information or `Payload` from specific routes. (requires at least Laravel 5.6!)
 
 ## Table of Contents
 - [Installation](#installation)
@@ -638,7 +638,7 @@ $node->sitemap
 ```
 Furthermore you can also use payload translation (either via an `Eloquent` model or via language files) to automatically retrieve these values.
 
-## API
+## API (requires at least Laravel 5.6!)
 
 RouteTree also includes an API, that allows fetching information about routes registered with RouteTree. The API must be enabled via config `routetree.api.enabled` and has the default base-url `api/routetree/` (also configurable).
 

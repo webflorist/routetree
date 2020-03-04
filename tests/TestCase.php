@@ -203,5 +203,18 @@ class TestCase extends BaseTestCase
         );
     }
 
+    protected function callArtisan(string $command) {
+
+        $result = $this->artisan($command);
+
+        // Needed for older laravel versions.
+        if (is_int($result)) {
+            $this->assertEquals(0, $result);
+        }
+        else {
+            $result->assertExitCode('0');
+        }
+    }
+
 
 }
