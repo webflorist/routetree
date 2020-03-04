@@ -253,6 +253,7 @@ class RouteTree
     public function generateAllRoutes()
     {
         if (!$this->routesGenerated) {
+            $this->rootNode->generatePathsOfNodeAndChildNodes();
             $this->rootNode->generateRoutesOfNodeAndChildNodes();
             $this->sortRegisteredRoutes();
             $this->routesGenerated = true;

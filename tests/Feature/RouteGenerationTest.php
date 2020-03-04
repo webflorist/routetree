@@ -1665,4 +1665,71 @@ class RouteGenerationTest extends TestCase
         $this->assertComplexTestRouteTree();
     }
 
+    public function test_redirect_to_younger_sibling() {
+
+        route_tree()->node('redirect-to-sibling', function (RouteNode $node) {
+            $node->redirect('redirect-target');
+        });
+
+        route_tree()->node('redirect-target', function (RouteNode $node) {
+            $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+        });
+
+        $this->routeTree->generateAllRoutes();
+
+        $this->assertRouteTree([
+            "de.redirect-target.get" => [
+                "method" => "GET",
+                "uri" => "de/redirect-target",
+                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    "id" => 'redirect-target',
+                    'method' => 'GET',
+                    'path' => 'de/redirect-target',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'locale' => 'de',
+                    'title' => 'Redirect-target',
+                    'navTitle' => 'Redirect-target',
+                    'h1Title' => 'Redirect-target'
+                ],
+            ],
+            "de.redirect-to-sibling.get" => [
+                "method" => "GET|POST|PUT|PATCH|DELETE|OPTIONS",
+                "uri" => "de/redirect-to-sibling",
+                "action" => '\Illuminate\Routing\RedirectController',
+                "middleware" => [],
+                'statusCode' => 302,
+                'redirectTarget' => '/de/redirect-target'
+            ],
+            "en.redirect-target.get" => [
+                "method" => "GET",
+                "uri" => "en/redirect-target",
+                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    "id" => 'redirect-target',
+                    'method' => 'GET',
+                    'path' => 'en/redirect-target',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'locale' => 'en',
+                    'title' => 'Redirect-target',
+                    'navTitle' => 'Redirect-target',
+                    'h1Title' => 'Redirect-target'
+                ],
+            ],
+            "en.redirect-to-sibling.get" => [
+                "method" => "GET|POST|PUT|PATCH|DELETE|OPTIONS",
+                "uri" => "en/redirect-to-sibling",
+                "action" => '\Illuminate\Routing\RedirectController',
+                "middleware" => [],
+                'statusCode' => 302,
+                'redirectTarget' => '/en/redirect-target'
+            ]
+
+        ]);
+    }
+
 }
