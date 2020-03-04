@@ -840,7 +840,9 @@ class RouteNode
     {
         // If no language is specifically stated, we use the current locale
         RouteTree::establishLocale($locale);
-
+        
+        if(!isset($this->paths[$locale]))
+            throw new NodePathForLocaleNotFoundException('The languge specific node path for "' . $locale. '" is not defined!');
         return $this->paths[$locale];
     }
 
