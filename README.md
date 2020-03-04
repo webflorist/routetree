@@ -1,4 +1,4 @@
-# webflorist/routetree
+# webflorist/routetree [![Build Status](https://travis-ci.com/webflorist/routetree.svg?branch=2.x)](https://travis-ci.com/webflorist/routetree)
 **RouteTree: Advanced Route Management for Laravel (v5.5+ and v6)**
 
 This package includes a special API for creating and accessing Laravel-routes and route-related information. It's main concept is to create a hierarchical multi-language RouteTree using an expressive syntax (mostly mimicking Laravel's own). Using that hierarchy, RouteTree can be used to easily create:
