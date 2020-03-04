@@ -97,7 +97,16 @@ return [
          * Base URL of generated urls.
          * e.g. "http://localhost".
          */
-        'base_url' => config('app.url')
+        'base_url' => config('app.url'),
+
+        /*
+         * Routes using these middleware
+         * will be automatically excluded
+         * from the sitemap.
+         */
+        'excluded_middleware' => [
+            'auth'
+        ]
 
     ],
 

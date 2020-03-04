@@ -295,4 +295,55 @@ class GenerateSitemapTest extends TestCase
     }
 
 
+
+    public function test_excluded_middleware()
+    {
+        $this->config->set('routetree.locales', null);
+        $this->config->set('routetree.sitemap.excluded_middleware', ['test1']);
+        $this->config->set('app.locale', 'de');
+
+        $this->routeTree->root(function (RouteNode $node) {
+            $node->namespace('\RouteTreeTests\Feature\Controllers');
+            $node->get('TestController@get');
+            $node->child('auth', function (RouteNode $node) {
+                $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                $node->middleware('auth');
+                $node->child('auth-child', function (RouteNode $node) {
+                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                });
+            });
+
+            $node->child('test1', function (RouteNode $node) {
+                $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                $node->middleware('test1');
+                $node->child('test1-child', function (RouteNode $node) {
+                    $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+                });
+            });
+        });
+
+        $this->routeTree->generateAllRoutes();
+
+        $this->artisan('routetree:generate-sitemap')->assertExitCode('0');
+        $this->assertFileExists($this->getSitemapOutputFile());
+        $this->assertXmlStringEqualsXmlFile($this->getSitemapOutputFile(), '<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
+        xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <url>
+        <loc>http://localhost/</loc>
+    </url>
+    <url>
+        <loc>http://localhost/auth</loc>
+    </url>
+    <url>
+        <loc>http://localhost/auth/auth-child</loc>
+    </url>
+
+
+</urlset>');
+    }
+
+
 }

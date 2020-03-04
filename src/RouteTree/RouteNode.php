@@ -1055,9 +1055,9 @@ class RouteNode
     }
 
     /**
-     * Generates the routes for all actions of this node and it's child-nodes.
+     * Generates the paths of this node and it's child-nodes.
      */
-    public function generateRoutesOfNodeAndChildNodes()
+    public function generatePathsOfNodeAndChildNodes()
     {
 
         // Make sure, paths for all languages are set.
@@ -1065,6 +1065,21 @@ class RouteNode
 
         // Generate the full-paths for this node.
         $this->generateFullPaths();
+
+        // Do the same for all children.
+        if ($this->hasChildNodes()) {
+            foreach ($this->getChildNodes() as $childNode) {
+                $childNode->generatePathsOfNodeAndChildNodes();
+            }
+        }
+
+    }
+
+    /**
+     * Generates the routes for all actions of this node and it's child-nodes.
+     */
+    public function generateRoutesOfNodeAndChildNodes()
+    {
 
         if ($this->hasChildNodes()) {
             foreach ($this->getChildNodes() as $childNode) {

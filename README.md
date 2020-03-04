@@ -1,5 +1,5 @@
-# webflorist/routetree
-**Advanded route management for Laravel 5.5 and later**
+# webflorist/routetree [![Build Status](https://travis-ci.com/webflorist/routetree.svg?branch=2.x)](https://travis-ci.com/webflorist/routetree)
+**RouteTree: Advanced Route Management for Laravel (v5.5+ and v6)**
 
 This package includes a special API for creating and accessing Laravel-routes and route-related information. It's main concept is to create a hierarchical multi-language RouteTree using an expressive syntax (mostly mimicking Laravel's own). Using that hierarchy, RouteTree can be used to easily create:
   * Any kind of navigation.
@@ -605,11 +605,11 @@ php artisan routetree:generate-sitemap
 
 Per default the output-file will be at `'public/sitemap.xml'`. You can however configure this in RouteTree's config file.
 
-Any URL's in the sitemap will use `config('app.url')` as the base url automatically. But you can also state a different value unter the `routetree.sitemap.base_url` config.
+Any URL's in the sitemap will use `config('app.url')` as the base url automatically. But you can also state a different value unfer the `routetree.sitemap.base_url` config.
 
 Per default all routes created with RouteTree will be present in the sitemap. There are some exclusion criteria though:
 - Only `GET` routes will be included.
-- Routes using the `auth` middleware will be automatically excluded.
+- Routes using the a middleware configured under `routetree.sitemap.excluded_middleware` will be automatically excluded (defaults to `['auth']`).
 - Redirect routes will be automatically excluded.
 - Routes with `parameters` can only be included, if RouteTree can retrieve all possible values for these parameters. There are two ways to achieve this:
     - using the `routeKeys()` method (see [Route Parameters](#route-parameters))
