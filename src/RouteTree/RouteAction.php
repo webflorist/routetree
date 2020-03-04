@@ -126,6 +126,14 @@ class RouteAction
     public $payload;
 
     /**
+     * Should the action-name be appended to the route-name.
+     * This can be set to false only for legacy-reasons.
+     *
+     * @var RoutePayload
+     */
+    protected $appendActionNameToRouteName = true;
+
+    /**
      * RouteAction constructor.
      *
      * @param string $method
@@ -498,7 +506,10 @@ class RouteAction
             $routeName .= '.' . $this->routeNode->getId();
         }
 
-        $routeName .= '.' . $this->getName();
+        // And the name of the action itself (except $this->appendActionNameToRouteName was set to false).
+        if ($this->appendActionNameToRouteName !== false) {
+            $routeName .= '.' . $this->getName();
+        }
 
         return $routeName;
     }
@@ -717,6 +728,15 @@ class RouteAction
 
         // Per default we fall back to $this->routeNode->getNavTitle().
         return $this->routeNode->getNavTitle($parameters, $locale, false);
+    }
+
+    /**
+     * Call this method to omit the action name from the full route name
+     * This allows for route-names like "en.my-node" instead of "en.my-node.get",
+     * and should only be used for legacy-reasons.
+     */
+    public function omitActionNameFromRouteName() {
+        $this->appendActionNameToRouteName = false;
     }
 
 }

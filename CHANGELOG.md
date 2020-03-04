@@ -1,5 +1,9 @@
 # Release Notes
 
+## [v2.2.1 (2020-03-04)](https://github.com/webflorist/routetree/compare/v2.2.0...v2.2.1)
+### Added
+- Add method `omitActionNameFromRouteName` to RouteAction to circumvent problems with legacy route names.
+
 ## [v2.2.0 (2020-03-04)](https://github.com/webflorist/routetree/compare/v2.1.0...v2.2.0)
 ### Added
 - Add config `sitemap.excluded_middleware`. Routes using these middleware will be automatically excluded from the sitemap (default is 'auth').
