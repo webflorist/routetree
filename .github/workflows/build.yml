@@ -3,7 +3,7 @@ name: build
 on:
   push:
     branches:
-      - '*'
+      - msnwalt-github-actions
   pull_request:
   schedule:
     - cron: '0 0 * * *'
@@ -16,7 +16,7 @@ jobs:
       fail-fast: true
       matrix:
         php: [7.2, 7.3, 7.4]
-        laravel: [^6.0, ^7.0]
+        laravel: [^6.0]
         include:
           - laravel: ^7.0
             testbench: ^5.0
