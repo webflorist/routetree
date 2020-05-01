@@ -1,5 +1,9 @@
 # Release Notes
 
+## NEXT RELEASE
+### Added
+- Added config `sitemap.route` to enable a route delivering a dynamic XML-sitemap.
+
 ## [v2.2.1 (2020-03-04)](https://github.com/webflorist/routetree/compare/v2.2.0...v2.2.1)
 ### Added
 - Add method `omitActionNameFromRouteName` to RouteAction to circumvent problems with legacy route names.

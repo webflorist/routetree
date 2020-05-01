@@ -79,19 +79,35 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Sitemap Settings
+    | XML-Sitemap Settings
     |--------------------------------------------------------------------------
     |
-    | Here you may configure the settings for generation
-    | of a sitemap XML file via the artisan command 'routetree:generate-sitemap'.
+    | Here you may configure the settings for generation of an XML-sitemap.
     |
     */
     'sitemap' => [
 
         /*
-         * Name of the output file (relative to laravel root).
+         * Name of the output file (relative to laravel root)
+         * of the artisan command 'routetree:generate-sitemap'.
          */
         'output_file' => 'public/sitemap.xml',
+
+        /*
+         * Settings related to a route for delivering a
+         * dynamic sitemap.
+         */
+        'route' => [
+
+            // Enable the sitemap route.
+            // RouteTree will automatically
+            // register the route, if enabled.
+            'enabled' => false,
+
+            // Path to the dynamic XML-sitemap
+            // (e.g. 'sitemap.xml').
+            'path' => 'sitemap.xml',
+        ],
 
         /*
          * Base URL of generated urls.

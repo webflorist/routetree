@@ -9,6 +9,7 @@ use Webflorist\RouteTree\Console\Commands\GenerateSitemapCommand;
 use Webflorist\RouteTree\Console\Commands\RouteCacheCommand;
 use Webflorist\RouteTree\Console\Commands\RouteClearCommand;
 use Webflorist\RouteTree\Http\Controllers\Api\RoutesController;
+use Webflorist\RouteTree\Http\Controllers\XmlSitemapController;
 use Webflorist\RouteTree\Http\Middleware\RouteTreeMiddleware;
 use Webflorist\RouteTree\Http\Middleware\SessionLocaleMiddleware;
 
@@ -100,10 +101,15 @@ class RouteTreeServiceProvider extends ServiceProvider
     {
         /** @var Router $router */
         $router = $this->app['router'];
+
         if (config('routetree.api.enabled')) {
             $router->group(['prefix' => config('routetree.api.base_path'), 'middleware' => 'api'], function (Router $router) {
                 $router->resource('routes', RoutesController::class)->only(['index', 'show']);
             });
+        }
+
+        if (config('routetree.sitemap.route.enabled')) {
+            $router->get(config('routetree.sitemap.route.path'), [XmlSitemapController::class, 'get']);
         }
     }
 }
