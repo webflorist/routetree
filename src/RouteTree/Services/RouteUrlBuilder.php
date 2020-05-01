@@ -82,15 +82,7 @@ class RouteUrlBuilder
             $node instanceof RouteNode ? $node : route_tree()->getCurrentNode()
             );
 
-        $this->action =
-            $action ??
-            (
-            $this->routeNode->hasAction('index') ? 'index' :
-                (
-                $this->routeNode->hasAction('get') ? 'get' :
-                    null
-                )
-            );
+        $this->action = $action ?? $this->guessAction();
 
         $this->parameters = $parameters;
         $this->locale = $locale;
@@ -269,6 +261,26 @@ class RouteUrlBuilder
     public function __toString()
     {
         return $this->generate();
+    }
+
+    /**
+     * Guesses the most appropriate action to
+     * generate the link to.
+     *
+     * @return string|null
+     */
+    private function guessAction()
+    {
+        if ($this->routeNode->hasAction('index')) {
+            return 'index';
+        }
+        if ($this->routeNode->hasAction('get')) {
+            return 'get';
+        }
+        if (count($this->routeNode->getActions())>0) {
+            return $this->routeNode->getActions()[0]->getName();
+        }
+        return null;
     }
 
 }
