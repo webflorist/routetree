@@ -1656,6 +1656,89 @@ class RouteGenerationTest extends TestCase
         ]);
     }
 
+    public function test_node_with_no_locale_prefix_set()
+    {
+
+        $this->routeTree->node('de-only-with-no-locale-prefix', function (RouteNode $node) {
+            $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+            $node->onlyLocales(['de']);
+            $node->noLocalePrefix();
+        });
+
+        $this->routeTree->generateAllRoutes();
+
+        $this->assertRouteTree([
+            "de.de-only-with-no-locale-prefix.get" => [
+                "method" => "GET",
+                "uri" => "de-only-with-no-locale-prefix",
+                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    "id" => 'de-only-with-no-locale-prefix',
+                    'method' => 'GET',
+                    'path' => 'de-only-with-no-locale-prefix',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'locale' => 'de',
+                    'title' => 'De-only-with-no-locale-prefix',
+                    'navTitle' => 'De-only-with-no-locale-prefix',
+                    'h1Title' => 'De-only-with-no-locale-prefix'
+                ],
+            ]
+
+        ]);
+    }
+
+    public function test_node_with_de_as_no_prefix_locales()
+    {
+
+        config()->set('routetree.no_prefix_locales', ['de']);
+
+        $this->routeTree->node('de-with-no-locale-prefix', function (RouteNode $node) {
+            $node->get('\RouteTreeTests\Feature\Controllers\TestController@get');
+        });
+
+        $this->routeTree->generateAllRoutes();
+
+        $this->assertRouteTree([
+            "de.de-with-no-locale-prefix.get" => [
+                "method" => "GET",
+                "uri" => "de-with-no-locale-prefix",
+                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    "id" => 'de-with-no-locale-prefix',
+                    'method' => 'GET',
+                    'path' => 'de-with-no-locale-prefix',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'locale' => 'de',
+                    'title' => 'De-with-no-locale-prefix',
+                    'navTitle' => 'De-with-no-locale-prefix',
+                    'h1Title' => 'De-with-no-locale-prefix'
+                ],
+            ],
+            "en.de-with-no-locale-prefix.get" => [
+                "method" => "GET",
+                "uri" => "en/de-with-no-locale-prefix",
+                "action" => '\RouteTreeTests\Feature\Controllers\TestController@get',
+                "middleware" => [],
+                "content" => [
+                    "id" => 'de-with-no-locale-prefix',
+                    'method' => 'GET',
+                    'path' => 'en/de-with-no-locale-prefix',
+                    'controller' => 'test',
+                    'function' => 'get',
+                    'locale' => 'en',
+                    'title' => 'De-with-no-locale-prefix',
+                    'navTitle' => 'De-with-no-locale-prefix',
+                    'h1Title' => 'De-with-no-locale-prefix'
+                ],
+            ]
+
+        ]);
+    }
+
     public function test_complex_routes()
     {
         $this->generateComplexTestRoutes($this->routeTree);

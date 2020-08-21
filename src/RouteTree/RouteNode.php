@@ -722,6 +722,9 @@ class RouteNode
 
     /**
      * Disable prefixing of path with locale for this node and all child-nodes.
+     *
+     * Attention: This can lead to in ambiguous paths!
+     *
      */
     public function noLocalePrefix()
     {
@@ -1126,6 +1129,26 @@ class RouteNode
         return $this->contentLangFile;
     }
 
+    protected function prefixPathWithLocale($locale) : bool {
+
+        // No for multilanguage sites.
+        if (config('routetree.locales') === null) {
+            return false;
+        }
+
+        // No for nodes, which have noLocalePrefix specifically set.
+        if ($this->noLocalePrefix) {
+            return false;
+        }
+
+        // No for locales configured in 'routetree.no_prefix_locales'.
+        if (in_array($locale, config('routetree.no_prefix_locales'))) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Compiles this RouteNode's path for the specified langauge.
      *
@@ -1135,13 +1158,7 @@ class RouteNode
     protected function compilePath($locale): string
     {
 
-        // Paths always start with locale....
-        $segments = [$locale];
-
-        // .... except for single language-pages.
-        if (config('routetree.locales') === null || $this->noLocalePrefix) {
-            $segments = [];
-        }
+        $segments = $this->prefixPathWithLocale($locale) ? [$locale] : [];
 
         // Add segments of parent nodes.
         foreach ($this->getRootLineNodes() as $parentNode) {

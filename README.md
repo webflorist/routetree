@@ -34,7 +34,9 @@ Here is a complete feature overview:
 * **Automatic redirects**:
     * From the web root `/` to the language-specific home page (e.g. `/en`).
     * From paths with omitted locale (e.g. from `/company/team/contact` to `en/company/team/contact`).
-* **XML-Sitemap generation** via an `artisan` command:
+* **XML-Sitemap**
+    * Generate static file via `artisan` command.
+    * Option to register a route delivering a dynamic sitemap.
     * Automatic exclusion of `auth` routes and redirects.
     * Manual exclusion of routes and children.
     * Resolving of all possible route keys for parameter/resource routes.
@@ -52,7 +54,7 @@ Here is a complete feature overview:
 - [Route Payload](#route-payload)
 - [Automatic Translation](#automatic-translation)
 - [Caching](#caching)
-- [Sitemap Generation](#sitemap-generation)
+- [XML Sitemap](#xml-sitemap)
 - [API](#api)
 - [Important RouteTree-methods](#important-routetree-methods)
 - [Important RouteNode-methods](#important-routenode-methods)
@@ -599,13 +601,17 @@ If you are using Laravels route caching, RouteTree must cache it's own data too.
 php artisan routetree:route-cache
 ```
 
-## Sitemap Generation
-Having an up-to-date `sitemap.xml` file is an important criteria for a modern search engine optimized website. RouteTree includes an artisan command, that will create such a file:
+## XML Sitemap
+Having an up-to-date `sitemap.xml` file is an important criterion for a modern search engine optimized website. RouteTree includes functionality to create such a file.
+ 
+The following an artisan command will create a static XML sitemap file:
 ```
 php artisan routetree:generate-sitemap
 ```
 
 Per default the output-file will be at `'public/sitemap.xml'`. You can however configure this in RouteTree's config file.
+
+You can also enable a route to provide the sitemap dynamically (see config-options under `routetree.sitemap.route`).
 
 Any URL's in the sitemap will use `config('app.url')` as the base url automatically. But you can also state a different value unfer the `routetree.sitemap.base_url` config.
 
