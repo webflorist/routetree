@@ -1,6 +1,6 @@
 # Release Notes
 
-## NEXT RELEASE
+## [v2.3.0 (2020-08-21)](https://github.com/webflorist/routetree/compare/v2.2.1...v2.3.0)
 ### Added
 - Added config `sitemap.route` to enable a route delivering a dynamic XML-sitemap.
 - Added config `no_prefix_locales` to disable locale-prefix for specific languages.
