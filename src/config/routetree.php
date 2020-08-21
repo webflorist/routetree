@@ -17,6 +17,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Locales with no automatic path prefix.
+    |--------------------------------------------------------------------------
+    |
+    | This setting will disable prefixing of path with locale for this language.
+    | (e.g. setting this to ['de'], if ['en','de'] is configured as locales above
+    | will result in the paths '/kontakt' for 'de' and 'en/contact' for 'en'.
+    |
+    | Attention: This can result in ambiguous paths!
+    |
+    */
+    'no_prefix_locales' => [],
+
+    /*
+    |--------------------------------------------------------------------------
     | Create absolute paths instead of relative paths by default?
     |--------------------------------------------------------------------------
     |
