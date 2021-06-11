@@ -489,9 +489,9 @@ class RouteTree
     {
         $this->registeredRoutes = $this->registeredRoutes->sort(function (RegisteredRoute $routeA, RegisteredRoute $routeB) {
             if ($routeA->path === $routeB->path) {
-                return $routeA->routeName > $routeB->routeName;
+                return $routeA->routeName <=> $routeB->routeName;
             }
-            return $routeA->path > $routeB->path;
+            return $routeA->path <=> $routeB->path;
         });
     }
 
