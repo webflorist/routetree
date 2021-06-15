@@ -1,5 +1,9 @@
 # Release Notes
 
+## [v2.3.1 (2021-06-15)](https://github.com/webflorist/routetree/compare/v2.3.0...v2.3.1)
+### Added
+- PHP8 compatibility fix
+
 ## [v2.3.0 (2020-08-21)](https://github.com/webflorist/routetree/compare/v2.2.1...v2.3.0)
 ### Added
 - Added config `sitemap.route` to enable a route delivering a dynamic XML-sitemap.
