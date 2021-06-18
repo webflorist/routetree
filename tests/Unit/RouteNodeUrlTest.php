@@ -1,8 +1,7 @@
 <?php
 
-namespace RouteTreeTests\Feature;
+namespace RouteTreeTests\Unit;
 
-use RouteTreeTests\Feature\Models\TestModelTranslatable;
 use RouteTreeTests\Feature\Models\TestModelTranslates;
 use RouteTreeTests\Feature\Traits\UsesTestRoutes;
 use RouteTreeTests\TestCase;

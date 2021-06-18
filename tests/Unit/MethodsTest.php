@@ -1,6 +1,6 @@
 <?php
 
-namespace RouteTreeTests\Feature;
+namespace RouteTreeTests\Unit;
 
 use RouteTreeTests\Feature\Traits\UsesTestRoutes;
 use RouteTreeTests\TestCase;
