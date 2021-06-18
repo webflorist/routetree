@@ -1,5 +1,9 @@
 # Release Notes
 
+## [v2.3.2 (2021-06-15)](https://github.com/webflorist/routetree/compare/v2.3.1...v2.3.2)
+### Added
+- minor namespace fix for some test-files
+
 ## [v2.3.1 (2021-06-15)](https://github.com/webflorist/routetree/compare/v2.3.0...v2.3.1)
 ### Added
 - PHP8 compatibility fix

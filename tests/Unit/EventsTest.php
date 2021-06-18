@@ -1,6 +1,6 @@
 <?php
 
-namespace RouteTreeTests\Feature;
+namespace RouteTreeTests\Unit;
 
 use Illuminate\Support\Facades\Event;
 use RouteTreeTests\Feature\Traits\UsesTestRoutes;
