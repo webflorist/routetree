@@ -1,5 +1,9 @@
 # Release Notes
 
+## [v2.3.3 (2022-04-25)](https://github.com/webflorist/routetree/compare/v2.3.2...v2.3.3)
+### Added
+- add Laravel 7+ support (thanks @mhaidn)
+
 ## [v2.3.2 (2021-06-15)](https://github.com/webflorist/routetree/compare/v2.3.1...v2.3.2)
 ### Added
 - minor namespace fix for some test-files
