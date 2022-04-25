@@ -19,7 +19,7 @@ class ApiTest extends TestCase
     {
         $this->generateComplexTestRoutes($this->routeTree);
 
-        $response = $this->get('api/routetree/routes/de.get')->decodeResponseJson();
+        $response = $this->getJsonResponse('api/routetree/routes/de.get');
 
         $this->assertEquals(
             array (
@@ -55,7 +55,7 @@ class ApiTest extends TestCase
     {
         $this->generateComplexTestRoutes($this->routeTree);
 
-        $response = $this->get('api/routetree/routes')->decodeResponseJson();
+        $response = $this->getJsonResponse('api/routetree/routes');
 
         $this->assertEquals(
             array (
@@ -1584,6 +1584,22 @@ class ApiTest extends TestCase
 
     }
 
+    /**
+     * Get JSON response from URI
+     *
+     * @param string $uri
+     * @return array
+     */
+    private function getJsonResponse(string $uri): array
+    {
+        $response = $this->get($uri)->decodeResponseJson();
+
+        // for Laravel 8+
+        if(is_object($response)) {
+            return $response->json();
+        }
+        return $response;
+    }
 
 
 }

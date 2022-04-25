@@ -45,7 +45,12 @@ class RouteCacheCommand extends \Illuminate\Foundation\Console\RouteCacheCommand
     protected function getFreshApplication()
     {
         if (app()->environment() === 'testing') {
-            return app();
+            try {
+                return parent::getFreshApplication();
+            }
+            catch(\Exception $exception) {
+                return app();
+            }
         }
         return parent::getFreshApplication();
     }
