@@ -444,6 +444,8 @@ class RouteTree
             if ($currentRoute->getActionMethod() === '\Illuminate\Routing\ViewController') {
                 unset($currentRouteParameters['view']);
                 unset($currentRouteParameters['data']);
+                unset($currentRouteParameters['status']);
+                unset($currentRouteParameters['headers']);
             }
             $parameters = $currentRouteParameters;
         }
