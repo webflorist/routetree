@@ -95,13 +95,13 @@ There are several ways to access the RouteTree service:
  * via Laravel facade: `\RouteTree::`
  * via Laravel container:  `app('Webflorist\RouteTree\RouteTree')` or `app()['Webflorist\RouteTree\RouteTree']`
 
-The following code examples will use the helper-function `RouteTree::`.
+The following code examples will use the facade `RouteTree::`.
 
 ## Defining the RouteTree
 
 Just like with Laravel's own routing, your can define the RouteTree in your `routes/web.php`.
 
-For better comparability of syntaxes, wherethe following examples will correspond to the ones presented in [Laravel's Routing documentation](https://laravel.com/docs/master/routing) where possible. They will also assume 2 configured languages (`'en','de'`) - if not otherwise stated.
+For better comparability of syntaxes, the following examples will correspond to the ones presented in [Laravel's Routing documentation](https://laravel.com/docs/master/routing) where possible. They will also assume 2 configured languages (`'en','de'`) - if not otherwise stated.
 
 ### Basic Routing
 ```php
