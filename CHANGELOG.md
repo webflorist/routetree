@@ -1,5 +1,9 @@
 # Release Notes
 
+## [v2.3.4 (2023-11-24)](https://github.com/webflorist/routetree/compare/v2.3.3...v2.3.4)
+### Fixed
+- fixed problem with sitemap.blade.php and php shortcodes enabled (thanks @SEUH)
+
 ## [v2.3.3 (2022-04-25)](https://github.com/webflorist/routetree/compare/v2.3.2...v2.3.3)
 ### Added
 - add Laravel 7+ support (thanks @mhaidn)
